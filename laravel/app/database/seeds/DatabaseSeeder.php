@@ -15,8 +15,6 @@ class DatabaseSeeder extends Seeder {
 		$this->call('UsersTableSeeder');
 		$this->call('UsersGroupsTableSeeder');
 
-
-		$this->call('UserTableSeeder');
 		$this->call('RaceTableSeeder');
 		$this->call('StatusTableSeeder');
 		$this->call('CurrencyTableSeeder');
@@ -42,7 +40,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('GlobaleventPeriodTableSeeder');
 		$this->call('GlobaleventPeriodEmployeeTableSeeder');
 		$this->call('PeriodEmployeePaymentTableSeeder');
-				
+
 	}
 
 }
