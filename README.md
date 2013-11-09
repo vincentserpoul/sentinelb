@@ -30,3 +30,13 @@ and type the following command in your terminal
     php artisan migrate --env=local  --package=cartalyst/sentry
     php artisan migrate --env=local
     php artisan db:seed --env=local
+
+Now open your browser and go to 
+
+        http://dev.sentinelb.com/api/v1/employee
+
+You should see
+        
+        {"error":true,"message":"Please log in to continue."}
+
+It's working!
