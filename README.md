@@ -24,6 +24,7 @@ composer create-project laravel/laravel --prefer-dist
 cd laravel
 composer update
 php artisan cache:clear
-php artisan migrate --env=local
 php artisan migrate --env=local  --package=cartalyst/sentry
+php artisan migrate --env=local
 php artisan db:seed --env=local
+php artisan config:publish cartalyst/sentry
