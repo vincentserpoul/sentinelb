@@ -18,7 +18,7 @@ class CenturyevergreenForeignKeys
             $table->foreign('race_id')->references('id')->on('race');
             $table->foreign('status_id')->references('id')->on('status');
             $table->foreign('work_pass_type_id')->references('id')->on('work_pass_type');
-            $table->foreign('user_id')->references('id')->on('user');            
+            $table->foreign('user_id')->references('id')->on('users');            
         });
 
         Schema::table('employee_address', function($table)
@@ -26,7 +26,7 @@ class CenturyevergreenForeignKeys
             // Foreign Keys for table 'employee_address'
 
             $table->foreign('employee_id')->references('id')->on('employee');
-            $table->foreign('user_id')->references('id')->on('user');                
+            $table->foreign('user_id')->references('id')->on('users');                
         });
 
         Schema::table('employee_identity_doc', function($table)
@@ -35,7 +35,7 @@ class CenturyevergreenForeignKeys
 
             $table->foreign('employee_id')->references('id')->on('employee');
             $table->foreign('identity_doc_type_id')->references('id')->on('identity_doc_type');
-            $table->foreign('user_id')->references('id')->on('user');                
+            $table->foreign('user_id')->references('id')->on('users');                
         });
 
         Schema::table('employee_remarks', function($table)
@@ -44,14 +44,14 @@ class CenturyevergreenForeignKeys
 
             $table->foreign('employee_id')->references('id')->on('employee');
             $table->foreign('globalevent_period_id')->references('id')->on('globalevent_period');
-            $table->foreign('user_id')->references('id')->on('user');                
+            $table->foreign('user_id')->references('id')->on('users');                
         });
 
         Schema::table('employer', function($table)
         {
             // Foreign Keys for table 'employer_contact'
             $table->foreign('country_code')->references('code')->on('country');
-            $table->foreign('user_id')->references('id')->on('user');
+            $table->foreign('user_id')->references('id')->on('users');
         });
 
         Schema::table('employer_contact', function($table)
@@ -61,7 +61,7 @@ class CenturyevergreenForeignKeys
             $table->foreign('employer_id')->references('id')->on('employer');
             $table->foreign('title_id')->references('id')->on('title');
             $table->foreign('sex_id')->references('id')->on('sex');
-            $table->foreign('user_id')->references('id')->on('user');                
+            $table->foreign('user_id')->references('id')->on('users');                
         });
 
         Schema::table('employer_department', function($table)
@@ -73,7 +73,7 @@ class CenturyevergreenForeignKeys
             $table->foreign('parent_id')->references('id')->on('employer_department');
             $table->foreign('employee_hourly_rate_currency_code')->references('code')->on('currency');
             $table->foreign('employer_hourly_rate_currency_code')->references('code')->on('currency');
-            $table->foreign('user_id')->references('id')->on('user');                
+            $table->foreign('user_id')->references('id')->on('users');                
         });
 
         Schema::table('globalevent', function($table)
@@ -81,7 +81,7 @@ class CenturyevergreenForeignKeys
             // Foreign Keys for table 'event'
 
             $table->foreign('employer_department_id')->references('id')->on('employer_department');
-            $table->foreign('user_id')->references('id')->on('user');                
+            $table->foreign('user_id')->references('id')->on('users');                
         });
 
         Schema::table('globalevent_period', function($table)
@@ -89,7 +89,7 @@ class CenturyevergreenForeignKeys
             // Foreign Keys for table 'event_period'
 
             $table->foreign('globalevent_id')->references('id')->on('globalevent');
-            $table->foreign('user_id')->references('id')->on('user');                
+            $table->foreign('user_id')->references('id')->on('users');                
         });
 
         Schema::table('globalevent_period_employee', function($table)
@@ -98,7 +98,7 @@ class CenturyevergreenForeignKeys
 
             $table->foreign('globalevent_period_id')->references('id')->on('globalevent_period');
             $table->foreign('employee_id')->references('id')->on('employee');
-            $table->foreign('user_id')->references('id')->on('user');                          
+            $table->foreign('user_id')->references('id')->on('users');                          
         });
 
         Schema::table('period_employee_payment', function($table)
@@ -108,7 +108,7 @@ class CenturyevergreenForeignKeys
             $table->foreign('globalevent_period_employee_id')->references('id')->on('globalevent_period_employee');
             $table->unique('globalevent_period_employee_id');
             $table->foreign('payment_id')->references('id')->on('payment');
-            $table->foreign('user_id')->references('id')->on('user');                          
+            $table->foreign('user_id')->references('id')->on('users');                          
         });        
 
     }
@@ -229,7 +229,7 @@ class CenturyevergreenForeignKeys
             $table->dropForeign('period_employee_payment_globalevent_period_employee_foreign');
             $table->dropUnique('period_employee_payment_globalevent_period_employee_id_unique');
             $table->dropForeign('period_employee_payment_payment_id_foreign')->references('id')->on('payment');
-            $table->dropForeign('user_id')->references('id')->on('user');                          
+            $table->dropForeign('user_id')->references('id')->on('users');                          
         }); 
 
     }
