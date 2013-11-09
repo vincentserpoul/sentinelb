@@ -21,3 +21,5 @@ vagrant ssh
 and type the following command in your terminal
 cd /var/www/dev.sentinelb.com
 composer create-project laravel/laravel --prefer-dist
+cd laravel
+composer update
