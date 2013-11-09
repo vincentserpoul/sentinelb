@@ -23,11 +23,10 @@ ssh to your vagrant machine.
 and type the following command in your terminal
 
     cd /var/www/dev.sentinelb.com
-    composer create-project laravel/laravel --prefer-dist
     cd laravel
+    composer install
     composer update
     php artisan cache:clear
     php artisan migrate --env=local  --package=cartalyst/sentry
     php artisan migrate --env=local
     php artisan db:seed --env=local
-    php artisan config:publish cartalyst/sentry
