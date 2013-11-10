@@ -11,8 +11,8 @@ Create your vagrant machine (cf https://github.com/vincentserpoul/vagrant-php-en
 
 Clone your repo into vagrant.sentinelb.com/www/dev.sentinelb.com
 
-    cd www
-    git clone https://github.com/vincentserpoul/sentinelb.git dev.sentinelb.com
+    cd vagrant.sentinelb.com/www/
+    git clone git@github.com:vincentserpoul/sentinelb.git dev.sentinelb.com
 
 # On your VM
 
@@ -31,12 +31,12 @@ and type the following command in your terminal
     php artisan migrate --env=local
     php artisan db:seed --env=local
 
-Now open your browser and go to 
+Now open your browser and go to
 
         http://dev.sentinelb.com/api/v1/employee
 
 You should see
-        
+
         {"error":true,"message":"Please log in to continue."}
 
 It's working!
