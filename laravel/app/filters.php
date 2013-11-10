@@ -13,16 +13,27 @@
 
 App::before(function($request)
 {
+    if($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        $statusCode = 204;
 
+        $headers = [
+            'Access-Control-Allow-Origin'       => Config::get('app.allowedorigin'),
+            'Access-Control-Allow-Methods'      => 'POST,GET,PUT,DELETE,OPTIONS',
+            'Access-Control-Allow-Headers'      => 'Authorization,Content-Type,Accept,Origin,x-requested-with',
+            'Access-Control-Allow-Credentials'  => 'true'
+        ];
+
+        return Response::make(null, $statusCode, $headers);
+    }
 });
 
 
 App::after(function($request, $response)
 {
 	// Note that you cannot use wildcard domains when doing CORS with Authorization!
-    $response->header('Access-Control-Allow-Origin', Config::get('app.allowedorigin'));
-    $response->header('Access-Control-Allow-Methods', 'POST,GET,PUT,DELETE,OPTIONS');
-    $response->header('Access-Control-Allow-Headers', 'Authorization,Content-Type,Accept,Origin,Access-Control-Allow-Origin,x-requested-with');
+    $response->header('Access-Control-Allow-Origin'     , Config::get('app.allowedorigin'));
+    $response->header('Access-Control-Allow-Methods'    , 'POST,GET,PUT,DELETE,OPTIONS');
+    $response->header('Access-Control-Allow-Headers'    , 'Authorization,Content-Type,Accept,Origin,x-requested-with');
     $response->header('Access-Control-Allow-Credentials', 'true');
 
 });
