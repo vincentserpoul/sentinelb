@@ -13,28 +13,18 @@
 
 App::before(function($request)
 {
-    if($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        $statusCode = 204;
 
-        $headers = array(
-            'Access-Control-Allow-Origin'      => Config::get('app.allowedorigin'),
-            'Access-Control-Allow-Methods'     => 'POST,GET,PUT,DELETE,OPTIONS',
-            'Access-Control-Allow-Headers'     => 'Authorization,Content-Type,Accept,Origin,Access-Control-Allow-Origin,x-requested-with',
-            'Access-Control-Allow-Credentials' => 'true'
-        );
-
-        return Response::make(null, $statusCode, $headers);
-    }
 });
 
 
 App::after(function($request, $response)
 {
 	// Note that you cannot use wildcard domains when doing CORS with Authorization!
-    $response->headers->set('Access-Control-Allow-Origin', Config::get('app.allowedorigin'));
-    $response->headers->set('Access-Control-Allow-Credentials', 'true');
-    $response->headers->set('Access-Control-Allow-Headers', 'Authorization,Content-Type,Accept,Origin,Access-Control-Allow-Origin,x-requested-with');
-    $response->headers->set('Access-Control-Allow-Methods', 'POST,GET,PUT,DELETE,OPTIONS');
+    $response->header('Access-Control-Allow-Origin', Config::get('app.allowedorigin'));
+    $response->header('Access-Control-Allow-Methods', 'POST,GET,PUT,DELETE,OPTIONS');
+    $response->header('Access-Control-Allow-Headers', 'Authorization,Content-Type,Accept,Origin,Access-Control-Allow-Origin,x-requested-with');
+    $response->header('Access-Control-Allow-Credentials', 'true');
+
 });
 
 /*
@@ -51,7 +41,7 @@ Route::filter('auth', function()
 {
 	if ((Request::getMethod() !== 'OPTIONS') && !Sentry::check()) return Response::json(
 							array(
-								'error' => true, 
+								'error' => true,
 								'message' => 'Please log in to continue.'
 							),
 							401
@@ -90,10 +80,13 @@ Route::filter('guest', function()
 | session does not match the one given in this request, we'll bail.
 |
 */
+
 Route::filter('csrf', function()
 {
-	if (Session::token() != Input::get('_token'))
+    Log::info(session_id().' -> '.Session::token().' ?= '.Input::get('_token'));
+/*	if (Session::token() != Input::get('_token'))
 	{
 		throw new Illuminate\Session\TokenMismatchException;
-	}
+	}*/
 });
+

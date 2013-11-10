@@ -178,7 +178,7 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
-		'Sentry' => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
+		'Sentry' 		  => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
 
 	),
 
@@ -191,7 +191,5 @@ return array(
 	|
 	*/
 
-	'allowedorigin' => array(
-			'http://dev.sentinelf.com:9000',
-	),
+	'allowedorigin' => 'http://dev.sentinelf.com:9000',
 );
