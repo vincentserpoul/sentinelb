@@ -17,9 +17,9 @@ App::before(function($request)
         $statusCode = 204;
 
         $headers = array(
-            'Access-Control-Allow-Origin'      => 'http://dev.sentinelf.com',
+            'Access-Control-Allow-Origin'      => Config::get('app.allowedorigin'),
             'Access-Control-Allow-Methods'     => 'POST,GET,PUT,DELETE,OPTIONS',
-            'Access-Control-Allow-Headers'     => 'Authorization,Content-Type,Accept,Origin,Access-Control-Allow-Origin',
+            'Access-Control-Allow-Headers'     => 'Authorization,Content-Type,Accept,Origin,Access-Control-Allow-Origin,x-requested-with',
             'Access-Control-Allow-Credentials' => 'true'
         );
 
@@ -31,9 +31,9 @@ App::before(function($request)
 App::after(function($request, $response)
 {
 	// Note that you cannot use wildcard domains when doing CORS with Authorization!
-    $response->headers->set('Access-Control-Allow-Origin', 'http://dev.sentinelf.com');
+    $response->headers->set('Access-Control-Allow-Origin', Config::get('app.allowedorigin'));
     $response->headers->set('Access-Control-Allow-Credentials', 'true');
-    $response->headers->set('Access-Control-Allow-Headers', 'Authorization,Content-Type,Accept,Origin,Access-Control-Allow-Origin');
+    $response->headers->set('Access-Control-Allow-Headers', 'Authorization,Content-Type,Accept,Origin,Access-Control-Allow-Origin,x-requested-with');
     $response->headers->set('Access-Control-Allow-Methods', 'POST,GET,PUT,DELETE,OPTIONS');
 });
 
@@ -47,7 +47,6 @@ App::after(function($request, $response)
 | integrates HTTP Basic authentication for quick, simple checking.
 |
 */
-
 Route::filter('auth', function()
 {
 	if ((Request::getMethod() !== 'OPTIONS') && !Sentry::check()) return Response::json(
@@ -91,7 +90,6 @@ Route::filter('guest', function()
 | session does not match the one given in this request, we'll bail.
 |
 */
-
 Route::filter('csrf', function()
 {
 	if (Session::token() != Input::get('_token'))

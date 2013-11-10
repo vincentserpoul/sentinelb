@@ -192,6 +192,6 @@ return array(
 	*/
 
 	'allowedorigin' => array(
-			'dev.sentinelf.com',
+			'http://dev.sentinelf.com:9000',
 	),
 );
