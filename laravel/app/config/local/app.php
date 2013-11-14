@@ -192,6 +192,4 @@ return array(
 	*/
 
 	'allowedorigin' => 'http://dev.sentinelf.com:9000',
-	'allowedmethods' => 'POST,GET,PUT,DELETE,OPTIONS',
-	'allowedheaders' => 'Authorization,Content-Type,Accept,Origin,x-requested-with,Access-Control-Allow-Origin,Access-Control-Allow-Credentials'
 );
