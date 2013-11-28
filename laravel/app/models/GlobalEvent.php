@@ -17,4 +17,10 @@ Class Globalevent extends Eloquent
         return $this->hasOne('Employerdepartment');
     }
 
+    public function globalevent_period()
+    {
+        return $this->hasMany('GlobaleventPeriod');
+    }
+
+
 }

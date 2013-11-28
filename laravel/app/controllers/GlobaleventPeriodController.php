@@ -8,8 +8,8 @@ class GlobaleventPeriodController extends \BaseController {
      * @return Response
      */
     public function index(){
-        
-        $GlobaleventPeriods = GlobaleventPeriod::get();
+
+        $GlobaleventPeriods = GlobaleventPeriod::with(array('globalevent', 'eventperiodemployee'))->get();
 
         return Response::json(
             array(
@@ -44,10 +44,10 @@ class GlobaleventPeriodController extends \BaseController {
         $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
 
         //$GlobaleventPeriod->user_id = Auth::user()->id;
-     
+
         // Validation and Filtering is sorely needed!!
         // Seriously, I'm a bad person for leaving that out.
-     
+
         $GlobaleventPeriod->save();
 
         return Response::json(
@@ -70,7 +70,7 @@ class GlobaleventPeriodController extends \BaseController {
         $GlobaleventPeriod = GlobaleventPeriod::where('id', $id)
                 ->take(1)
                 ->get();
-     
+
         return Response::json(
             array(
                 'error' => false,
@@ -100,7 +100,7 @@ class GlobaleventPeriodController extends \BaseController {
     public function update($id){
 
         $GlobaleventPeriod = GlobaleventPeriod::find($id);
-     
+
         if ( Request::json('globalevent_id') ){
             $GlobaleventPeriod->globalevent_id = Request::json('globalevent_id');
         }
@@ -118,9 +118,9 @@ class GlobaleventPeriodController extends \BaseController {
         }
 
         $GlobaleventPeriod->id = $id;
-     
+
         $GlobaleventPeriod->save();
-     
+
         return Response::json(
             array(
                 'error' => false,
@@ -144,7 +144,7 @@ class GlobaleventPeriodController extends \BaseController {
 
         $GlobaleventPeriodEmployee->delete();
         $GlobaleventPeriod->delete();
-     
+
         return Response::json(
             array(
                 'error' => false,

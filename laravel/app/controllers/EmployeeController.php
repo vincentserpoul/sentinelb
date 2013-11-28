@@ -8,7 +8,7 @@ class EmployeeController extends \BaseController {
      * @return Response
      */
     public function index(){
-        
+
         $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))->get();
 
         return Response::json(
@@ -52,17 +52,17 @@ class EmployeeController extends \BaseController {
         $Employee->work_pass_type_id = Request::json('work_pass_type_id');
 
         //$Employee->user_id = Auth::user()->id;
-     
+
         // Validation and Filtering is sorely needed!!
         // Seriously, I'm a bad person for leaving that out.
-     
+
         $Employee->save();
 
         return Response::json(
             array(
                 'error' => false,
                 'message' => 'Employee created',
-                'action' => 'insert',               
+                'action' => 'insert',
                 'employee' => $Employee->toArray()
             ),
             200
@@ -80,7 +80,7 @@ class EmployeeController extends \BaseController {
         $Employee = Employee::where('id', $id)
                 ->take(1)
                 ->get();
-     
+
         return Response::json(
             array(
                 'error' => false,
@@ -112,7 +112,7 @@ class EmployeeController extends \BaseController {
 var_dump(Request::json());die();
 
         $Employee = Employee::find($id);
-     
+
         if ( Request::json('title_id') ){
             $Employee->title_id = Request::json('title_id');
         }
@@ -162,9 +162,9 @@ var_dump(Request::json());die();
         }
 
         $Employee->id = $id;
-     
+
         $Employee->save();
-     
+
         return Response::json(
             array(
                 'error' => false,
@@ -186,10 +186,10 @@ var_dump(Request::json());die();
 
         $Employee = Employee::find($id);
         $EmployeeIdentityDoc = EmployeeIdentityDoc::where('employee_id', $id);
-        
+
         $EmployeeIdentityDoc->delete();
         $Employee->delete();
-     
+
         return Response::json(
             array(
                 'error' => false,
@@ -197,6 +197,33 @@ var_dump(Request::json());die();
                 'action' => 'delete',
                 'employee' => $Employee->toArray()
                 ),
+            200
+        );
+    }
+
+    /**
+     * Retrieve The list of employees.
+     *
+     * @param  int  $employee_id
+     * @return Response
+     */
+    public function globalevent_period($employee_id){
+
+        $globaleventPeriods = Employee::where('employee.id', '=', $employee_id)
+                                ->join('globalevent_period_employee', 'employee.id', '=', 'globalevent_period_employee.employee_id')
+                                ->join('globalevent_period', 'globalevent_period.id', '=', 'globalevent_period_employee.globalevent_period_id')
+                                ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
+                                ->leftjoin('period_employee_payment', 'globalevent_period_employee.id', '=', 'period_employee_payment.globalevent_period_employee_id')
+                                ->leftjoin('payment', 'period_employee_payment.payment_id', '=', 'payment.id')
+                                ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'payment.*')
+                                ->orderBy('globalevent_period.end_datetime', 'desc')
+                                ->get();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'globalevent_periods' => $globaleventPeriods->toArray()
+            ),
             200
         );
     }

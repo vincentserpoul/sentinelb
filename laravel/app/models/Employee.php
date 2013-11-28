@@ -10,7 +10,7 @@ Class Employee extends Eloquent
 
     public function employee_address()
     {
-        return $this->hasMany('Employeeaddress');
+        return $this->hasMany('EmployeeAddress');
     }
 
     public function employee_identity_doc()
@@ -29,14 +29,20 @@ Class Employee extends Eloquent
         return $this->hasMany('Employeeremark');
     }
 
-    public function event_period_employee()
+    public function globalevent_period_employee()
     {
-        return hasMany('Eventperiodemployee');
+        return $this->hasMany('GlobaleventPeriodEmployee');
+    }
+
+    public function globalevent_period()
+    {
+        return $this->belongsToMany('GlobaleventPeriod', 'globalevent_period_employee')
+                    ->withPivot('real_start_datetime', 'real_end_datetime');
     }
 
     public function race()
     {
-        return $this->hasOne('Race');
+        return $this->belongsTo('Race');
     }
 
     public function status()
@@ -62,5 +68,5 @@ Class Employee extends Eloquent
     public function country()
     {
         return $this->hasOne('Country');
-    }  
+    }
 }

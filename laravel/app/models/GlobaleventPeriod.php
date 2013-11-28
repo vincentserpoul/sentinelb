@@ -14,11 +14,18 @@ Class GlobaleventPeriod extends Eloquent
 
     public function eventperiodemployee()
     {
-        return hasMany('Globaleventperiodemployee');
+        return $this->hasMany('GlobaleventPeriodEmployee');
     }
+
     public function globalevent()
     {
-        return $this->hasOne('Globalevent');
+        return $this->belongsTo('Globalevent');
+    }
+
+    public function employee()
+    {
+        return $this->belongsToMany('Employee', 'globalevent_period_employee')
+                     ->withPivot('real_start_datetime', 'real_end_datetime');
     }
 
 }
