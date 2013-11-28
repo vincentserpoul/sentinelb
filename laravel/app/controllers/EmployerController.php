@@ -206,7 +206,7 @@ class EmployerController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => 'Employer cannot be deleted'
+                    'message' => 'Employer cannot be deleted.' . $e
                     ),
                 500
             );
