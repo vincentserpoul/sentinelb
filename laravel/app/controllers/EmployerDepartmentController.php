@@ -170,19 +170,28 @@ class EmployerDepartmentController extends \BaseController {
      * @return Response
      */
     public function destroy($id){
+        try {
+            $EmployerDepartment = EmployerDepartment::find($id);
 
-        $EmployerDepartment = EmployerDepartment::find($id);
-
-        $EmployerDepartment->delete();
-     
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Employer department deleted',
-                'EmployerDepartments' => $this->getDepartments($EmployerDepartment->employer_id)
-                ),
-            200
-        );
+            $EmployerDepartment->delete();
+         
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Employer department deleted',
+                    'EmployerDepartments' => $this->getDepartments($EmployerDepartment->employer_id)
+                    ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => 'Employer department cannot be deleted.' . $e
+                    ),
+                500
+            );
+        }
     }
 
     private function getDepartments($employer_id){
