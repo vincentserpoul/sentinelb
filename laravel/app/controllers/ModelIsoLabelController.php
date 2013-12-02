@@ -25,7 +25,7 @@ class ModelIsoLabelController extends \BaseController {
             default:
                 //
         }
-        
+
         if(empty($formattedLabels)){
             return Response::json(
                 array(
