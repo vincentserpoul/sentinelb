@@ -109,8 +109,6 @@ class EmployeeController extends \BaseController {
      */
     public function update($id){
 
-var_dump(Request::json());die();
-
         $Employee = Employee::find($id);
 
         if ( Request::json('title_id') ){
@@ -163,7 +161,56 @@ var_dump(Request::json());die();
 
         $Employee->id = $id;
 
+        /*****************/
+        /* Employee docs */
+        /*****************/
+        $newEmployeeDocs = Request::json('employee_doc');
+
+        /* Delete all doc ids that are not given in the employee json */
+        EmployeeDoc::where('employee_doc.employee_id', '=', $id)->whereNotIn('id', array_column($newEmployeeDocs, 'id'))->delete();
+
+        foreach($newEmployeeDocs as $index=>$newEmployeeDoc){
+            /* if there is no ID, it means it is a new Doc */
+            if(!array_key_exists('id', $newEmployeeDoc)){
+                $employeeDoc = new EmployeeDoc;
+                $employeeDoc->employee_id = $id;
+                $employeeDoc->doc_type_id = $newEmployeeDoc['doc_type_id'];
+                $employeeDoc->save();
+                $newEmployeeDocs[$index]['id'] = $employeeDoc->id;
+            }
+        }
+
+        /**************************/
+        /* Employee Identity docs */
+        /**************************/
+        $newEmployeeIdentityDocs = Request::json('employee_identity_doc');
+
+        /* Delete all doc ids that are not given in the employee json */
+        EmployeeIdentityDoc::where('employee_identity_doc.employee_id', '=', $id)->whereNotIn('id', array_column($newEmployeeIdentityDocs, 'id'))->delete();
+
+        foreach($newEmployeeIdentityDocs as $index=>$newEmployeeIdentityDoc){
+            /* if there is no ID, it means it is a new Doc */
+            if(!array_key_exists('id', $newEmployeeIdentityDoc)){
+                $employeeIdentityDoc = new EmployeeIdentityDoc;
+                $employeeIdentityDoc->employee_id = $id;
+                $employeeIdentityDoc->identity_doc_type_id = $newEmployeeIdentityDoc['identity_doc_type_id'];
+                $employeeIdentityDoc->identity_doc_number = $newEmployeeIdentityDoc['identity_doc_number'];
+                $employeeIdentityDoc->identity_doc_validity_start = $newEmployeeIdentityDoc['identity_doc_validity_start'];
+                $employeeIdentityDoc->identity_doc_validity_end = $newEmployeeIdentityDoc['identity_doc_validity_end'];
+                $employeeIdentityDoc->save();
+                $newEmployeeIdentityDocs[$index]['id'] = $employeeIdentityDoc->id;
+            }
+        }
+
+
+
         $Employee->save();
+
+        /* updates employee with the new data for identity docs */
+        $Employee['employee_identity_doc'] = $newEmployeeIdentityDocs;
+
+        /* updates employee with the new data */
+        $Employee['employee_doc'] = $newEmployeeDocs;
 
         return Response::json(
             array(
