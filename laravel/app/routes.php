@@ -56,6 +56,12 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth'), function()
     Route::options('employer_contact/{id}', function(){return null;});
     Route::resource('employer_contact', 'EmployerContactController');
 
+    // Payment
+    Route::options('payment', function(){return null;});
+    Route::options('payment/{id}', function(){return null;});
+    Route::resource('payment', 'PaymentController');
+
+
     // EmployerDepartment
     Route::options('employer_department', function(){return null;});
     Route::options('employer_department/{id}', function(){return null;});
