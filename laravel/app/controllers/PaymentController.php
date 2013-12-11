@@ -37,7 +37,9 @@ class PaymentController extends \BaseController {
      * @return Response
      */
     public function store(){
-
+        
+        return true;
+        // Pas de création en direct
         $Payment = new Payment;
         $Payment->amount = Request::json('amount');
         $Payment->currency_code = Request::json('currency_code');
@@ -76,7 +78,7 @@ class PaymentController extends \BaseController {
             200
         );
 
-   
+  
     }
 
     /**
@@ -97,6 +99,8 @@ class PaymentController extends \BaseController {
      * @return Response
      */
     public function update($id){
+        return true:
+        // Pas de mise à jour en direct
         try
         {
             $Payment = Payment::find($id);
@@ -135,6 +139,8 @@ class PaymentController extends \BaseController {
      * @return Response
      */
     public function destroy($id){
+       return true;
+       // Pas de suppression en direct
        try
         {
             $Payment = Payment::find($id);
