@@ -32,16 +32,6 @@ class EmployerController extends \BaseController {
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @return Response
@@ -83,38 +73,6 @@ class EmployerController extends \BaseController {
                 500
             );
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id){
-        // Make sure current user owns the requested resource
-        $Employer = Employer::where('id', $id)
-                ->take(1)
-                ->get();
-     
-        return Response::json(
-            array(
-                'error' => false,
-                'employers' => $Employer->toArray()
-            ),
-            200
-        );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

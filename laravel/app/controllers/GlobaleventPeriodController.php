@@ -9,25 +9,26 @@ class GlobaleventPeriodController extends \BaseController {
      */
     public function index(){
 
-        $GlobaleventPeriods = GlobaleventPeriod::with(array('globalevent', 'eventperiodemployee'))->get();
+        try {
+            $GlobaleventPeriods = GlobaleventPeriod::with(array('globalevent', 'eventperiodemployee'))->get();
 
-        return Response::json(
-            array(
-                'error' => false,
-                'GlobaleventPeriods' => $GlobaleventPeriods->toArray()
-            ),
-            200
-        );
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
+            return Response::json(
+                array(
+                    'error' => false,
+                    'GlobaleventPeriods' => $GlobaleventPeriods->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Event period cannot be returned',
+                    'action' => 'get'
+                ),
+                500
+            );
+        }   
     }
 
     /**
@@ -36,59 +37,35 @@ class GlobaleventPeriodController extends \BaseController {
      * @return Response
      */
     public function store(){
-        $GlobaleventPeriod = new GlobaleventPeriod;
 
-        $GlobaleventPeriod->event_id = Request::json('event_id');
-        $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
-        $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
-        $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
+        try {
+            $GlobaleventPeriod = new GlobaleventPeriod;
 
-        //$GlobaleventPeriod->user_id = Auth::user()->id;
+            $GlobaleventPeriod->event_id = Request::json('event_id');
+            $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
+            $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
+            $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
 
-        // Validation and Filtering is sorely needed!!
-        // Seriously, I'm a bad person for leaving that out.
+            $GlobaleventPeriod->save();
 
-        $GlobaleventPeriod->save();
-
-        return Response::json(
-            array(
-                'error' => false,
-                'GlobaleventPeriod' => $GlobaleventPeriod->toArray()
-            ),
-            200
-        );
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id){
-        // Make sure current user owns the requested resource
-        $GlobaleventPeriod = GlobaleventPeriod::where('id', $id)
-                ->take(1)
-                ->get();
-
-        return Response::json(
-            array(
-                'error' => false,
-                'GlobaleventPeriods' => $GlobaleventPeriod->toArray()
-            ),
-            200
-        );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Event Period successfully created',
+                    'GlobaleventPeriod' => $GlobaleventPeriod->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Employer cannot be created.' . $e,
+                    'action' => 'update'
+                ),
+                500
+            );
+        }
     }
 
     /**
@@ -98,36 +75,47 @@ class GlobaleventPeriodController extends \BaseController {
      * @return Response
      */
     public function update($id){
+        
+        try {
+            $GlobaleventPeriod = GlobaleventPeriod::find($id);
 
-        $GlobaleventPeriod = GlobaleventPeriod::find($id);
+            if ( Request::json('globalevent_id') ){
+                $GlobaleventPeriod->globalevent_id = Request::json('globalevent_id');
+            }
 
-        if ( Request::json('globalevent_id') ){
-            $GlobaleventPeriod->globalevent_id = Request::json('globalevent_id');
+            if ( Request::json('start_datetime') ){
+                $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
+            }
+
+            if ( Request::json('end_datetime') ){
+                $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
+            }
+
+            if ( Request::json('number_of_employee_needed') ){
+                $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
+            }
+
+            $GlobaleventPeriod->id = $id;
+
+            $GlobaleventPeriod->save();
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Global event period updated'
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Event period cannot be updated.' . $e,
+                    'action' => 'update'
+                ),
+                500
+            );
         }
-
-        if ( Request::json('start_datetime') ){
-            $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
-        }
-
-        if ( Request::json('end_datetime') ){
-            $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
-        }
-
-        if ( Request::json('number_of_employee_needed') ){
-            $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
-        }
-
-        $GlobaleventPeriod->id = $id;
-
-        $GlobaleventPeriod->save();
-
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Global event period updated'
-            ),
-            200
-        );
     }
 
     /**
@@ -138,20 +126,31 @@ class GlobaleventPeriodController extends \BaseController {
      */
     public function destroy($id){
 
-        $GlobaleventPeriod = GlobaleventPeriod::find($id);
-        $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::where('Eevent_period_id', $id);
+        try {
+            $GlobaleventPeriod = GlobaleventPeriod::find($id);
+            $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::where('globalevent_period_id', $id);
 
 
-        $GlobaleventPeriodEmployee->delete();
-        $GlobaleventPeriod->delete();
+            $GlobaleventPeriodEmployee->delete();
+            $GlobaleventPeriod->delete();
 
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Global event period deleted'
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Global event period deleted'
+                    ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Event period cannot be deleted.' . $e,
+                    'action' => 'delete'
                 ),
-            200
-        );
+                500
+            );
+        }
     }
 
 }

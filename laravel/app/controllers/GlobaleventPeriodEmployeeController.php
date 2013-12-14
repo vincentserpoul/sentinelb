@@ -36,26 +36,34 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
      * @return Response
      */
     public function store(){
-        $GlobaleventPeriodEmployee = new GlobaleventPeriodEmployee;
 
-        $GlobaleventPeriodEmployee->globalevent_period_id = Request::json('globalevent_period_id');
-        $GlobaleventPeriodEmployee->employee_id = Request::json('employee_id');
-        $GlobaleventPeriodEmployee->real_start_datetime = Request::json('real_start_datetime');
+        try {
+            $GlobaleventPeriodEmployee = new GlobaleventPeriodEmployee;
 
-        //$GlobaleventPeriodEmployee->user_id = Auth::user()->id;
+            $GlobaleventPeriodEmployee->globalevent_period_id = Request::json('globalevent_period_id');
+            $GlobaleventPeriodEmployee->employee_id = Request::json('employee_id');
+            //$GlobaleventPeriodEmployee->real_start_datetime = Request::json('real_start_datetime');
 
-        // Validation and Filtering is sorely needed!!
-        // Seriously, I'm a bad person for leaving that out.
+            $GlobaleventPeriodEmployee->save();
 
-        $GlobaleventPeriodEmployee->save();
-
-        return Response::json(
-            array(
-                'error' => false,
-                'GlobaleventPeriodEmployee' => $GlobaleventPeriodEmployee->toArray()
-            ),
-            200
-        );
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Employee is successfully assigned',
+                    'GlobaleventPeriodEmployee' => $GlobaleventPeriodEmployee->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Employee cannot be assigned.' . $e,
+                    'action' => 'create'
+                ),
+                500
+            );
+        }
     }
 
     /**

@@ -9,25 +9,25 @@ class GlobaleventController extends \BaseController {
      */
     public function index(){
 
-        $Globalevents = Globalevent::get();
+        try {
+            $Globalevents = Globalevent::get();
 
-        return Response::json(
-            array(
-                'error' => false,
-                'Globalevents' => $Globalevents->toArray()
-            ),
-            200
-        );
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
+            return Response::json(
+                array(
+                    'error' => false,
+                    'Globalevents' => $Globalevents->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Events cannot be returned"
+                ),
+                500
+            );
+        }    
     }
 
     /**
@@ -36,61 +36,31 @@ class GlobaleventController extends \BaseController {
      * @return Response
      */
     public function store(){
-        $Globalevent = new Globalevent;
+        try {
+            $Globalevent = new Globalevent;
 
-        $Globalevent->employer_id = Request::json('employer_id');
-        $Globalevent->label = Request::json('label');
-        $Globalevent->employer_department_id = Request::json('employer_department_id');
-/*        $Globalevent->computed_start_date = Request::json('start_date');
-        $Globalevent->computed_end_date = Request::json('end_date');
-*/
+            $Globalevent->employer_id = Request::json('employer_id');
+            $Globalevent->label = Request::json('label');
+            $Globalevent->employer_department_id = Request::json('employer_department_id');
 
-        //$Globalevent->user_id = Auth::user()->id;
+            $Globalevent->save();
 
-        // Validation and Filtering is sorely needed!!
-        // Seriously, I'm a bad person for leaving that out.
-
-        $Globalevent->save();
-
-        return Response::json(
-            array(
-                'error' => false,
-                'Globalevent' => $Globalevent->toArray()
-            ),
-            200
-        );
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id){
-        // Make sure current user owns the requested resource
-        $Globalevent = Globalevent::where('id', $id)
-                ->take(1)
-                ->get();
-
-        return Response::json(
-            array(
-                'error' => false,
-                'Globalevents' => $Globalevent->toArray()
-            ),
-            200
-        );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
+            return Response::json(
+                array(
+                    'error' => false,
+                    'Globalevent' => $Globalevent->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) { 
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Event cannot be created " . $e
+                ),
+                500
+            );
+        }
     }
 
     /**
@@ -101,35 +71,45 @@ class GlobaleventController extends \BaseController {
      */
     public function update($id){
 
-        $Globalevent = Globalevent::find($id);
+        try {
+            $Globalevent = Globalevent::find($id);
 
-        if ( Request::json('label') ){
-            $Globalevent->label = Request::json('label');
+            if ( Request::json('label') ){
+                $Globalevent->label = Request::json('label');
+            }
+
+            if ( Request::json('employer_department_id') ){
+                $Globalevent->employer_department_id = Request::json('employer_department_id');
+            }
+
+            if ( Request::json('employer_id') ) {
+                $Globalevent->employer_id = Request::json('employer_id');
+            }
+
+            if ( Request::json('date') ) {
+                $Globalevent->date = Request::json('date');
+            }
+
+            $Globalevent->id = $id;
+
+            $Globalevent->save();
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Event updated'
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Event cannot be updated"
+                ),
+                500
+            );
         }
-
-        if ( Request::json('employer_department_id') ){
-            $Globalevent->employer_department_id = Request::json('employer_department_id');
-        }
-
-/*        if ( Request::json('start_date') ){
-            $Globalevent->start_date = Request::json('start_date');
-        }
-
-        if ( Request::json('end_date') ){
-            $Globalevent->end_date = Request::json('end_date');
-        }*/
-
-        $Globalevent->id = $id;
-
-        $Globalevent->save();
-
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Globalevent updated'
-            ),
-            200
-        );
     }
 
     /**
@@ -139,23 +119,33 @@ class GlobaleventController extends \BaseController {
      * @return Response
      */
     public function destroy($id){
+        
+        try {
+            $Globalevent = Globalevent::find($id);
+            $GlobaleventPeriod = GlobaleventPeriod::where('globalevent_id', $id);
+            $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::with('globalevent_period')->where('globalevent_id', $id);
 
-        $Globalevent = Globalevent::find($id);
-        $GlobaleventPeriod = GlobaleventPeriod::where('globalevent_id', $id);
-        $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::with('globalevent_period')->where('globalevent_id', $id);
 
+            $GlobaleventPeriodEmployee->delete();
+            $GlobaleventPeriod->delete();
+            $Globalevent->delete();
 
-        $GlobaleventPeriodEmployee->delete();
-        $GlobaleventPeriod->delete();
-        $Globalevent->delete();
-
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Globalevent deleted'
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Globalevent deleted'
+                    ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Event cannot be deleted"
                 ),
-            200
-        );
+                500
+            );
+        }
     }
 
 }

@@ -8,28 +8,29 @@ class EmployerDepartmentController extends \BaseController {
      * @return Response
      */
     public function index(){
-        $employer_id = Request::input('employer_id');        
 
-        if($employer_id) $EmployerDepartments = $this->getDepartments($employer_id);
-        else $EmployerDepartments = EmployerDepartment::get();    
+        try {
+            $employer_id = Request::input('employer_id');        
 
-        return Response::json(
-            array(
-                'error' => false,
-                'EmployerDepartments' => $employer_id ? $EmployerDepartments : $EmployerDepartments->toArray()
-            ),
-            200
-        );
-    }
+            if($employer_id) $EmployerDepartments = $this->getDepartments($employer_id);
+            else $EmployerDepartments = EmployerDepartment::get();    
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
+            return Response::json(
+                array(
+                    'error' => false,
+                    'EmployerDepartments' => $employer_id ? $EmployerDepartments : $EmployerDepartments->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "departments cannot be returned"
+                ),
+                500
+            );
+        }
     }
 
     /**
@@ -38,66 +39,43 @@ class EmployerDepartmentController extends \BaseController {
      * @return Response
      */
     public function store(){
-        $EmployerDepartment = new EmployerDepartment;
 
-        $EmployerDepartment->employer_id = Request::json('employer_id');
-        $EmployerDepartment->label = Request::json('label');
-        $EmployerDepartment->description = Request::json('description');
-        $EmployerDepartment->work_type_id = Request::json('work_type_id');
-        $EmployerDepartment->employee_hourly_rate = Request::json('employee_hourly_rate');
-        $EmployerDepartment->employee_hourly_rate_currency_code = Request::json('employee_hourly_rate_currency_code');
-        $EmployerDepartment->employer_hourly_rate = Request::json('employer_hourly_rate');
-        $EmployerDepartment->employer_hourly_rate_currency_code = Request::json('employer_hourly_rate_currency_code');
-        $EmployerDepartment->parent_id = Request::json('parent_id');
+        try {
+            $EmployerDepartment = new EmployerDepartment;
 
-        //$EmployerDepartment->user_id = Auth::user()->id;
-     
-        // Validation and Filtering is sorely needed!!
-        // Seriously, I'm a bad person for leaving that out.
-     
-        $EmployerDepartment->save();
+            $EmployerDepartment->employer_id = Request::json('employer_id');
+            $EmployerDepartment->label = Request::json('label');
+            $EmployerDepartment->description = Request::json('description');
+            $EmployerDepartment->work_type_id = Request::json('work_type_id');
+            $EmployerDepartment->employee_hourly_rate = Request::json('employee_hourly_rate');
+            $EmployerDepartment->employee_hourly_rate_currency_code = Request::json('employee_hourly_rate_currency_code');
+            $EmployerDepartment->employer_hourly_rate = Request::json('employer_hourly_rate');
+            $EmployerDepartment->employer_hourly_rate_currency_code = Request::json('employer_hourly_rate_currency_code');
+            $EmployerDepartment->parent_id = Request::json('parent_id');
+         
+            $EmployerDepartment->save();
 
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Department created',
-                'action' => 'insert',
-                'EmployerDepartment' => $EmployerDepartment->toArray()
-            ),
-            200
-        );
-    }
+            $EmployerDepartments = $this->getDepartments($EmployerDepartment->employer_id);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id){
-        // Make sure current user owns the requested resource
-        $EmployerDepartment = EmployerDepartment::where('id', $id)
-                ->take(1)
-                ->get();
-     
-        return Response::json(
-            array(
-                'error' => false,
-                'EmployerDepartments' => $EmployerDepartment->toArray()
-            ),
-            200
-        );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Department created',
+                    'action' => 'insert',
+                    'EmployerDepartments' => $EmployerDepartments
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Employers cannot be created",
+                    'action' => "create"
+                ),
+                500
+            );
+        }
     }
 
     /**
@@ -108,59 +86,70 @@ class EmployerDepartmentController extends \BaseController {
      */
     public function update($id){
 
-        $EmployerDepartment = EmployerDepartment::find($id);
-     
-        if ( Request::json('employer_id') ){
-            $EmployerDepartment->employer_id = Request::json('employer_id');
+        try {
+            $EmployerDepartment = EmployerDepartment::find($id);
+         
+            if ( Request::json('employer_id') ){
+                $EmployerDepartment->employer_id = Request::json('employer_id');
+            }
+
+            if ( Request::json('label') ){
+                $EmployerDepartment->label = Request::json('label');
+            }
+
+            if ( Request::json('description') ){
+                $EmployerDepartment->description = Request::json('description');
+            }
+
+            if ( Request::json('work_type_id') ){
+                $EmployerDepartment->work_type_id = Request::json('work_type_id');
+            }
+
+            if ( Request::json('employee_hourly_rate') ){
+                $EmployerDepartment->employee_hourly_rate = Request::json('employee_hourly_rate');
+            }
+
+            if ( Request::json('employee_hourly_rate_currency_code') ){
+                $EmployerDepartment->employee_hourly_rate_currency_code = Request::json('employee_hourly_rate_currency_code');
+            }
+
+            if ( Request::json('employer_hourly_rate') ){
+                $EmployerDepartment->employer_hourly_rate = Request::json('employer_hourly_rate');
+            }
+
+            if ( Request::json('employer_hourly_rate_currency_code') ){
+                $EmployerDepartment->employer_hourly_rate_currency_code = Request::json('employer_hourly_rate_currency_code');
+            }
+
+            if ( Request::json('parent_id') ){
+                $EmployerDepartment->employer_hourly_rate = Request::json('parent_id');
+            }
+
+            $EmployerDepartment->id = $id;
+         
+            $EmployerDepartment->save();
+
+            $EmployerDepartments = $this->getDepartments($EmployerDepartment->employer_id);
+         
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'EmployerDepartment updated', 
+                    'action' => 'update', 
+                    'EmployerDepartments' => $EmployerDepartments
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Employers cannot be updated",
+                    'action' => "update"
+                ),
+                500
+            );
         }
-
-        if ( Request::json('label') ){
-            $EmployerDepartment->label = Request::json('label');
-        }
-
-        if ( Request::json('description') ){
-            $EmployerDepartment->description = Request::json('description');
-        }
-
-        if ( Request::json('work_type_id') ){
-            $EmployerDepartment->work_type_id = Request::json('work_type_id');
-        }
-
-        if ( Request::json('employee_hourly_rate') ){
-            $EmployerDepartment->employee_hourly_rate = Request::json('employee_hourly_rate');
-        }
-
-        if ( Request::json('employee_hourly_rate_currency_code') ){
-            $EmployerDepartment->employee_hourly_rate_currency_code = Request::json('employee_hourly_rate_currency_code');
-        }
-
-        if ( Request::json('employer_hourly_rate') ){
-            $EmployerDepartment->employer_hourly_rate = Request::json('employer_hourly_rate');
-        }
-
-        if ( Request::json('employer_hourly_rate_currency_code') ){
-            $EmployerDepartment->employer_hourly_rate_currency_code = Request::json('employer_hourly_rate_currency_code');
-        }
-
-        if ( Request::json('parent_id') ){
-            $EmployerDepartment->employer_hourly_rate = Request::json('parent_id');
-        }
-
-        $EmployerDepartment->id = $id;
-     
-        $EmployerDepartment->save();
-
-        $EmployerDepartment->children = $this->getDepartmentChildren($EmployerDepartment->id, $EmployerDepartment->employer_id);       
-     
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'EmployerDepartment updated', 
-                'action' => 'update', 
-                'EmployerDepartment' => $EmployerDepartment->toArray()
-            ),
-            200
-        );
     }
 
     /**
@@ -170,6 +159,7 @@ class EmployerDepartmentController extends \BaseController {
      * @return Response
      */
     public function destroy($id){
+
         try {
             $EmployerDepartment = EmployerDepartment::find($id);
 

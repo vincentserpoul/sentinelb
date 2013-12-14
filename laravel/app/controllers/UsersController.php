@@ -35,48 +35,15 @@ class UsersController extends \BaseController {
             );
 
         } catch (Exception $e) {
-
+            
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Employers cannot be returned"
+                ),
+                500
+            );
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store(){
-        
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id){
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -116,7 +83,13 @@ class UsersController extends \BaseController {
                 200
             );
         } catch (Exception $e) {
-
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Users cannot be updated"
+                ),
+                500
+            );
         }
     }
 
@@ -127,6 +100,7 @@ class UsersController extends \BaseController {
      * @return Response
      */
     public function destroy($id){
+
         try{
             $user = Sentry::findUserById($id);
 
@@ -135,14 +109,20 @@ class UsersController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Users deleted',
+                    'message' => 'User deleted',
                     'action' => 'delete', 
                     'users' => $this->getAllUsers()
                     ),
                 200
             );
         } catch (Exception $e) {
-
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "User cannot be deleted." . $e
+                ),
+                500
+            );
         }
     }
 
