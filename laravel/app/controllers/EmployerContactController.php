@@ -9,13 +9,13 @@ class EmployerContactController extends \BaseController {
         $this->beforeFilter(function(){
             if (!Sentry::getUser()->hasAnyAccess(array('add_employer_contact'))) return Response::json(
                             array(
-                                'error' => true, 
+                                'error' => true,
                                 'message' => 'Please log in to continue.'
                             ),
                             401
                         );
         }, array('only' => array('store')));
-    }   
+    }
 
     /**
      * Display a listing of the resource.
@@ -26,7 +26,7 @@ class EmployerContactController extends \BaseController {
         $employer_id = Request::input('employer_id');
 
         if($employer_id) $EmployerContacts = EmployerContact::where('employer_id', $employer_id)->get();
-        else $EmployerContacts = EmployerContact::get();        
+        else $EmployerContacts = EmployerContact::get();
 
         return Response::json(
             array(
@@ -64,16 +64,16 @@ class EmployerContactController extends \BaseController {
         $EmployerContact->primary_contact = Request::json('primary_contact');
 
         //$EmployerContact->user_id = Auth::user()->id;
-     
+
         // Validation and Filtering is sorely needed!!
         // Seriously, I'm a bad person for leaving that out.
-     
+
         $EmployerContact->save();
 
         return Response::json(
             array(
                 'error' => false,
-                'message' => 'Contact created', 
+                'message' => 'Contact created',
                 'action' => 'insert',
                 'EmployerContact' => $EmployerContact->toArray()
             ),
@@ -92,7 +92,7 @@ class EmployerContactController extends \BaseController {
         $EmployerContact = EmployerContact::where('id', $id)
                 ->take(1)
                 ->get();
-     
+
         return Response::json(
             array(
                 'error' => false,
@@ -122,7 +122,7 @@ class EmployerContactController extends \BaseController {
     public function update($id){
 
         $EmployerContact = EmployerContact::find($id);
-     
+
         if (!is_null(Request::json('employer_id'))){
             $EmployerContact->employer_id = Request::json('employer_id');
         }
@@ -156,14 +156,14 @@ class EmployerContactController extends \BaseController {
         }
 
         $EmployerContact->id = $id;
-     
+
         $EmployerContact->save();
-     
+
         return Response::json(
             array(
                 'error' => false,
-                'message' => 'Employer contact updated', 
-                'action' => 'update', 
+                'message' => 'Employer contact updated',
+                'action' => 'update',
                 'EmployerContact' => $EmployerContact->toArray()
             ),
             200
@@ -181,7 +181,7 @@ class EmployerContactController extends \BaseController {
         $EmployerContact = EmployerContact::find($id);
 
         $EmployerContact->delete();
-     
+
         return Response::json(
             array(
                 'error' => false,
