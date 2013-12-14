@@ -4,7 +4,7 @@
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {
-		"laravel/framework": "4.0.*",
+		"laravel/framework": "4.1.*",
 		"cartalyst/sentry": "2.0.*",
         "ircmaxell/password-compat": "1.0.*"
 	},
@@ -16,6 +16,7 @@
 			"app/database/migrations",
 			"app/database/seeds",
 			"app/tests/TestCase.php",
+			"app/handlers",
 			"app/libraries"
 		]
 	},
