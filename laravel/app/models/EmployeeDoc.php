@@ -15,6 +15,6 @@ Class EmployeeDoc extends Eloquent
     public function doc_type()
     {
         return $this->belongsTo('DocType');
-    }    
-    
+    }
+
 }
