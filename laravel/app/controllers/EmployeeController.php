@@ -249,7 +249,7 @@ class EmployeeController extends \BaseController {
     }
 
     /**
-     * Retrieve The list of employees.
+     * Retrieve The list of employee assignments.
      *
      * @param  int  $employee_id
      * @return Response
@@ -262,7 +262,33 @@ class EmployeeController extends \BaseController {
                                 ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
                                 ->leftjoin('period_employee_payment', 'globalevent_period_employee.id', '=', 'period_employee_payment.globalevent_period_employee_id')
                                 ->leftjoin('payment', 'period_employee_payment.payment_id', '=', 'payment.id')
-                                ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'payment.*')
+                                ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'payment.id as payment_id')
+                                ->orderBy('globalevent_period.end_datetime', 'desc')
+                                ->get();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'globalevent_periods' => $globaleventPeriods->toArray()
+            ),
+            200
+        );
+    }
+
+    /**
+     * Retrieve The list of employee assignments.
+     *
+     * @param  int  $employee_id
+     * @return Response
+     */
+    public function unpaid_globalevent_period($employee_id){
+
+        $globaleventPeriods = Employee::where('employee.id', '=', $employee_id)
+                                ->join('globalevent_period_employee', 'employee.id', '=', 'globalevent_period_employee.employee_id')
+                                ->join('globalevent_period', 'globalevent_period.id', '=', 'globalevent_period_employee.globalevent_period_id')
+                                ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
+                                ->whereRaw('not exists (select 1 from period_employee_payment pep where pep.globalevent_period_employee_id = globalevent_period_employee.id)')
+                                ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*')
                                 ->orderBy('globalevent_period.end_datetime', 'desc')
                                 ->get();
 
