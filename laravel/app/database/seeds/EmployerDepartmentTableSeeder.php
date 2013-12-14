@@ -12,10 +12,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'Kitchen',
                         'description' => 'All foods',
                         'work_type_id' => 1,
-                        'employee_hourly_rate' => 8.50,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.00,
-                        'employer_hourly_rate_currency_code' => 'SGD'
+                        'employee_h_rate' => 8.50,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.00,
+                        'employer_h_rate_currency_code' => 'SGD'
                   )
             );
 
@@ -25,10 +25,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'American kitchen',
                         'description' => 'All american foods',
                         'work_type_id' => 1,
-                        'employee_hourly_rate' => 8.50,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.00,
-                        'employer_hourly_rate_currency_code' => 'SGD',
+                        'employee_h_rate' => 8.50,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.00,
+                        'employer_h_rate_currency_code' => 'SGD',
                         'parent_id' => 1
                   )
             );
@@ -40,10 +40,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'Asian kitchen',
                         'description' => 'All asian foods',
                         'work_type_id' => 1,
-                        'employee_hourly_rate' => 8.50,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.00,
-                        'employer_hourly_rate_currency_code' => 'SGD',
+                        'employee_h_rate' => 8.50,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.00,
+                        'employer_h_rate_currency_code' => 'SGD',
                         'parent_id' => 1
                   )
             );
@@ -54,10 +54,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'French kitchen',
                         'description' => 'All french foods',
                         'work_type_id' => 1,
-                        'employee_hourly_rate' => 8.50,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.00,
-                        'employer_hourly_rate_currency_code' => 'SGD',
+                        'employee_h_rate' => 8.50,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.00,
+                        'employer_h_rate_currency_code' => 'SGD',
                         'parent_id' => 1
                   )
             );
@@ -68,10 +68,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'Groom',
                         'description' => 'grooms',
                         'work_type_id' => 2,
-                        'employee_hourly_rate' => 8.30,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.40,
-                        'employer_hourly_rate_currency_code' => 'SGD',
+                        'employee_h_rate' => 8.30,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.40,
+                        'employer_h_rate_currency_code' => 'SGD',
                   )
             );
 
@@ -81,10 +81,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'Bedroom Groom',
                         'description' => 'bed grooms',
                         'work_type_id' => 2,
-                        'employee_hourly_rate' => 8.30,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.40,
-                        'employer_hourly_rate_currency_code' => 'SGD',
+                        'employee_h_rate' => 8.30,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.40,
+                        'employer_h_rate_currency_code' => 'SGD',
                         'parent_id' => 5
                   )
             );
@@ -95,10 +95,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'Hall Groom',
                         'description' => 'hall grooms',
                         'work_type_id' => 2,
-                        'employee_hourly_rate' => 8.30,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.40,
-                        'employer_hourly_rate_currency_code' => 'SGD',
+                        'employee_h_rate' => 8.30,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.40,
+                        'employer_h_rate_currency_code' => 'SGD',
                         'parent_id' => 5
                   )
             );
@@ -109,10 +109,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'Kitchen',
                         'description' => 'kitchen',
                         'work_type_id' => 1,
-                        'employee_hourly_rate' => 8.30,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.40,
-                        'employer_hourly_rate_currency_code' => 'SGD',
+                        'employee_h_rate' => 8.30,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.40,
+                        'employer_h_rate_currency_code' => 'SGD',
                   )
             );
 
@@ -122,10 +122,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'Grooms',
                         'description' => 'grooming',
                         'work_type_id' => 2,
-                        'employee_hourly_rate' => 8.30,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.40,
-                        'employer_hourly_rate_currency_code' => 'SGD',
+                        'employee_h_rate' => 8.30,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.40,
+                        'employer_h_rate_currency_code' => 'SGD',
                   )
             );
 
@@ -135,10 +135,10 @@ class EmployerDepartmentTableSeeder extends Seeder {
                         'label' => 'Bed Grooms',
                         'description' => 'bewd grooming',
                         'work_type_id' => 2,
-                        'employee_hourly_rate' => 8.30,
-                        'employee_hourly_rate_currency_code' => 'SGD',
-                        'employer_hourly_rate' => 9.40,
-                        'employer_hourly_rate_currency_code' => 'SGD',
+                        'employee_h_rate' => 8.30,
+                        'employee_h_rate_currency_code' => 'SGD',
+                        'employer_h_rate' => 9.40,
+                        'employer_h_rate_currency_code' => 'SGD',
                         'parent_id' => 9
                   )
             );

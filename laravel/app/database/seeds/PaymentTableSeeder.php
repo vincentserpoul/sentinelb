@@ -8,17 +8,17 @@ class PaymentTableSeeder extends Seeder {
 
             Payment::create(
                   array(
-                        'amount' => 10.5,
+                        'extra_amount' => 10.5,
                         'currency_code' => 'SGD'
                   )
             );
 
             Payment::create(
                   array(
-                        'amount' => 22.4,
+                        'extra_amount' => 22.4,
                         'currency_code' => 'SGD'
                   )
-            );          
+            );
 
     }
 }
