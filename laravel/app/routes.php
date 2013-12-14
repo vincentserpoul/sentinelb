@@ -45,6 +45,8 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth'), function()
     Route::resource('employee', 'EmployeeController');
         Route::options('employee/{employee_id}/globalevent_period', function(){return null;});
         Route::get('employee/{employee_id}/globalevent_period', 'EmployeeController@globalevent_period');
+        Route::options('employee/{employee_id}/unpaid_globalevent_period', function(){return null;});
+        Route::get('employee/{employee_id}/unpaid_globalevent_period', 'EmployeeController@unpaid_globalevent_period');
 
     // Employer
     Route::options('employer', function(){return null;});
