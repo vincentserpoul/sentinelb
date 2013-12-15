@@ -26,6 +26,8 @@ and type the following command in your terminal
     cd laravel
     composer install
     composer update
+    mysql -udev -pdev -e "DROP DATABASE centuryevergreen;"
+    mysql -udev -pdev -e "CREATE DATABASE centuryevergreen;"
     php artisan cache:clear
     php artisan migrate --env=local  --package=cartalyst/sentry
     php artisan migrate --env=local
