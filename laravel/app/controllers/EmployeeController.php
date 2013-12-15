@@ -166,7 +166,7 @@ class EmployeeController extends \BaseController {
         /*****************/
         $newEmployeeDocs = Request::json('employee_doc');
 
-        if(!empty($newEmployeeDocs)){
+        if(!is_null($newEmployeeDocs)){
             /* List of ids that we will keep in the docs */
             $employeeDocIdTokeep = array_column($newEmployeeDocs, 'id');
 
@@ -194,6 +194,13 @@ class EmployeeController extends \BaseController {
                     $employeeDoc->doc_type_id = $newEmployeeDoc['doc_type_id'];
                     $employeeDoc->save();
                     $newEmployeeDocs[$index]['id'] = $employeeDoc->id;
+
+                    /* if there is an uploaded image */
+                    if(array_key_exists('doc_image', $newEmployeeDoc)){
+                        $employeeDoc->saveImage($newEmployeeDoc['doc_image']);
+                        /* replace the url data so that the response is not long */
+                        unset($newEmployeeDocs[$index]['doc_image']);
+                    }
                 }
             }
         }
@@ -203,7 +210,7 @@ class EmployeeController extends \BaseController {
         /**************************/
         $newEmployeeIdentityDocs = Request::json('employee_identity_doc');
 
-        if(!empty($newEmployeeIdentityDocs)){
+        if(!is_null($newEmployeeIdentityDocs)){
             /* List of ids that we will keep in the docs */
             $employeeIdentityDocIdTokeep = array_column($newEmployeeIdentityDocs, 'id');
 
@@ -234,6 +241,14 @@ class EmployeeController extends \BaseController {
                     $employeeIdentityDoc->identity_doc_validity_end = $newEmployeeIdentityDoc['identity_doc_validity_end'];
                     $employeeIdentityDoc->save();
                     $newEmployeeIdentityDocs[$index]['id'] = $employeeIdentityDoc->id;
+
+                    /* if there is an uploaded image */
+                    if(array_key_exists('doc_image', $newEmployeeIdentityDoc)){
+                        $employeeIdentityDoc->saveImage($newEmployeeIdentityDoc['doc_image']);
+                        /* replace the url data so that the response is not long */
+                        $newEmployeeIdentityDoc[$index]['image_name'] = $employeeIdentityDoc->image_name;
+                        unset($newEmployeeIdentityDoc[$index]['doc_image']);
+                    }
                 }
             }
         }

@@ -20,6 +20,7 @@ class CreateEmployeeidentitydocTable extends Migration
             $table->string('identity_doc_number', 100)->nullable()->default(NULL);
             $table->date('identity_doc_validity_start')->nullable()->default(NULL);
             $table->date('identity_doc_validity_end')->nullable()->default(NULL);
+            $table->string('image_name', 100)->nullable()->default(NULL);
             $table->timestamps();
             $table->integer('user_id')->nullable()->default('1')->unsigned();
         });
