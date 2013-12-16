@@ -2,24 +2,19 @@
 // Handler :'DocumentFile', used to play with uploaded scanned files
 class DocumentFile {
 
-    public function employeeDocSaved($data)
+    public function docSaved($data)
     {
         Log::info('employeeDocSaved '.$data->toJson());
     }
 
-    public function employeeIdentityDocSaved($data)
+    public function docDeleted($data)
     {
-        Log::info('employeeIdentityDocSaved '.$data->toJson());
-    }
+        /* Create path to image */
+        $relativePathToImage = $data->getImagePath().$data->image_name;
 
-    public function employeeDocDeleted($data)
-    {
-        Log::info('employeeDocDeleted '.$data->toJson());
+        /* Delete file */
+        if(!empty($relativePathToImage) && File::exists(public_path().$relativePathToImage)){
+            File::delete(public_path().$relativePathToImage);
+        }
     }
-
-    public function employeeIdentityDocDeleted($data)
-    {
-        Log::info('employeeIdentityDocDeleted  '.$data->toJson());
-    }
-
 }
