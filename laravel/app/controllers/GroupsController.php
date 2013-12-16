@@ -31,18 +31,14 @@ class GroupsController extends \BaseController {
                 200
             );    
         } catch (Exception $e){
-
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => 'Group cannot be returned' . $e
+                ),
+                500
+            );
         }        
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -76,29 +72,15 @@ class GroupsController extends \BaseController {
                 );
             }
         } catch (Exception $e) {
-
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => 'Group cannot be created' . $e,
+                    'action' => 'create'
+                ),
+                500
+            );
         }        
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id){
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -137,7 +119,14 @@ class GroupsController extends \BaseController {
             );
 
         } catch (Exception $e) {
-
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => 'Group cannot be updated' . $e,
+                    'action' => 'update'
+                ),
+                500
+            );
         }   
     }
 
@@ -166,7 +155,14 @@ class GroupsController extends \BaseController {
             );
 
         } catch (Exception $e){
-
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => 'Group cannot be deleted' . $e,
+                    'action' => 'delete'
+                ),
+                500
+            );
         }
     }
 
