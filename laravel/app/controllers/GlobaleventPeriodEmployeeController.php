@@ -35,14 +35,20 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
      *
      * @return Response
      */
-    public function store(){
+    public function store () {
 
         try {
             $GlobaleventPeriodEmployee = new GlobaleventPeriodEmployee;
 
+            if (!Request::json('globalevent_period_id') || !Request::json('employee_id'))
+                throw new Exception('Missing event period detail or employee detail');
+
             $GlobaleventPeriodEmployee->globalevent_period_id = Request::json('globalevent_period_id');
             $GlobaleventPeriodEmployee->employee_id = Request::json('employee_id');
             //$GlobaleventPeriodEmployee->real_start_datetime = Request::json('real_start_datetime');
+
+            if (!$this->check_assignment($GlobaleventPeriodEmployee->employee_id, $GlobaleventPeriodEmployee->globalevent_period_id))
+                throw new Exception('Already assigned or employee is assigned to event period with overlapping timeslot');
 
             $GlobaleventPeriodEmployee->save();
 
@@ -50,7 +56,7 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
                 array(
                     'error' => false,
                     'message' => 'Employee is successfully assigned',
-                    'GlobaleventPeriodEmployee' => $GlobaleventPeriodEmployee->toArray()
+                    'possible_globalevent_period' => $this->get_possible_globalevent_period($GlobaleventPeriodEmployee->employee_id, 0)
                 ),
                 200
             );
@@ -58,12 +64,43 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Employee cannot be assigned.' . $e,
+                    'message' => 'Employee cannot be assigned.' . $e->getMessage(),
                     'action' => 'create'
                 ),
                 500
             );
         }
+    }
+
+    private function check_assignment ($employee_id, $globalevent_period_id) {
+        
+        $assginedGlobaleventPeriodQuery = 
+            'SELECT DISTINCT globalevent_period.* ' .
+            'FROM globalevent_period WHERE id IN ( ' .
+                'SELECT globalevent_period_employee.globalevent_period_id ' .
+                'FROM globalevent_period_employee ' .
+                'WHERE globalevent_period_employee.employee_id = ' . $employee_id . ')';
+
+        $query =    
+            'EXISTS (SELECT * FROM (' . 
+            $assginedGlobaleventPeriodQuery . 
+            ') AS assgined_globalevent_period ' .
+            'WHERE globalevent_period.id = assgined_globalevent_period.id ' .
+                'OR (assgined_globalevent_period.start_datetime <= globalevent_period.end_datetime ' .
+                'AND globalevent_period.start_datetime <= assgined_globalevent_period.end_datetime))';
+                
+
+        $globaleventPeriods = 
+            DB::table('globalevent_period')
+            ->where('globalevent_period.id', '=', $globalevent_period_id)
+            ->whereRaw($query)
+            ->select('globalevent_period.*')
+            ->distinct()
+            ->get();
+
+        if (count($globaleventPeriods))
+            return false;
+        return true;    
     }
 
     /**
@@ -146,17 +183,71 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
      */
     public function destroy($id){
 
-        $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::find($id);
+        try {
+            $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::find($id);
 
-        $GlobaleventPeriodEmployee->delete();
+            $employee_id = $GlobaleventPeriodEmployee['employee_id'];
 
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Globalevent period employee deleted'
-                ),
-            200
-        );
+            $GlobaleventPeriodEmployee->delete();
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Globalevent period employee deleted',
+                    'employee_id' => $employee_id,
+                    'possible_globalevent_period' => $this->get_possible_globalevent_period($employee_id, 0)
+                    ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => 'Globalevent period employee cannot be deleted. ' . $e->getMessage()
+                    ),
+                500
+            );
+        }
+    }
+
+    /**
+     * Retrieve The list of employee possible assignments.
+     *
+     * @param  int  $employee_id, $event_id
+     * @return Response
+     */
+    private function get_possible_globalevent_period ($employee_id, $event_id) {
+        $assginedGlobaleventPeriodQuery = 
+            'SELECT DISTINCT globalevent_period.* ' .
+            'FROM globalevent_period WHERE id IN ( ' .
+                'SELECT globalevent_period_employee.globalevent_period_id ' .
+                'FROM globalevent_period_employee ' .
+                'WHERE globalevent_period_employee.employee_id = ' . $employee_id . ')';
+
+        $query =    
+            'NOT EXISTS (SELECT * FROM (' . 
+            $assginedGlobaleventPeriodQuery . 
+            ') AS assgined_globalevent_period ' .
+            'WHERE globalevent_period.id = assgined_globalevent_period.id ' .
+                'OR (assgined_globalevent_period.start_datetime <= globalevent_period.end_datetime ' .
+                'AND globalevent_period.start_datetime <= assgined_globalevent_period.end_datetime))';
+
+        if ($event_id)
+            return $globaleventPeriods = 
+                DB::table('globalevent_period')
+                ->whereRaw($query)
+                ->where('globalevent_period.globalevent_id', '=', $event_id)
+                ->select('globalevent_period.*')
+                ->distinct()
+                ->get();
+        else 
+            return $globaleventPeriods = 
+                DB::table('globalevent_period')
+                ->whereRaw($query)
+                ->select('globalevent_period.*')
+                ->distinct()
+                ->get();
+
     }
 
 }

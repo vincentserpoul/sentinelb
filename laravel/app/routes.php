@@ -47,8 +47,12 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth'), function()
     Route::get('employee/{employee_id}/globalevent_period', 'EmployeeController@globalevent_period');
     Route::options('employee/{employee_id}/unpaid_globalevent_period', function(){return null;});
     Route::get('employee/{employee_id}/unpaid_globalevent_period', 'EmployeeController@unpaid_globalevent_period');
-    Route::options('employee/{employee_id}/possible_globalevent_period', function(){return null;});
-    Route::get('employee/{employee_id}/possible_globalevent_period', 'EmployeeController@possible_globalevent_period');
+    Route::options('employee/{employee_id}/possible_globalevent_period/{event_id}', function(){return null;});
+    Route::get('employee/{employee_id}/possible_globalevent_period/{event_id}', 'EmployeeController@possible_globalevent_period');
+    Route::options('employee/all_possible_globalevent_period/{event_id}', function(){return null;});
+    Route::get('employee/all_possible_globalevent_period/{event_id}', 'EmployeeController@all_possible_globalevent_period');
+    Route::options('employee/assigned_employees/{globalevent_period_id}', function(){return null;});
+    Route::get('employee/assigned_employees/{globalevent_period_id}', 'EmployeeController@assigned_employees');
 
     // Employer
     Route::options('employer', function(){return null;});

@@ -355,40 +355,16 @@ class EmployeeController extends \BaseController {
     /**
      * Retrieve The list of employee possible assignments.
      *
-     * @param  int  $employee_id
+     * @param  int  $employee_id, $event_id
      * @return Response
      */
-    public function possible_globalevent_period ($employee_id) {
+    public function possible_globalevent_period ($employee_id, $event_id) {
 
         try {
-            $assgined_globalevent_period_query = 
-                'SELECT DISTINCT globalevent_period.* ' .
-                'FROM globalevent_period WHERE id IN ( ' .
-                    'SELECT globalevent_period_employee.globalevent_period_id ' .
-                    'FROM globalevent_period_employee ' .
-                    'WHERE globalevent_period_employee.employee_id = ' . $employee_id . ')';
-
-            $query =    
-                'NOT EXISTS (SELECT * FROM (' . 
-                $assgined_globalevent_period_query . 
-                ') AS assgined_globalevent_period ' .
-                'WHERE globalevent_period.id = assgined_globalevent_period.id ' .
-                    'OR (assgined_globalevent_period.start_datetime <= globalevent_period.end_datetime ' .
-                    'AND globalevent_period.start_datetime <= assgined_globalevent_period.end_datetime))';
-                    
-
-            $globaleventPeriods = 
-                DB::table('globalevent_period')
-                ->where('globalevent_period.globalevent_id', '=', '1')
-                ->whereRaw($query)
-                ->select('globalevent_period.*')
-                ->distinct()
-                ->get();
-
             return Response::json(
                 array(
                     'error' => false,
-                    'globalevent_periods' => $globaleventPeriods
+                    'globalevent_periods' => $this->get_possible_globalevent_period($employee_id, $event_id)
                 ),
                 200
             );
@@ -396,10 +372,105 @@ class EmployeeController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => $e
+                    'message' => $e->getMessage()
                 ),
                 500
             );
         }
+    }
+
+    public function all_possible_globalevent_period ($event_id) {
+        
+        try {
+            $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))->get();
+            foreach ($Employees as $Employee) {
+                $Employee['possible_globalevent_periods'] = $this->get_possible_globalevent_period($Employee['id'], $event_id);
+            }
+            return Response::json(
+                array(
+                    'error' => false,
+                    'Employees' => $Employees->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => $e->getMessage()
+                ),
+                500
+            );   
+        }
+    }
+
+    public function assigned_employees ($globalevent_period_id) {
+
+        try {
+            $assigned_employees = 
+                DB::table('employee')
+                ->join('globalevent_period_employee', 'globalevent_period_employee.employee_id', '=', 'employee.id')
+                ->join('globalevent_period', 'globalevent_period_employee.globalevent_period_id', '=', 'globalevent_period.id')
+                ->where('globalevent_period.id', '=', $globalevent_period_id)
+                ->select('employee.*', 'globalevent_period_employee.id as globalevent_period_employee_id')
+                ->distinct()
+                ->get();
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'Employees' => $assigned_employees
+                ),
+                200
+            );    
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => $e->getMessage()
+                ),
+                500
+            ); 
+        }
+    }
+
+    /**
+     * Retrieve The list of employee possible assignments.
+     *
+     * @param  int  $employee_id, $event_id
+     * @return Response
+     */
+    private function get_possible_globalevent_period ($employee_id, $event_id) {
+        $assginedGlobaleventPeriodQuery = 
+            'SELECT DISTINCT globalevent_period.* ' .
+            'FROM globalevent_period WHERE id IN ( ' .
+                'SELECT globalevent_period_employee.globalevent_period_id ' .
+                'FROM globalevent_period_employee ' .
+                'WHERE globalevent_period_employee.employee_id = ' . $employee_id . ')';
+
+        $query =    
+            'NOT EXISTS (SELECT * FROM (' . 
+            $assginedGlobaleventPeriodQuery . 
+            ') AS assgined_globalevent_period ' .
+            'WHERE globalevent_period.id = assgined_globalevent_period.id ' .
+                'OR (assgined_globalevent_period.start_datetime <= globalevent_period.end_datetime ' .
+                'AND globalevent_period.start_datetime <= assgined_globalevent_period.end_datetime))';
+
+        if ($event_id)
+            return $globaleventPeriods = 
+                DB::table('globalevent_period')
+                ->whereRaw($query)
+                ->where('globalevent_period.globalevent_id', '=', $event_id)
+                ->select('globalevent_period.*')
+                ->distinct()
+                ->get();
+        else 
+            return $globaleventPeriods = 
+                DB::table('globalevent_period')
+                ->whereRaw($query)
+                ->select('globalevent_period.*')
+                ->distinct()
+                ->get();
+
     }
 }
