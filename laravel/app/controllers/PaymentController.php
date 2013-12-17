@@ -99,7 +99,7 @@ class PaymentController extends \BaseController {
      * @return Response
      */
     public function update($id){
-        return true:
+        return true;
         // Pas de mise à jour en direct
         try
         {
