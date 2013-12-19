@@ -42,8 +42,8 @@ class GlobaleventPeriodController extends \BaseController {
             $GlobaleventPeriod = new GlobaleventPeriod;
 
             $GlobaleventPeriod->event_id = Request::json('event_id');
-            $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
-            $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
+            $GlobaleventPeriod->start_datetime = new DateTime(Request::json('start_datetime'));
+            $GlobaleventPeriod->end_datetime = new DateTime(Request::json('end_datetime'));
             $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
 
             $GlobaleventPeriod->save();
@@ -84,11 +84,11 @@ class GlobaleventPeriodController extends \BaseController {
             }
 
             if ( Request::json('start_datetime') ){
-                $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
+                $GlobaleventPeriod->start_datetime = new DateTime(Request::json('start_datetime'));
             }
 
             if ( Request::json('end_datetime') ){
-                $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
+                $GlobaleventPeriod->end_datetime = new DateTime(Request::json('end_datetime'));
             }
 
             if ( Request::json('number_of_employee_needed') ){
@@ -102,7 +102,8 @@ class GlobaleventPeriodController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Global event period updated'
+                    'message' => 'Global event period updated',
+                    'globalevent_period' => $GlobaleventPeriod->toArray()
                 ),
                 200
             );
@@ -110,7 +111,7 @@ class GlobaleventPeriodController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Event period cannot be updated.' . $e,
+                    'message' => 'Event period cannot be updated.' . $e->getMessage(),
                     'action' => 'update'
                 ),
                 500
