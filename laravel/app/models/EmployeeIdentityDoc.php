@@ -41,7 +41,9 @@ Class EmployeeIdentityDoc extends Eloquent
         $relativePathToImage = $this->getImagePath().$imageName;
 
         /* Create folder */
-        File::makeDirectory(public_path().$this->getImagePath(), 0777, true);
+        if(!File::isDirectory(public_path().$this->getImagePath())){
+            File::makeDirectory(public_path().$this->getImagePath(), 0777, true);
+        }
 
         /* Write file */
         File::put(public_path().$relativePathToImage, $img);
