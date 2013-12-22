@@ -24,8 +24,8 @@ and type the following command in your terminal
 
     cd /var/www/dev.sentinelb.com
     cd laravel
-    composer install
-    composer update
+    sudo composer install
+    sudo composer update
     mysql -udev -pdev -e "DROP DATABASE centuryevergreen;"
     mysql -udev -pdev -e "CREATE DATABASE centuryevergreen;"
     php artisan cache:clear
