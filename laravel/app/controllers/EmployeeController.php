@@ -51,12 +51,69 @@ class EmployeeController extends \BaseController {
         $Employee->status_id = Request::json('status_id');
         $Employee->work_pass_type_id = Request::json('work_pass_type_id');
 
-        //$Employee->user_id = Auth::user()->id;
-
-        // Validation and Filtering is sorely needed!!
-        // Seriously, I'm a bad person for leaving that out.
-
         $Employee->save();
+
+        $id = $Employee->id;
+
+        /*****************/
+        /* Employee docs */
+        /*****************/
+        $newEmployeeDocs = Request::json('employee_doc');
+
+        if(!is_null($newEmployeeDocs)){
+
+            /* Create the new Docs */
+            foreach($newEmployeeDocs as $index=>$newEmployeeDoc){
+            /* if there is no ID, it means it is a new Doc */
+                $employeeDoc = new EmployeeDoc;
+                $employeeDoc->employee_id = $id;
+                $employeeDoc->doc_type_id = $newEmployeeDoc['doc_type_id'];
+                $employeeDoc->save();
+                $newEmployeeDocs[$index]['id'] = $employeeDoc->id;
+
+                /* if there is an uploaded image */
+                if(array_key_exists('doc_image', $newEmployeeDoc)){
+                    $employeeDoc->saveImage($newEmployeeDoc['doc_image']);
+                    /* replace the url data so that the response is not long */
+                    unset($newEmployeeDocs[$index]['doc_image']);
+                }
+            }
+        }
+
+        /**************************/
+        /* Employee Identity docs */
+        /**************************/
+        $newEmployeeIdentityDocs = Request::json('employee_identity_doc');
+
+        if(!is_null($newEmployeeIdentityDocs)){
+
+            /* Create the new Docs */
+            foreach($newEmployeeIdentityDocs as $index=>$newEmployeeIdentityDoc){
+            /* if there is no ID, it means it is a new Doc */
+                $employeeIdentityDoc = new EmployeeIdentityDoc;
+                $employeeIdentityDoc->employee_id = $id;
+                $employeeIdentityDoc->identity_doc_type_id = $newEmployeeIdentityDoc['identity_doc_type_id'];
+                $employeeIdentityDoc->identity_doc_number = $newEmployeeIdentityDoc['identity_doc_number'];
+                $employeeIdentityDoc->identity_doc_validity_start = $newEmployeeIdentityDoc['identity_doc_validity_start'];
+                $employeeIdentityDoc->identity_doc_validity_end = $newEmployeeIdentityDoc['identity_doc_validity_end'];
+                $employeeIdentityDoc->save();
+                $newEmployeeIdentityDocs[$index]['id'] = $employeeIdentityDoc->id;
+
+                /* if there is an uploaded image */
+                if(array_key_exists('doc_image', $newEmployeeIdentityDoc)){
+                    $employeeIdentityDoc->saveImage($newEmployeeIdentityDoc['doc_image']);
+                    /* replace the url data so that the response is not long */
+                    $newEmployeeIdentityDoc[$index]['image_name'] = $employeeIdentityDoc->image_name;
+                    unset($newEmployeeIdentityDoc[$index]['doc_image']);
+                }
+            }
+        }
+
+        /* updates employee with the new data for identity docs */
+        $Employee['employee_identity_doc'] = $newEmployeeIdentityDocs;
+
+        /* updates employee with the new data */
+        $Employee['employee_doc'] = $newEmployeeDocs;
 
         return Response::json(
             array(
@@ -380,7 +437,7 @@ class EmployeeController extends \BaseController {
     }
 
     public function all_possible_globalevent_period ($event_id) {
-        
+
         try {
             $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))->get();
             foreach ($Employees as $Employee) {
@@ -400,14 +457,14 @@ class EmployeeController extends \BaseController {
                     'message' => $e->getMessage()
                 ),
                 500
-            );   
+            );
         }
     }
 
     public function assigned_employees ($globalevent_period_id) {
 
         try {
-            $assigned_employees = 
+            $assigned_employees =
                 DB::table('employee')
                 ->join('globalevent_period_employee', 'globalevent_period_employee.employee_id', '=', 'employee.id')
                 ->join('globalevent_period', 'globalevent_period_employee.globalevent_period_id', '=', 'globalevent_period.id')
@@ -422,7 +479,7 @@ class EmployeeController extends \BaseController {
                     'Employees' => $assigned_employees
                 ),
                 200
-            );    
+            );
         } catch (Exception $e) {
             return Response::json(
                 array(
@@ -430,7 +487,7 @@ class EmployeeController extends \BaseController {
                     'message' => $e->getMessage()
                 ),
                 500
-            ); 
+            );
         }
     }
 
@@ -441,31 +498,31 @@ class EmployeeController extends \BaseController {
      * @return Response
      */
     private function get_possible_globalevent_period ($employee_id, $event_id) {
-        $assginedGlobaleventPeriodQuery = 
+        $assginedGlobaleventPeriodQuery =
             'SELECT DISTINCT globalevent_period.* ' .
             'FROM globalevent_period WHERE id IN ( ' .
                 'SELECT globalevent_period_employee.globalevent_period_id ' .
                 'FROM globalevent_period_employee ' .
                 'WHERE globalevent_period_employee.employee_id = ' . $employee_id . ')';
 
-        $query =    
-            'NOT EXISTS (SELECT * FROM (' . 
-            $assginedGlobaleventPeriodQuery . 
+        $query =
+            'NOT EXISTS (SELECT * FROM (' .
+            $assginedGlobaleventPeriodQuery .
             ') AS assgined_globalevent_period ' .
             'WHERE globalevent_period.id = assgined_globalevent_period.id ' .
                 'OR (assgined_globalevent_period.start_datetime <= globalevent_period.end_datetime ' .
                 'AND globalevent_period.start_datetime <= assgined_globalevent_period.end_datetime))';
 
         if ($event_id)
-            return $globaleventPeriods = 
+            return $globaleventPeriods =
                 DB::table('globalevent_period')
                 ->whereRaw($query)
                 ->where('globalevent_period.globalevent_id', '=', $event_id)
                 ->select('globalevent_period.*')
                 ->distinct()
                 ->get();
-        else 
-            return $globaleventPeriods = 
+        else
+            return $globaleventPeriods =
                 DB::table('globalevent_period')
                 ->whereRaw($query)
                 ->select('globalevent_period.*')
