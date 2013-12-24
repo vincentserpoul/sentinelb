@@ -41,11 +41,17 @@ class GlobaleventPeriodController extends \BaseController {
         try {
             $GlobaleventPeriod = new GlobaleventPeriod;
 
-            $GlobaleventPeriod->event_id = Request::json('event_id');
-            $GlobaleventPeriod->start_datetime = new DateTime(Request::json('start_datetime'));
-            $GlobaleventPeriod->end_datetime = new DateTime(Request::json('end_datetime'));
+            $GlobaleventPeriod->globalevent_id = Request::json('event_id');
+            $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
+            $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
             $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
 
+            // validate info
+            if (strtotime($GlobaleventPeriod->end_datetime) <= strtotime($GlobaleventPeriod->start_datetime))
+                throw new Exception('End datetime must be after start datetime', 1);
+            if ($GlobaleventPeriod->number_of_employee_needed < 1) 
+                throw new Exception("Number of employees needed must be greater than 0", 1);
+                
             $GlobaleventPeriod->save();
 
             return Response::json(
@@ -60,7 +66,7 @@ class GlobaleventPeriodController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Employer cannot be created.' . $e,
+                    'message' => 'Employer cannot be created.' . $e->getMessage(),
                     'action' => 'update'
                 ),
                 500
@@ -94,6 +100,12 @@ class GlobaleventPeriodController extends \BaseController {
             if ( Request::json('number_of_employee_needed') ){
                 $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
             }
+
+            // validate info
+            if ($GlobaleventPeriod->end_datetime <= $GlobaleventPeriod->start_datetime)
+                throw new Exception('End datetime must be after start datetime', 1);
+            if ($GlobaleventPeriod->number_of_employee_needed < 1) 
+                throw new Exception("Number of employees needed must be greater than 0", 1);
 
             $GlobaleventPeriod->id = $id;
 

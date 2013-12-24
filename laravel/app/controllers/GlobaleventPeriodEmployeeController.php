@@ -38,25 +38,20 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
     public function store () {
 
         try {
-            $GlobaleventPeriodEmployee = new GlobaleventPeriodEmployee;
-
-            if (!Request::json('globalevent_period_id') || !Request::json('employee_id'))
+            if (!isset(Request::json('globalevent_period_id')) || !isset(Request::json('employee_id')))
                 throw new Exception('Missing event period detail or employee detail');
 
-            $GlobaleventPeriodEmployee->globalevent_period_id = Request::json('globalevent_period_id');
-            $GlobaleventPeriodEmployee->employee_id = Request::json('employee_id');
-            //$GlobaleventPeriodEmployee->real_start_datetime = Request::json('real_start_datetime');
-
-            if (!$this->check_assignment($GlobaleventPeriodEmployee->employee_id, $GlobaleventPeriodEmployee->globalevent_period_id))
-                throw new Exception('Already assigned or employee is assigned to event period with overlapping timeslot');
-
-            $GlobaleventPeriodEmployee->save();
+            if (Request::json('globalevent_period_id') != 0) {
+                $this->assign(Request::json('globalevent_period_id'), Request::json('employee_id'));
+            } else {
+                
+            }
 
             return Response::json(
                 array(
                     'error' => false,
                     'message' => 'Employee is successfully assigned',
-                    'possible_globalevent_period' => $this->get_possible_globalevent_period($GlobaleventPeriodEmployee->employee_id, 0)
+                    'possible_globalevent_period' => $this->get_possible_globalevent_period(Request::json('employee_id'), 0)
                 ),
                 200
             );
@@ -70,6 +65,22 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
                 500
             );
         }
+    }
+
+    /**
+     * assign event period 
+     * 
+     */
+    private function assign($globalevent_period_id, $employee_id) {
+        $GlobaleventPeriodEmployee = new GlobaleventPeriodEmployee;
+        $GlobaleventPeriodEmployee->globalevent_period_id = $globalevent_period_id;
+        $GlobaleventPeriodEmployee->employee_id = $employee_id;
+        //$GlobaleventPeriodEmployee->real_start_datetime = Request::json('real_start_datetime');
+
+        if (!$this->check_assignment($GlobaleventPeriodEmployee->employee_id, $GlobaleventPeriodEmployee->globalevent_period_id))
+            throw new Exception('Already assigned or employee is assigned to event period with overlapping timeslot');
+
+        $GlobaleventPeriodEmployee->save();
     }
 
     private function check_assignment ($employee_id, $globalevent_period_id) {

@@ -42,12 +42,14 @@ class GlobaleventController extends \BaseController {
             $Globalevent->employer_id = Request::json('employer_id');
             $Globalevent->label = Request::json('label');
             $Globalevent->employer_department_id = Request::json('employer_department_id');
+            $Globalevent->date = Request::json('date');
 
             $Globalevent->save();
 
             return Response::json(
                 array(
                     'error' => false,
+                    'message' => 'Event successfully created',
                     'Globalevent' => $Globalevent->toArray()
                 ),
                 200
@@ -123,10 +125,9 @@ class GlobaleventController extends \BaseController {
         try {
             $Globalevent = Globalevent::find($id);
             $GlobaleventPeriod = GlobaleventPeriod::where('globalevent_id', $id);
-            $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::with('globalevent_period')->where('globalevent_id', $id);
+            //$GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::with('globalevent_period')->where('globalevent_id', $id);
 
-
-            $GlobaleventPeriodEmployee->delete();
+            //$GlobaleventPeriodEmployee->delete();
             $GlobaleventPeriod->delete();
             $Globalevent->delete();
 
@@ -141,7 +142,7 @@ class GlobaleventController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => "Event cannot be deleted"
+                    'message' => "Event cannot be deleted. " . $e->getMessage()
                 ),
                 500
             );
