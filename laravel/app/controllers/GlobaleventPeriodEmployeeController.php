@@ -38,20 +38,16 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
     public function store () {
 
         try {
-            if (!isset(Request::json('globalevent_period_id')) || !isset(Request::json('employee_id')))
+            if (!Request::json('globalevent_period_id') || !Request::json('employee_id'))
                 throw new Exception('Missing event period detail or employee detail');
 
-            if (Request::json('globalevent_period_id') != 0) {
-                $this->assign(Request::json('globalevent_period_id'), Request::json('employee_id'));
-            } else {
-                
-            }
+            $globalevent_period_employees = $this->assign(Request::json('globalevent_period_id'), Request::json('employee_id'));
 
             return Response::json(
                 array(
                     'error' => false,
                     'message' => 'Employee is successfully assigned',
-                    'possible_globalevent_period' => $this->get_possible_globalevent_period(Request::json('employee_id'), 0)
+                    'globalevent_period_employees' => $globalevent_period_employees->toArray()
                 ),
                 200
             );
@@ -60,6 +56,42 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
                 array(
                     'error' => false,
                     'message' => 'Employee cannot be assigned.' . $e->getMessage(),
+                    'action' => 'create'
+                ),
+                500
+            );
+        }
+    }
+
+    public function assign_whole_event () {
+        try {
+            if (!Request::json('globalevent_id') || !Request::json('employee_id'))
+                throw new Exception('Missing event detail or employee detail');
+
+            $possible_globalevent_periods = $this->get_possible_globalevent_period(Request::json('employee_id'), Request::json('globalevent_id'));
+            
+            $globalevent_period_employees = array();
+
+            foreach ($possible_globalevent_periods as $possible_globalevent_period) {
+                $globalevent_period_employee = $this->assign($possible_globalevent_period->id, Request::json('employee_id'));
+                $globalevent_period_employees[] = $globalevent_period_employee->toArray();
+            }
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Employee is successfully assigned',
+                    'globalevent_period_employees' => $globalevent_period_employees
+                ),
+                200
+            );
+
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Employee cannot be assigned.' . $e->getMessage(),
+                    'globalevent_period_employees' => $globalevent_period_employees,
                     'action' => 'create'
                 ),
                 500
@@ -81,6 +113,7 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
             throw new Exception('Already assigned or employee is assigned to event period with overlapping timeslot');
 
         $GlobaleventPeriodEmployee->save();
+        return $GlobaleventPeriodEmployee;
     }
 
     private function check_assignment ($employee_id, $globalevent_period_id) {
@@ -205,8 +238,7 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
                 array(
                     'error' => false,
                     'message' => 'Globalevent period employee deleted',
-                    'employee_id' => $employee_id,
-                    'possible_globalevent_period' => $this->get_possible_globalevent_period($employee_id, 0)
+                    'globalevent_period_employee' => $GlobaleventPeriodEmployee->toArray()
                     ),
                 200
             );
@@ -221,7 +253,7 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
         }
     }
 
-    /**
+    /*
      * Retrieve The list of employee possible assignments.
      *
      * @param  int  $employee_id, $event_id

@@ -438,18 +438,27 @@ class EmployeeController extends \BaseController {
 
     public function all_possible_globalevent_period ($event_id) {
 
-        try {
+        //try {
             $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))->get();
+            $possible_globalevent_periods = array();
             foreach ($Employees as $Employee) {
-                $Employee['possible_globalevent_periods'] = $this->get_possible_globalevent_period($Employee['id'], $event_id);
+                //var_dump($this->get_possible_globalevent_period($Employee['id'], $event_id));
+                $employee_possible_globalevent_periods = $this->get_possible_globalevent_period($Employee['id'], $event_id);
+                foreach ($employee_possible_globalevent_periods as $employee_possible_globalevent_period) {
+                    $possible_globalevent_periods[] = array(
+                        'globalevent_period_id' => $employee_possible_globalevent_period->id,
+                        'employee_id' => $Employee['id']
+                    );
+                }
             }
             return Response::json(
                 array(
                     'error' => false,
-                    'Employees' => $Employees->toArray()
+                    'possible_globalevent_periods' => $possible_globalevent_periods
                 ),
                 200
             );
+            /*
         } catch (Exception $e) {
             return Response::json(
                 array(
@@ -458,7 +467,7 @@ class EmployeeController extends \BaseController {
                 ),
                 500
             );
-        }
+        }*/
     }
 
     public function assigned_employees ($globalevent_period_id) {
@@ -518,14 +527,14 @@ class EmployeeController extends \BaseController {
                 DB::table('globalevent_period')
                 ->whereRaw($query)
                 ->where('globalevent_period.globalevent_id', '=', $event_id)
-                ->select('globalevent_period.*')
+                ->select('globalevent_period.id')
                 ->distinct()
                 ->get();
         else
             return $globaleventPeriods =
                 DB::table('globalevent_period')
                 ->whereRaw($query)
-                ->select('globalevent_period.*')
+                ->select('globalevent_period.id')
                 ->distinct()
                 ->get();
 
