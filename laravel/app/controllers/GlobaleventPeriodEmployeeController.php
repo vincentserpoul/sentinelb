@@ -230,6 +230,13 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
         try {
             $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::find($id);
 
+            $now = new Datetime();
+
+            $GlobaleventPeriod = GlobaleventPeriod::find($GlobaleventPeriodEmployee['globalevent_period_id']);
+
+            if ($now > new Datetime($GlobaleventPeriod->end_datetime))
+                throw new Exception('Cannot delete assignments from past event periods');
+
             $employee_id = $GlobaleventPeriodEmployee['employee_id'];
 
             $GlobaleventPeriodEmployee->delete();

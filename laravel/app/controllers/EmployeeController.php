@@ -508,6 +508,8 @@ class EmployeeController extends \BaseController {
      * @return Response
      */
     private function get_possible_globalevent_period ($employee_id, $event_id) {
+        $now = new Datetime();
+
         $assginedGlobaleventPeriodQuery =
             'SELECT DISTINCT globalevent_period.* ' .
             'FROM globalevent_period WHERE id IN ( ' .
@@ -521,7 +523,8 @@ class EmployeeController extends \BaseController {
             ') AS assgined_globalevent_period ' .
             'WHERE globalevent_period.id = assgined_globalevent_period.id ' .
                 'OR (assgined_globalevent_period.start_datetime <= globalevent_period.end_datetime ' .
-                'AND globalevent_period.start_datetime <= assgined_globalevent_period.end_datetime))';
+                'AND globalevent_period.start_datetime <= assgined_globalevent_period.end_datetime))' .
+            'AND globalevent_period.end_datetime > \'' . $now->format('Y-m-d H:i:s') . '\'';
 
         if ($event_id)
             return $globaleventPeriods =
