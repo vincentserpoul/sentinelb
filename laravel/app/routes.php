@@ -40,9 +40,11 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth'), function()
     // header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 
     // Employee
-    Route::options('employee', function(){return null;});
-    Route::options('employee/{id}', function(){return null;});
-    Route::resource('employee', 'EmployeeController');
+
+    /* Search route: to be put before le catchall des ids employee */
+    Route::options('employee/search', function(){return null;});
+    Route::get('employee/search', 'EmployeeController@search');
+
     Route::options('employee/{employee_id}/globalevent_period', function(){return null;});
     Route::get('employee/{employee_id}/globalevent_period', 'EmployeeController@globalevent_period');
     Route::options('employee/{employee_id}/unpaid_globalevent_period', function(){return null;});
@@ -53,6 +55,11 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth'), function()
     Route::get('employee/all_possible_globalevent_period/{event_id}', 'EmployeeController@all_possible_globalevent_period');
     Route::options('employee/assigned_employees/{globalevent_period_id}', function(){return null;});
     Route::get('employee/assigned_employees/{globalevent_period_id}', 'EmployeeController@assigned_employees');
+
+    /* Base url for employees */
+    Route::options('employee', function(){return null;});
+    Route::options('employee/{employee_id}', function(){return null;});
+    Route::resource('employee', 'EmployeeController');
 
     // Employer
     Route::options('employer', function(){return null;});

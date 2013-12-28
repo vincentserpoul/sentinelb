@@ -133,6 +133,9 @@ class EmployeeController extends \BaseController {
      * @return Response
      */
     public function show($id){
+
+        die(var_export($id));
+
         // Make sure current user owns the requested resource
         $Employee = Employee::where('id', $id)
                 ->take(1)
@@ -539,4 +542,56 @@ class EmployeeController extends \BaseController {
                 ->get();
 
     }
+
+    /**
+     * Retrieve The list of employee according to a search
+     *
+     * @param  search criterias
+     * @return json List of employees corresponding to criterias
+     */
+    public function search() {
+var_dump(Input::all());die();
+        /* We filter out the criterias that are not supposed to be there */
+        $searchCriterias = $this->filterAllowedSearchCriterias(Input::all());
+var_dump($searchCriterias);die();
+        /* Init employees list */
+        $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'));
+
+        /* We get the ids for each of the criterias */
+        foreach($searchCriterias as $searchCriteria => $values){
+
+            var_dump(json_decode($values));die();
+            /* we get all the ids that the user selected */
+            $searchValues = array_column(json_decode($values)->toArray(), 'id');
+
+            /* According to the key, we build the search */
+            switch($searchCriteria){
+                default:
+                    $Employees->where($searchCriteria.'_id', 'in', $searchValues);
+
+            }
+        }
+
+        $Employees = $Employees->get();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'employees' => $Employees->toArray()
+            ),
+            200
+        );
+    }
+
+    /**
+     * Filters the list of search criterias
+     *
+     * @param  search criterias
+     * @return search criterias
+     */
+    protected function filterAllowedSearchCriterias($searchCriterias){
+        $allowedCriterias = array('work_pass_type'=>null, 'race'=>null, 'sex'=>null, 'age_min'=>null, 'age_max'=>null);
+        return array_intersect_key($searchCriterias, $allowedCriterias);
+    }
+
 }
