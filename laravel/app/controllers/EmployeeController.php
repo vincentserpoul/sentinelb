@@ -550,30 +550,50 @@ class EmployeeController extends \BaseController {
      * @param  search criterias
      * @return json List of employees corresponding to criterias
      */
-    public function search() {
-var_dump(Input::all());die();
+    public function search($listFilterParams) {
+        $listFilterParams = json_decode($listFilterParams, true);
+
+        /* If the param is not decodable as array */
+        if(is_null($listFilterParams) || !is_array($listFilterParams)){
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => 'The search params are not well formatted.'
+                ),
+                200
+            );
+        }
+
         /* We filter out the criterias that are not supposed to be there */
-        $searchCriterias = $this->filterAllowedSearchCriterias(Input::all());
-var_dump($searchCriterias);die();
+        $searchCriterias = $this->filterAllowedSearchCriterias($listFilterParams);
+
         /* Init employees list */
         $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'));
 
         /* We get the ids for each of the criterias */
-        foreach($searchCriterias as $searchCriteria => $values){
+        foreach($searchCriterias as $searchCriteria => $searchValues){
 
-            var_dump(json_decode($values));die();
-            /* we get all the ids that the user selected */
-            $searchValues = array_column(json_decode($values)->toArray(), 'id');
-
-            /* According to the key, we build the search */
-            switch($searchCriteria){
-                default:
-                    $Employees->where($searchCriteria.'_id', 'in', $searchValues);
-
+            /* if the searchValues is a list of ref ids to filter */
+            if(is_array($searchValues)){
+                $Employees->whereIn($searchCriteria.'_id', $searchValues);
+            } /* identity_doc */
+            elseif($searchCriteria == 'identity_doc_number' && !empty($searchValues) && is_string($searchValues)){
+                $Employees->whereRaw('exists (select 1 from employee_identity_doc where employee_identity_doc.employee_id = employee.id and employee_identity_doc.identity_doc_number like ?)', array('%'.$searchValues.'%'));
+            } /* age_min */
+            elseif($searchCriteria == 'age_min' && is_integer($searchValues)){
+                $Employees->whereRaw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) > ?', array($searchValues));
+            } /* age_max */
+            elseif($searchCriteria == 'age_max' && is_integer($searchValues)){
+                $Employees->whereRaw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) < ?', array($searchValues));
+            } /* if the values is not an integer, then it is a text comparison */
+            elseif(is_string($searchValues) && !is_integer($searchValues)){
+                $Employees->whereRaw($searchCriteria.' like ?', array('%'.strtolower($searchValues).'%'));
             }
         }
 
-        $Employees = $Employees->get();
+        //echo $Employees->toSql();die();
+
+        $Employees = $Employees->limit(20)->get();
 
         return Response::json(
             array(
@@ -591,8 +611,41 @@ var_dump($searchCriterias);die();
      * @return search criterias
      */
     protected function filterAllowedSearchCriterias($searchCriterias){
-        $allowedCriterias = array('work_pass_type'=>null, 'race'=>null, 'sex'=>null, 'age_min'=>null, 'age_max'=>null);
-        return array_intersect_key($searchCriterias, $allowedCriterias);
+        /* if parameter not an array */
+        if(!is_array($searchCriterias)){
+            return false;
+        }
+
+        /* List of searchable criterias */
+        $allowedCriterias = array(
+              'work_pass_type'=>null
+            , 'race'=>null
+            , 'sex'=>null
+            , 'age_min'=>null
+            , 'age_max'=>null
+            , 'identity_doc_number'=>null
+            , 'last_name'=>null
+        );
+
+        $newSearchCriteria = array();
+        /* First step, make sure the params are an associative array like that:
+         * array('sex'=>array(0, 1)), 'age_min' => 12);
+         */
+        foreach($searchCriterias as $key=>$value){
+            /* If it is an array and it contains the id we wanna search for, we need to push it inside a new array */
+            if(is_array($value)){
+                /* then we are in the case of a list of tuple returned by angular */
+                foreach($value as $tuple){
+                    if(array_key_exists('id', $tuple)){
+                        $newSearchCriterias[$key][] = $tuple['id'];
+                    }
+                }
+            } else {
+                $newSearchCriterias[$key] = $value;
+            }
+        }
+
+        return array_intersect_key($newSearchCriterias, $allowedCriterias);
     }
 
 }
