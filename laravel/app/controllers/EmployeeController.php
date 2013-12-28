@@ -134,8 +134,6 @@ class EmployeeController extends \BaseController {
      */
     public function show($id){
 
-        die(var_export($id));
-
         // Make sure current user owns the requested resource
         $Employee = Employee::where('id', $id)
                 ->take(1)
