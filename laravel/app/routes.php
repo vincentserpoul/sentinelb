@@ -43,7 +43,7 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth'), function()
 
     /* Search route: to be put before le catchall des ids employee */
     Route::options('employee/search', function(){return null;});
-    Route::get('employee/search', 'EmployeeController@search');
+    Route::get('employee/search/{listFilterParams}', 'EmployeeController@search');
 
     Route::options('employee/{employee_id}/globalevent_period', function(){return null;});
     Route::get('employee/{employee_id}/globalevent_period', 'EmployeeController@globalevent_period');

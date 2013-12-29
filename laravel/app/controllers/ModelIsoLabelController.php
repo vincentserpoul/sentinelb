@@ -2,28 +2,36 @@
 
 class ModelIsoLabelController extends \BaseController {
 
-    public function show($modelStaticLabel){
+    public function show($modelIsoLabel){
         $formattedLabels = array();
-        $neededClass = new Title;
+        /* default HTTP status cached */
+        $httpCode = 200;
 
-        switch($modelStaticLabel){
-            case 'country':
-                // Titles
-                $neededClass = new Country;
-                $formattedLabels['country'] = $neededClass->get()->toArray();
+        /* trying to get it from the cache first */
+        $formattedLabels = Cache::get('modelIsoLabel'.$modelIsoLabel);
 
-                break;
+        if(empty($formattedLabels)){
+            switch($modelIsoLabel){
+                case 'country':
+                    // Titles
+                    $neededClass = new Country;
+                    break;
 
-            case 'currency':
+                case 'currency':
+                    // Countries
+                    $neededClass = new Currency;
+                    break;
 
-                // Countries
-                $neededClass = new Currency;
-                $formattedLabels['currency'] = $neededClass->get()->toArray();
+                    default:
+                        //
+                        $neededClass = new stdClass();
+            }
 
-                break;
+            $formattedLabels[$modelIsoLabel] = $neededClass->get()->toArray();
 
-            default:
-                //
+            /* Caching the result and change the httpCode */
+            $httpCode = 200;
+            Cache::forever('modelIsoLabel'.$modelIsoLabel, $formattedLabels);
         }
 
         if(empty($formattedLabels)){
@@ -32,7 +40,7 @@ class ModelIsoLabelController extends \BaseController {
                     'error' => "the iso labels you required are not available",
                     'labels' => array()
                 ),
-                200
+                $httpCode
             );
         }
 
@@ -41,7 +49,7 @@ class ModelIsoLabelController extends \BaseController {
                 'error' => false,
                 'labels' => $formattedLabels
             ),
-            200
+            $httpCode
         );
 
     }
