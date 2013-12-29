@@ -119,7 +119,7 @@ class UsersController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => "User cannot be deleted." . $e
+                    'message' => "User cannot be deleted. " . $e->getMessage()
                 ),
                 500
             );
@@ -131,15 +131,32 @@ class UsersController extends \BaseController {
     */    
     private function getAllUsers(){
         try{
-            $Users = Users::get();
+            $Users = Sentry::findAllUsers();
 
-            foreach($Users as $user){
-                $user['group_id'] = UsersGroups::where('user_id', $user->id)->pluck('group_id');
+            $returnedUsers = array();
+
+            function getId ($a) {
+                return $a['id'];
             }
 
-            return $Users->toArray();
-        } catch (Exception $e){
+            foreach ($Users as $user) {
+                $returnedUsers[] = array(
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'activated' => $user->activated,
+                    'groups' => array_map('getId', $user->getGroups()->toArray())
+                );
+            }
 
+            return $returnedUsers;
+        } catch (Exception $e){
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "User cannot be returned. " . $e->getMessage()
+                ),
+                500
+            );
         }
     }
 }
