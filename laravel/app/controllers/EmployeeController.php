@@ -9,12 +9,18 @@ class EmployeeController extends \BaseController {
      */
     public function index(){
 
-        $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))->get();
+        $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))
+                        ->limit(500)
+                        ->paginate(20)
+                        ->toArray();
 
         return Response::json(
             array(
                 'error' => false,
-                'employees' => $Employees->toArray()
+                'employees' => $Employees['data'],
+                'current_page' => $Employees['current_page'],
+                'total' => $Employees['total'],
+                'last_page' => $Employees['last_page'],
             ),
             200
         );
@@ -593,12 +599,17 @@ class EmployeeController extends \BaseController {
 
         //echo $Employees->toSql();die();
 
-        $Employees = $Employees->limit(20)->get();
+        $Employees = $Employees->limit(500)
+                        ->paginate(50)
+                        ->toArray();
 
         return Response::json(
             array(
                 'error' => false,
-                'employees' => $Employees->toArray()
+                'employees' => $Employees['data'],
+                'current_page' => $Employees['current_page'],
+                'total' => $Employees['total'],
+                'last_page' => $Employees['last_page'],
             ),
             200
         );
