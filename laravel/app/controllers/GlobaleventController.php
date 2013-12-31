@@ -10,8 +10,7 @@ class GlobaleventController extends \BaseController {
     public function index(){
 
         try {
-            $Globalevents = Globalevent::limit(20)
-                                       ->paginate(20);
+            $Globalevents = Globalevent::paginate(20);
 
             return Response::json(
                 array(
