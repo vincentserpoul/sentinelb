@@ -9,15 +9,26 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
      */
     public function index(){
 
-        $GlobaleventPeriodEmployees = GlobaleventPeriodEmployee::get();
+        try {
+            $GlobaleventPeriodEmployees = GlobaleventPeriodEmployee::get();
 
-        return Response::json(
-            array(
-                'error' => false,
-                'GlobaleventPeriodEmployees' => $GlobaleventPeriodEmployees->toArray()
-            ),
-            200
-        );
+            return Response::json(
+                array(
+                    'error' => false,
+                    'GlobaleventPeriodEmployees' => $GlobaleventPeriodEmployees->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'GlobaleventPeriodEmployees cannot be returned. ' . $e->getMessage(),
+                    'action' => 'get'
+                ),
+                500
+            );
+        }
     }
 
     /**
