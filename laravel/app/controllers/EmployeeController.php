@@ -582,7 +582,8 @@ class EmployeeController extends \BaseController {
         $searchCriterias = $this->filterAllowedSearchCriterias($listFilterParams);
 
         /* Init employees list */
-        $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'));
+        $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))
+                        ->select(DB::raw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) AS age'), 'employee.*');
 
         /* We get the ids for each of the criterias */
         foreach($searchCriterias as $searchCriteria => $searchValues){
