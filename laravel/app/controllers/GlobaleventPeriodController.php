@@ -10,12 +10,17 @@ class GlobaleventPeriodController extends \BaseController {
     public function index(){
 
         try {
-            $GlobaleventPeriods = GlobaleventPeriod::with(array('globalevent', 'eventperiodemployee'))->get();
+            $GlobaleventPeriods = GlobaleventPeriod::with(array('globalevent', 'eventperiodemployee'))
+                                                    ->paginate(10)
+                                                    ->toArray();
 
             return Response::json(
                 array(
                     'error' => false,
-                    'GlobaleventPeriods' => $GlobaleventPeriods->toArray()
+                    'GlobaleventPeriods' => $GlobaleventPeriods['data'],
+                    'current_page' => $GlobaleventPeriods['current_page'],
+                    'last_page' => $GlobaleventPeriods['last_page'],
+                    'total' => $GlobaleventPeriods['total']
                 ),
                 200
             );
@@ -53,6 +58,8 @@ class GlobaleventPeriodController extends \BaseController {
                 throw new Exception("Number of employees needed must be greater than 0", 1);
                 
             $GlobaleventPeriod->save();
+
+            $GlobaleventPeriod['number_of_employees_assigned'] = 0;
 
             return Response::json(
                 array(

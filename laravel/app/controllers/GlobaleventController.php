@@ -10,12 +10,21 @@ class GlobaleventController extends \BaseController {
     public function index(){
 
         try {
-            $Globalevents = Globalevent::paginate(20);
+            $Globalevents = Globalevent::orderBy('date', 'desc')
+                                        ->paginate(20);
+
+            foreach ($Globalevents as $Globalevent)
+                $this->set_labels($Globalevent);
+
+            $Globalevents = $Globalevents->toArray();
 
             return Response::json(
                 array(
                     'error' => false,
-                    'Globalevents' => $Globalevents->toArray()
+                    'Globalevents' => $Globalevents['data'],
+                    'current_page' => $Globalevents['current_page'],
+                    'last_page' => $Globalevents['last_page'],
+                    'total' => $Globalevents['total']
                 ),
                 200
             );
@@ -24,6 +33,46 @@ class GlobaleventController extends \BaseController {
                 array(
                     'error' => true,
                     'message' => "Events cannot be returned"
+                ),
+                500
+            );
+        }    
+    }
+
+    private function set_labels ($Globalevent) {
+        $Globalevent['employer_name'] = Employer::find($Globalevent['employer_id'])->name;
+        $Globalevent['employer_department_label'] = EmployerDepartment::find($Globalevent['employer_department_id'])->label;
+    }
+
+    public function globalevent_periods ($globalevent_id) {
+
+        try {
+            $GlobaleventPeriods = GlobaleventPeriod::where('globalevent_id', '=', $globalevent_id)
+                                                    ->paginate(10);
+
+            foreach ($GlobaleventPeriods as $GlobaleventPeriod) {
+                $GlobaleventPeriod['number_of_employees_assigned'] = GlobaleventPeriodEmployee::where('globalevent_period_id', '=', $GlobaleventPeriod->id)
+                                                                                               ->count();
+            }
+
+            $GlobaleventPeriods = $GlobaleventPeriods->toArray();
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'GlobaleventPeriods' => $GlobaleventPeriods['data'],
+                    'current_page' => $GlobaleventPeriods['current_page'],
+                    'last_page' => $GlobaleventPeriods['last_page'],
+                    'total' => $GlobaleventPeriods['total']
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Event period cannot be returned. ' . $e->getMessage(),
+                    'action' => 'get'
                 ),
                 500
             );
@@ -45,6 +94,9 @@ class GlobaleventController extends \BaseController {
             $Globalevent->date = Request::json('date');
 
             $Globalevent->save();
+
+            // set labels for new event
+            $this->set_labels($Globalevent);
 
             return Response::json(
                 array(

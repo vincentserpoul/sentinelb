@@ -86,6 +86,8 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth'), function()
     Route::options('globalevent', function(){return null;});
     Route::options('globalevent/{id}', function(){return null;});
     Route::resource('globalevent', 'GlobaleventController');
+    Route::options('globalevent/globalevent_periods/{globalevent_id}', function(){return null;});
+    Route::get('globalevent/globalevent_periods/{globalevent_id}', 'GlobaleventController@globalevent_periods');
 
     // EventPeriod
     Route::options('globalevent_period', function(){return null;});

@@ -487,12 +487,16 @@ class EmployeeController extends \BaseController {
                 ->where('globalevent_period.id', '=', $globalevent_period_id)
                 ->select('employee.*', 'globalevent_period_employee.id as globalevent_period_employee_id')
                 ->distinct()
-                ->get();
+                ->paginate(10)
+                ->toArray();
 
             return Response::json(
                 array(
                     'error' => false,
-                    'Employees' => $assigned_employees
+                    'Employees' => $assigned_employees['data'],
+                    'current_page' => $assigned_employees['current_page'],
+                    'last_page' => $assigned_employees['last_page'],
+                    'total' => $assigned_employees['total']
                 ),
                 200
             );
@@ -600,7 +604,7 @@ class EmployeeController extends \BaseController {
         //echo $Employees->toSql();die();
 
         $Employees = $Employees->limit(500)
-                        ->paginate(50)
+                        ->paginate(10)
                         ->toArray();
 
         return Response::json(
