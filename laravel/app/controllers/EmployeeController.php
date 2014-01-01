@@ -446,7 +446,7 @@ class EmployeeController extends \BaseController {
     public function all_possible_globalevent_period ($event_id) {
 
         //try {
-            $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))->get();
+            $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))->limit(10)->get();
             $possible_globalevent_periods = array();
             foreach ($Employees as $Employee) {
                 //var_dump($this->get_possible_globalevent_period($Employee['id'], $event_id));
@@ -541,14 +541,14 @@ class EmployeeController extends \BaseController {
                 DB::table('globalevent_period')
                 ->whereRaw($query)
                 ->where('globalevent_period.globalevent_id', '=', $event_id)
-                ->select('globalevent_period.id')
-                ->distinct()
+                ->select('globalevent_period.*')
+                ->distinct()    
                 ->get();
         else
             return $globaleventPeriods =
                 DB::table('globalevent_period')
                 ->whereRaw($query)
-                ->select('globalevent_period.id')
+                ->select('globalevent_period.*')
                 ->distinct()
                 ->get();
 
@@ -572,6 +572,10 @@ class EmployeeController extends \BaseController {
                 ),
                 200
             );
+        }
+
+        if (isset($listFilterParams['globalevent_id'])) {
+            $globalevent_id = (int)$listFilterParams['globalevent_id'];
         }
 
         /* We filter out the criterias that are not supposed to be there */
@@ -603,9 +607,17 @@ class EmployeeController extends \BaseController {
 
         //echo $Employees->toSql();die();
 
+        $num_per_page = (isset($globalevent_id)) ? 10 : 50;
+
         $Employees = $Employees->limit(500)
-                        ->paginate(10)
+                        ->paginate($num_per_page)
                         ->toArray();
+
+        if (isset($globalevent_id)) {
+            for ($i = 0; $i < count($Employees['data']); $i++) {
+                $Employees['data'][$i]['possible_globalevent_periods'] = $this->get_possible_globalevent_period($Employees['data'][$i]['id'], $globalevent_id);
+            }
+        }
 
         return Response::json(
             array(
