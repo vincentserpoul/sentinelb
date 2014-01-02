@@ -14,8 +14,8 @@ class GlobaleventController extends \BaseController {
                                         ->paginate(20);
 
             foreach ($Globalevents as $Globalevent)
-                $this->set_labels($Globalevent);
-
+                $this->set_labels($Globalevent);    
+            
             $Globalevents = $Globalevents->toArray();
 
             return Response::json(

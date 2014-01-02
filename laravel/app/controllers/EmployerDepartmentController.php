@@ -9,28 +9,31 @@ class EmployerDepartmentController extends \BaseController {
      */
     public function index(){
 
-        try {
+        //try {
             $employer_id = Request::input('employer_id');        
 
             if($employer_id) $EmployerDepartments = $this->getDepartments($employer_id);
-            else $EmployerDepartments = EmployerDepartment::get();    
+            else $EmployerDepartments = EmployerDepartment::paginate(20)->toArray();   
 
             return Response::json(
                 array(
                     'error' => false,
-                    'EmployerDepartments' => $employer_id ? $EmployerDepartments : $EmployerDepartments->toArray()
+                    'EmployerDepartments' => $EmployerDepartments['data'],
+                    'current_page' => $EmployerDepartments['current_page'],
+                    'last_page' => $EmployerDepartments['last_page'],
+                    'total' => $EmployerDepartments['total']
                 ),
                 200
             );
-        } catch (Exception $e) {
+        /*} catch (Exception $e) {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => "departments cannot be returned"
+                    'message' => "departments cannot be returned. " . $e->getMessage()
                 ),
                 500
             );
-        }
+        }*/
     }
 
     /**
@@ -187,38 +190,28 @@ class EmployerDepartmentController extends \BaseController {
     private function getDepartments($employer_id){
         $rootDepartments = EmployerDepartment::where('employer_id', $employer_id)
                                             ->where('parent_id', null)
-                                            ->get();              
-        $departments = array();                                                                                                                                         
-        $rootDepartments = $this->getAttributes($rootDepartments);        
-        foreach($rootDepartments as $rootDepartment){            
-            $rootDepartment['children'] = $this->getDepartmentChildren($rootDepartment['id'], $employer_id);
-            $departments[] = $rootDepartment;
+                                            ->paginate(20)
+                                            ->toArray(); 
+        // set pagination info for departments                   
+        for ($i = 0; $i < count($rootDepartments['data']); $i++){            
+            $rootDepartments['data'][$i]['children'] = $this->getDepartmentChildren($rootDepartments['data'][$i]['id'], $employer_id);
         } 
-        return $departments;
+
+        return $rootDepartments;
     }
 
     private function getDepartmentChildren($parent_id, $employer_id){
         $departments = EmployerDepartment::where('employer_id', $employer_id)
                                          ->where('parent_id', $parent_id)
-                                         ->get();          
-        $departments = $this->getAttributes($departments);                                         
+                                         ->get()
+                                         ->toArray();     
+
         if(!count($departments)) 
             return null;
-        else { 
-            $return_departments = array();        
-            foreach($departments as $department){
-                $department['children'] = $this->getDepartmentChildren($department['id'], $employer_id);                                  
-                $return_departments[] = $department;
-            }      
-            return $return_departments;
-        }
-    }
-
-    private function getAttributes($array){
-        $attributes_array = array();
-        foreach($array as $item){
-            array_push($attributes_array, $item['attributes']);
-        }
-        return $attributes_array;
+        
+        for ($i = 0; $i < count($departments); $i++){
+            $departments[$i]['children'] = $this->getDepartmentChildren($departments[$i]['id'], $employer_id);
+        }      
+        return $departments;
     }
 }

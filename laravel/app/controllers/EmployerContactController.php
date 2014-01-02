@@ -25,13 +25,16 @@ class EmployerContactController extends \BaseController {
     public function index(){
         $employer_id = Request::input('employer_id');
 
-        if($employer_id) $EmployerContacts = EmployerContact::where('employer_id', $employer_id)->get();
-        else $EmployerContacts = EmployerContact::get();
+        if($employer_id) $EmployerContacts = EmployerContact::where('employer_id', $employer_id)->paginate(10)->toArray();
+        else $EmployerContacts = EmployerContact::paginate(10)->toArray();
 
         return Response::json(
             array(
                 'error' => false,
-                'EmployerContacts' => $EmployerContacts->toArray()
+                'EmployerContacts' => $EmployerContacts['data'],
+                'current_page' => $EmployerContacts['current_page'],
+                'last_page' => $EmployerContacts['last_page'],
+                'total' => $EmployerContacts['total']
             ),
             200
         );
