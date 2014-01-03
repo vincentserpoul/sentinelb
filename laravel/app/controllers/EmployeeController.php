@@ -173,169 +173,180 @@ class EmployeeController extends \BaseController {
      */
     public function update($id){
 
-        $Employee = Employee::find($id);
+        try {
 
-        if ( Request::json('title_id') ){
-            $Employee->title_id = Request::json('title_id');
-        }
+            $Employee = Employee::find($id);
 
-        if ( Request::json('first_name') ){
-            $Employee->first_name = Request::json('first_name');
-        }
-
-        if ( Request::json('last_name') ){
-            $Employee->last_name = Request::json('last_name');
-        }
-
-        if ( Request::json('sex_id') ){
-            $Employee->sex_id = Request::json('sex_id');
-        }
-
-        if ( Request::json('country_code') ){
-            $Employee->country_code = Request::json('country_code');
-        }
-
-        if ( Request::json('date_of_birth') ){
-            $Employee->date_of_birth = Request::json('date_of_birth');
-        }
-
-        if ( Request::json('mobile_phone_number') ){
-            $Employee->mobile_phone_number = Request::json('mobile_phone_number');
-        }
-
-        if ( Request::json('school') ){
-            $Employee->school = Request::json('school');
-        }
-
-        if ( Request::json('join_date') ){
-            $Employee->join_date = Request::json('join_date');
-        }
-
-        if ( Request::json('race_id') ){
-            $Employee->race_id = Request::json('race_id');
-        }
-
-        if ( Request::json('status_id') ){
-            $Employee->status_id = Request::json('status_id');
-        }
-
-        if ( Request::json('work_pass_type_id') ){
-            $Employee->work_pass_type_id = Request::json('work_pass_type_id');
-        }
-
-        $Employee->id = $id;
-
-        /*****************/
-        /* Employee docs */
-        /*****************/
-        $newEmployeeDocs = Request::json('employee_doc');
-
-        if(!is_null($newEmployeeDocs)){
-            /* List of ids that we will keep in the docs */
-            $employeeDocIdTokeep = array_column($newEmployeeDocs, 'id');
-
-            /*
-             * Delete all doc ids that are not given in the employee json
-             * We could do a simple delete in Db, but in order to trigger the event 'deleted'
-             * We need to loop through the objects
-             */
-            $employeeDocToDelete = EmployeeDoc::where('employee_doc.employee_id', '=', $id);
-            if(!empty($employeeDocIdTokeep)){
-                $employeeDocToDelete->whereNotIn('id', $employeeDocIdTokeep);
-            }
-            $employeeDocDeleteList = $employeeDocToDelete->get();
-
-            foreach($employeeDocDeleteList as $employeeDoc){
-                $employeeDoc->delete();
+            if ( Request::json('title_id') ){
+                $Employee->title_id = Request::json('title_id');
             }
 
-            /* Create the new Docs */
-            foreach($newEmployeeDocs as $index=>$newEmployeeDoc){
-                /* if there is no ID, it means it is a new Doc */
-                if(!array_key_exists('id', $newEmployeeDoc)){
-                    $employeeDoc = new EmployeeDoc;
-                    $employeeDoc->employee_id = $id;
-                    $employeeDoc->doc_type_id = $newEmployeeDoc['doc_type_id'];
-                    $employeeDoc->save();
-                    $newEmployeeDocs[$index]['id'] = $employeeDoc->id;
+            if ( Request::json('first_name') ){
+                $Employee->first_name = Request::json('first_name');
+            }
 
-                    /* if there is an uploaded image */
-                    if(array_key_exists('doc_image', $newEmployeeDoc)){
-                        $employeeDoc->saveImage($newEmployeeDoc['doc_image']);
-                        /* replace the url data so that the response is not long */
-                        unset($newEmployeeDocs[$index]['doc_image']);
+            if ( Request::json('last_name') ){
+                $Employee->last_name = Request::json('last_name');
+            }
+
+            if ( Request::json('sex_id') ){
+                $Employee->sex_id = Request::json('sex_id');
+            }
+
+            if ( Request::json('country_code') ){
+                $Employee->country_code = Request::json('country_code');
+            }
+
+            if ( Request::json('date_of_birth') ){
+                $Employee->date_of_birth = Request::json('date_of_birth');
+            }
+
+            if ( Request::json('mobile_phone_number') ){
+                $Employee->mobile_phone_number = Request::json('mobile_phone_number');
+            }
+
+            if ( Request::json('school') ){
+                $Employee->school = Request::json('school');
+            }
+
+            if ( Request::json('join_date') ){
+                $Employee->join_date = Request::json('join_date');
+            }
+
+            if ( Request::json('race_id') ){
+                $Employee->race_id = Request::json('race_id');
+            }
+
+            if ( Request::json('status_id') ){
+                $Employee->status_id = Request::json('status_id');
+            }
+
+            if ( Request::json('work_pass_type_id') ){
+                $Employee->work_pass_type_id = Request::json('work_pass_type_id');
+            }
+
+            $Employee->id = $id;
+
+            /*****************/
+            /* Employee docs */
+            /*****************/
+            $newEmployeeDocs = Request::json('employee_doc');
+
+            if(!is_null($newEmployeeDocs)){
+                /* List of ids that we will keep in the docs */
+                $employeeDocIdTokeep = array_column($newEmployeeDocs, 'id');
+
+                /*
+                 * Delete all doc ids that are not given in the employee json
+                 * We could do a simple delete in Db, but in order to trigger the event 'deleted'
+                 * We need to loop through the objects
+                 */
+                $employeeDocToDelete = EmployeeDoc::where('employee_doc.employee_id', '=', $id);
+                if(!empty($employeeDocIdTokeep)){
+                    $employeeDocToDelete->whereNotIn('id', $employeeDocIdTokeep);
+                }
+                $employeeDocDeleteList = $employeeDocToDelete->get();
+
+                foreach($employeeDocDeleteList as $employeeDoc){
+                    $employeeDoc->delete();
+                }
+
+                /* Create the new Docs */
+                foreach($newEmployeeDocs as $index=>$newEmployeeDoc){
+                    /* if there is no ID, it means it is a new Doc */
+                    if(!array_key_exists('id', $newEmployeeDoc)){
+                        $employeeDoc = new EmployeeDoc;
+                        $employeeDoc->employee_id = $id;
+                        $employeeDoc->doc_type_id = $newEmployeeDoc['doc_type_id'];
+                        $employeeDoc->save();
+                        $newEmployeeDocs[$index]['id'] = $employeeDoc->id;
+
+                        /* if there is an uploaded image */
+                        if(array_key_exists('doc_image', $newEmployeeDoc)){
+                            $employeeDoc->saveImage($newEmployeeDoc['doc_image']);
+                            /* replace the url data so that the response is not long */
+                            unset($newEmployeeDocs[$index]['doc_image']);
+                        }
                     }
                 }
             }
-        }
 
-        /**************************/
-        /* Employee Identity docs */
-        /**************************/
-        $newEmployeeIdentityDocs = Request::json('employee_identity_doc');
+            /**************************/
+            /* Employee Identity docs */
+            /**************************/
+            $newEmployeeIdentityDocs = Request::json('employee_identity_doc');
 
-        if(!is_null($newEmployeeIdentityDocs)){
-            /* List of ids that we will keep in the docs */
-            $employeeIdentityDocIdTokeep = array_column($newEmployeeIdentityDocs, 'id');
+            if(!is_null($newEmployeeIdentityDocs)){
+                /* List of ids that we will keep in the docs */
+                $employeeIdentityDocIdTokeep = array_column($newEmployeeIdentityDocs, 'id');
 
-            /*
-             * Delete all doc ids that are not given in the employee json
-             * We could do a simple delete in Db, but in order to trigger the event 'deleted'
-             * We need to loop through the objects
-             */
-            $employeeIdentityDocToDelete = EmployeeIdentityDoc::where('employee_identity_doc.employee_id', '=', $id);
-            if(!empty($employeeIdentityDocIdTokeep)){
-                $employeeIdentityDocToDelete->whereNotIn('id', $employeeIdentityDocIdTokeep);
-            }
-            $employeeIdentityDocToDeleteList = $employeeIdentityDocToDelete->get();
+                /*
+                 * Delete all doc ids that are not given in the employee json
+                 * We could do a simple delete in Db, but in order to trigger the event 'deleted'
+                 * We need to loop through the objects
+                 */
+                $employeeIdentityDocToDelete = EmployeeIdentityDoc::where('employee_identity_doc.employee_id', '=', $id);
+                if(!empty($employeeIdentityDocIdTokeep)){
+                    $employeeIdentityDocToDelete->whereNotIn('id', $employeeIdentityDocIdTokeep);
+                }
+                $employeeIdentityDocToDeleteList = $employeeIdentityDocToDelete->get();
 
-            foreach($employeeIdentityDocToDeleteList as $employeeIdentityDoc){
-                $employeeIdentityDoc->delete();
-            }
+                foreach($employeeIdentityDocToDeleteList as $employeeIdentityDoc){
+                    $employeeIdentityDoc->delete();
+                }
 
-            /* Create the new Docs */
-            foreach($newEmployeeIdentityDocs as $index=>$newEmployeeIdentityDoc){
-                /* if there is no ID, it means it is a new Doc */
-                if(!array_key_exists('id', $newEmployeeIdentityDoc)){
-                    $employeeIdentityDoc = new EmployeeIdentityDoc;
-                    $employeeIdentityDoc->employee_id = $id;
-                    $employeeIdentityDoc->identity_doc_type_id = $newEmployeeIdentityDoc['identity_doc_type_id'];
-                    $employeeIdentityDoc->identity_doc_number = $newEmployeeIdentityDoc['identity_doc_number'];
-                    $employeeIdentityDoc->identity_doc_validity_start = $newEmployeeIdentityDoc['identity_doc_validity_start'];
-                    $employeeIdentityDoc->identity_doc_validity_end = $newEmployeeIdentityDoc['identity_doc_validity_end'];
-                    $employeeIdentityDoc->save();
-                    $newEmployeeIdentityDocs[$index]['id'] = $employeeIdentityDoc->id;
+                /* Create the new Docs */
+                foreach($newEmployeeIdentityDocs as $index=>$newEmployeeIdentityDoc){
+                    /* if there is no ID, it means it is a new Doc */
+                    if(!array_key_exists('id', $newEmployeeIdentityDoc)){
+                        $employeeIdentityDoc = new EmployeeIdentityDoc;
+                        $employeeIdentityDoc->employee_id = $id;
+                        $employeeIdentityDoc->identity_doc_type_id = $newEmployeeIdentityDoc['identity_doc_type_id'];
+                        $employeeIdentityDoc->identity_doc_number = $newEmployeeIdentityDoc['identity_doc_number'];
+                        $employeeIdentityDoc->identity_doc_validity_start = $newEmployeeIdentityDoc['identity_doc_validity_start'];
+                        $employeeIdentityDoc->identity_doc_validity_end = $newEmployeeIdentityDoc['identity_doc_validity_end'];
+                        $employeeIdentityDoc->save();
+                        $newEmployeeIdentityDocs[$index]['id'] = $employeeIdentityDoc->id;
 
-                    /* if there is an uploaded image */
-                    if(array_key_exists('doc_image', $newEmployeeIdentityDoc)){
-                        $employeeIdentityDoc->saveImage($newEmployeeIdentityDoc['doc_image']);
-                        /* replace the url data so that the response is not long */
-                        $newEmployeeIdentityDoc[$index]['image_name'] = $employeeIdentityDoc->image_name;
-                        unset($newEmployeeIdentityDoc[$index]['doc_image']);
+                        /* if there is an uploaded image */
+                        if(array_key_exists('doc_image', $newEmployeeIdentityDoc)){
+                            $employeeIdentityDoc->saveImage($newEmployeeIdentityDoc['doc_image']);
+                            /* replace the url data so that the response is not long */
+                            $newEmployeeIdentityDoc[$index]['image_name'] = $employeeIdentityDoc->image_name;
+                            unset($newEmployeeIdentityDoc[$index]['doc_image']);
+                        }
                     }
                 }
             }
+
+
+
+            $Employee->save();
+
+            /* updates employee with the new data for identity docs */
+            $Employee['employee_identity_doc'] = $newEmployeeIdentityDocs;
+
+            /* updates employee with the new data */
+            $Employee['employee_doc'] = $newEmployeeDocs;
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Employee updated',
+                    'action' => 'update',
+                    'employee' => $Employee->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => 'Employee cannot be updated. ' . $e->getMessage()
+                ),
+                500
+            );
         }
-
-
-
-        $Employee->save();
-
-        /* updates employee with the new data for identity docs */
-        $Employee['employee_identity_doc'] = $newEmployeeIdentityDocs;
-
-        /* updates employee with the new data */
-        $Employee['employee_doc'] = $newEmployeeDocs;
-
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Employee updated',
-                'action' => 'update',
-                'employee' => $Employee->toArray()
-            ),
-            200
-        );
     }
 
     /**

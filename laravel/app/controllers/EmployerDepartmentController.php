@@ -50,10 +50,10 @@ class EmployerDepartmentController extends \BaseController {
             $EmployerDepartment->label = Request::json('label');
             $EmployerDepartment->description = Request::json('description');
             $EmployerDepartment->work_type_id = Request::json('work_type_id');
-            $EmployerDepartment->employee_hourly_rate = Request::json('employee_hourly_rate');
-            $EmployerDepartment->employee_hourly_rate_currency_code = Request::json('employee_hourly_rate_currency_code');
-            $EmployerDepartment->employer_hourly_rate = Request::json('employer_hourly_rate');
-            $EmployerDepartment->employer_hourly_rate_currency_code = Request::json('employer_hourly_rate_currency_code');
+            $EmployerDepartment->employee_h_rate = Request::json('employee_h_rate');
+            $EmployerDepartment->employee_h_rate_currency_code = Request::json('employee_h_rate_currency_code');
+            $EmployerDepartment->employer_h_rate = Request::json('employer_h_rate');
+            $EmployerDepartment->employer_h_rate_currency_code = Request::json('employer_h_rate_currency_code');
             $EmployerDepartment->parent_id = Request::json('parent_id');
          
             $EmployerDepartment->save();
@@ -65,7 +65,7 @@ class EmployerDepartmentController extends \BaseController {
                     'error' => false,
                     'message' => 'Department created',
                     'action' => 'insert',
-                    'EmployerDepartments' => $EmployerDepartments
+                    'EmployerDepartments' => $EmployerDepartments['data']
                 ),
                 200
             );
@@ -73,7 +73,7 @@ class EmployerDepartmentController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => "Employers cannot be created",
+                    'message' => "Employers cannot be created. " . $e->getMessage(),
                     'action' => "create"
                 ),
                 500
@@ -108,24 +108,24 @@ class EmployerDepartmentController extends \BaseController {
                 $EmployerDepartment->work_type_id = Request::json('work_type_id');
             }
 
-            if ( Request::json('employee_hourly_rate') ){
-                $EmployerDepartment->employee_hourly_rate = Request::json('employee_hourly_rate');
+            if ( Request::json('employee_h_rate') ){
+                $EmployerDepartment->employee_h_rate = Request::json('employee_h_rate');
             }
 
-            if ( Request::json('employee_hourly_rate_currency_code') ){
-                $EmployerDepartment->employee_hourly_rate_currency_code = Request::json('employee_hourly_rate_currency_code');
+            if ( Request::json('employee_h_rate_currency_code') ){
+                $EmployerDepartment->employee_h_rate_currency_code = Request::json('employee_h_rate_currency_code');
             }
 
-            if ( Request::json('employer_hourly_rate') ){
-                $EmployerDepartment->employer_hourly_rate = Request::json('employer_hourly_rate');
+            if ( Request::json('employer_h_rate') ){
+                $EmployerDepartment->employer_h_rate = Request::json('employer_h_rate');
             }
 
-            if ( Request::json('employer_hourly_rate_currency_code') ){
-                $EmployerDepartment->employer_hourly_rate_currency_code = Request::json('employer_hourly_rate_currency_code');
+            if ( Request::json('employer_h_rate_currency_code') ){
+                $EmployerDepartment->employer_h_rate_currency_code = Request::json('employer_h_rate_currency_code');
             }
 
             if ( Request::json('parent_id') ){
-                $EmployerDepartment->employer_hourly_rate = Request::json('parent_id');
+                $EmployerDepartment->employer_h_rate = Request::json('parent_id');
             }
 
             $EmployerDepartment->id = $id;
@@ -139,7 +139,7 @@ class EmployerDepartmentController extends \BaseController {
                     'error' => false,
                     'message' => 'EmployerDepartment updated', 
                     'action' => 'update', 
-                    'EmployerDepartments' => $EmployerDepartments
+                    'EmployerDepartments' => $EmployerDepartments['data']
                 ),
                 200
             );
