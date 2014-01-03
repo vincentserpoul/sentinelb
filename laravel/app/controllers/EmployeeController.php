@@ -378,6 +378,7 @@ class EmployeeController extends \BaseController {
                                 ->leftjoin('period_employee_payment', 'globalevent_period_employee.id', '=', 'period_employee_payment.globalevent_period_employee_id')
                                 ->leftjoin('payment', 'period_employee_payment.payment_id', '=', 'payment.id')
                                 ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'payment.id as payment_id')
+                                ->limit(10)
                                 ->orderBy('globalevent_period.end_datetime', 'desc')
                                 ->get();
 
@@ -542,7 +543,7 @@ class EmployeeController extends \BaseController {
                 ->whereRaw($query)
                 ->where('globalevent_period.globalevent_id', '=', $event_id)
                 ->select('globalevent_period.*')
-                ->distinct()    
+                ->distinct()
                 ->get();
         else
             return $globaleventPeriods =
@@ -582,8 +583,10 @@ class EmployeeController extends \BaseController {
         $searchCriterias = $this->filterAllowedSearchCriterias($listFilterParams);
 
         /* Init employees list */
-        $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))
-                        ->select(DB::raw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) AS age'), 'employee.*');
+        $Employees = new Employee;
+        $Employees = $Employees
+                        ->select(DB::raw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) AS age'), 'employee.id', 'employee.first_name', 'employee.last_name', DB::raw('title.label as title_label'))
+                        ->join('title', 'employee.title_id', '=', 'title.id');
 
         /* We get the ids for each of the criterias */
         foreach($searchCriterias as $searchCriteria => $searchValues){
@@ -608,13 +611,11 @@ class EmployeeController extends \BaseController {
 
         //echo $Employees->toSql();die();
 
-        $num_per_page = (isset($globalevent_id)) ? 10 : 50;
-
-        $Employees = $Employees->limit(500)
-                        ->paginate($num_per_page)
+        $Employees = $Employees
+                        ->paginate(10)
                         ->toArray();
 
-        if (isset($globalevent_id)) {
+       if (isset($globalevent_id)) {
             for ($i = 0; $i < count($Employees['data']); $i++) {
                 $Employees['data'][$i]['possible_globalevent_periods'] = $this->get_possible_globalevent_period($Employees['data'][$i]['id'], $globalevent_id);
             }
