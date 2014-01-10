@@ -65,7 +65,7 @@ class GlobaleventPeriodController extends \BaseController {
                 array(
                     'error' => false,
                     'message' => 'Event Period successfully created',
-                    'GlobaleventPeriod' => $GlobaleventPeriod->toArray()
+                    'eventPeriod' => $GlobaleventPeriod->toArray()
                 ),
                 200
             );
@@ -96,12 +96,12 @@ class GlobaleventPeriodController extends \BaseController {
                 $GlobaleventPeriod->globalevent_id = Request::json('globalevent_id');
             }
 
-            if ( Request::json('start_datetime') ){
-                $GlobaleventPeriod->start_datetime = new DateTime(Request::json('start_datetime'));
+            if ( new DateTime(Request::json('start_datetime')) ){
+                $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
             }
 
-            if ( Request::json('end_datetime') ){
-                $GlobaleventPeriod->end_datetime = new DateTime(Request::json('end_datetime'));
+            if ( new DateTime(Request::json('end_datetime')) ){
+                $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
             }
 
             if ( Request::json('number_of_employee_needed') ){
@@ -122,7 +122,7 @@ class GlobaleventPeriodController extends \BaseController {
                 array(
                     'error' => false,
                     'message' => 'Global event period updated',
-                    'globalevent_period' => $GlobaleventPeriod->toArray()
+                    'eventPeriod' => $GlobaleventPeriod->toArray()
                 ),
                 200
             );

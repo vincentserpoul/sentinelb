@@ -102,7 +102,7 @@ class GlobaleventController extends \BaseController {
                 array(
                     'error' => false,
                     'message' => 'Event successfully created',
-                    'Globalevent' => $Globalevent->toArray()
+                    'event' => $Globalevent->toArray()
                 ),
                 200
             );
@@ -148,10 +148,13 @@ class GlobaleventController extends \BaseController {
 
             $Globalevent->save();
 
+            $this->set_labels($Globalevent);
+
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Event updated'
+                    'message' => 'Event updated',
+                    'event' => $Globalevent->toArray()
                 ),
                 200
             );
@@ -159,7 +162,7 @@ class GlobaleventController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => "Event cannot be updated"
+                    'message' => "Event cannot be updated. " . $e->getMessage()
                 ),
                 500
             );
