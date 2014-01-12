@@ -141,7 +141,8 @@ class EmployeeController extends \BaseController {
     public function show($id){
 
         // Make sure current user owns the requested resource
-        $Employee = Employee::where('id', $id)
+        $Employee = Employee::with(array('employee_identity_doc', 'employee_doc'))
+                ->where('id', $id)
                 ->take(1)
                 ->get();
 
@@ -596,8 +597,16 @@ class EmployeeController extends \BaseController {
         /* Init employees list */
         $Employees = new Employee;
         $Employees = $Employees
-                        ->select(DB::raw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) AS age'), 'employee.id', 'employee.first_name', 'employee.last_name', DB::raw('title.label as title_label'))
-                        ->join('title', 'employee.title_id', '=', 'title.id');
+                        ->select(DB::raw('title.label as title_label')
+                                , 'employee.id'
+                                , 'employee.first_name'
+                                , 'employee.last_name'
+                                , DB::raw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) AS age')
+                                , DB::raw('GROUP_CONCAT(employee_identity_doc.identity_doc_number) AS identity_doc_number')
+                            )
+                        ->join('title', 'employee.title_id', '=', 'title.id')
+                        ->join('employee_identity_doc', 'employee.id', '=', 'employee_identity_doc.employee_id')
+                        ->groupBy('employee.date_of_birth', 'employee.id', 'employee.first_name', 'employee.last_name', 'title.label' );
 
         /* We get the ids for each of the criterias */
         foreach($searchCriterias as $searchCriteria => $searchValues){
