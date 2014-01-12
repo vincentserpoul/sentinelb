@@ -9,22 +9,27 @@ class EmployeeController extends \BaseController {
      */
     public function index(){
 
-        $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))
-                        ->limit(500)
-                        ->paginate(20)
+        $Employees = new Employee;
+
+        $EmployeesList = $Employees->listWithDetails()
+                        ->limit(100)
+                        ->paginate(10)
                         ->toArray();
 
+$globaleventPeriods = Globalevent::find(1)->employeeConflictBuilder();
+var_dump($globaleventPeriods);
         return Response::json(
             array(
                 'error' => false,
-                'employees' => $Employees['data'],
-                'current_page' => $Employees['current_page'],
-                'total' => $Employees['total'],
-                'last_page' => $Employees['last_page'],
+                'employees' => $EmployeesList['data'],
+                'current_page' => $EmployeesList['current_page'],
+                'total' => $EmployeesList['total'],
+                'last_page' => $EmployeesList['last_page'],
             ),
             200
         );
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -429,143 +434,33 @@ class EmployeeController extends \BaseController {
         );
     }
 
-    /**
-     * Retrieve The list of employee possible assignments.
-     *
-     * @param  int  $employee_id, $event_id
-     * @return Response
-     */
-    public function possible_globalevent_period ($employee_id, $event_id) {
+    public function assigned_employees($globalevent_period_id) {
 
-        try {
-            return Response::json(
-                array(
-                    'error' => false,
-                    'globalevent_periods' => $this->get_possible_globalevent_period($employee_id, $event_id)
-                ),
-                200
-            );
-        } catch (Exception $e) {
-            return Response::json(
-                array(
-                    'error' => true,
-                    'message' => $e->getMessage()
-                ),
-                500
-            );
-        }
+        /* Init employee model */
+        $Employees = new Employee;
+
+        /* Get usual employee list details */
+        $EmployeesList = $Employees->listWithDetails();
+
+        /* filter with globalevent_period */
+        $EmployeesList->join('globalevent_period_employee AS gpe', 'gpe.employee_id', '=', 'employee.id')
+                        ->where('gpe.globalevent_period_id', '=', $globalevent_period_id);
+
+        $EmployeesList = $EmployeesList->limit(500)->paginate(10)
+                                        ->toArray();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'employees' => $EmployeesList['data'],
+                'current_page' => $EmployeesList['current_page'],
+                'total' => $EmployeesList['total'],
+                'last_page' => $EmployeesList['last_page'],
+            ),
+            200
+        );
     }
 
-    public function all_possible_globalevent_period ($event_id) {
-
-        //try {
-            $Employees = Employee::with(array('employee_identity_doc', 'employee_doc'))->limit(10)->get();
-            $possible_globalevent_periods = array();
-            foreach ($Employees as $Employee) {
-                //var_dump($this->get_possible_globalevent_period($Employee['id'], $event_id));
-                $employee_possible_globalevent_periods = $this->get_possible_globalevent_period($Employee['id'], $event_id);
-                foreach ($employee_possible_globalevent_periods as $employee_possible_globalevent_period) {
-                    $possible_globalevent_periods[] = array(
-                        'globalevent_period_id' => $employee_possible_globalevent_period->id,
-                        'employee_id' => $Employee['id']
-                    );
-                }
-            }
-            return Response::json(
-                array(
-                    'error' => false,
-                    'possible_globalevent_periods' => $possible_globalevent_periods
-                ),
-                200
-            );
-            /*
-        } catch (Exception $e) {
-            return Response::json(
-                array(
-                    'error' => true,
-                    'message' => $e->getMessage()
-                ),
-                500
-            );
-        }*/
-    }
-
-    public function assigned_employees ($globalevent_period_id) {
-
-        try {
-            $assigned_employees =
-                DB::table('employee')
-                ->join('globalevent_period_employee', 'globalevent_period_employee.employee_id', '=', 'employee.id')
-                ->join('globalevent_period', 'globalevent_period_employee.globalevent_period_id', '=', 'globalevent_period.id')
-                ->where('globalevent_period.id', '=', $globalevent_period_id)
-                ->select('employee.*', 'globalevent_period_employee.id as globalevent_period_employee_id')
-                ->distinct()
-                ->paginate(10)
-                ->toArray();
-
-            return Response::json(
-                array(
-                    'error' => false,
-                    'Employees' => $assigned_employees['data'],
-                    'current_page' => $assigned_employees['current_page'],
-                    'last_page' => $assigned_employees['last_page'],
-                    'total' => $assigned_employees['total']
-                ),
-                200
-            );
-        } catch (Exception $e) {
-            return Response::json(
-                array(
-                    'error' => true,
-                    'message' => $e->getMessage()
-                ),
-                500
-            );
-        }
-    }
-
-    /**
-     * Retrieve The list of employee possible assignments.
-     *
-     * @param  int  $employee_id, $event_id
-     * @return Response
-     */
-    private function get_possible_globalevent_period ($employee_id, $event_id) {
-        $now = new Datetime();
-
-        $assginedGlobaleventPeriodQuery =
-            'SELECT DISTINCT globalevent_period.* ' .
-            'FROM globalevent_period WHERE id IN ( ' .
-                'SELECT globalevent_period_employee.globalevent_period_id ' .
-                'FROM globalevent_period_employee ' .
-                'WHERE globalevent_period_employee.employee_id = ' . $employee_id . ')';
-
-        $query =
-            'NOT EXISTS (SELECT * FROM (' .
-            $assginedGlobaleventPeriodQuery .
-            ') AS assgined_globalevent_period ' .
-            'WHERE globalevent_period.id = assgined_globalevent_period.id ' .
-                'OR (assgined_globalevent_period.start_datetime <= globalevent_period.end_datetime ' .
-                'AND globalevent_period.start_datetime <= assgined_globalevent_period.end_datetime))' .
-            'AND globalevent_period.end_datetime > \'' . $now->format('Y-m-d H:i:s') . '\'';
-
-        if ($event_id)
-            return $globaleventPeriods =
-                DB::table('globalevent_period')
-                ->whereRaw($query)
-                ->where('globalevent_period.globalevent_id', '=', $event_id)
-                ->select('globalevent_period.*')
-                ->distinct()
-                ->get();
-        else
-            return $globaleventPeriods =
-                DB::table('globalevent_period')
-                ->whereRaw($query)
-                ->select('globalevent_period.*')
-                ->distinct()
-                ->get();
-
-    }
 
     /**
      * Retrieve The list of employee according to a search
@@ -587,114 +482,44 @@ class EmployeeController extends \BaseController {
             );
         }
 
-        if (isset($listFilterParams['globalevent_id'])) {
-            $globalevent_id = (int)$listFilterParams['globalevent_id'];
-        }
-
-        /* We filter out the criterias that are not supposed to be there */
-        $searchCriterias = $this->filterAllowedSearchCriterias($listFilterParams);
-
-        /* Init employees list */
+        /* Init employee model */
         $Employees = new Employee;
-        $Employees = $Employees
-                        ->select(DB::raw('title.label as title_label')
-                                , 'employee.id'
-                                , 'employee.first_name'
-                                , 'employee.last_name'
-                                , DB::raw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) AS age')
-                                , DB::raw('GROUP_CONCAT(employee_identity_doc.identity_doc_number) AS identity_doc_number')
-                            )
-                        ->join('title', 'employee.title_id', '=', 'title.id')
-                        ->join('employee_identity_doc', 'employee.id', '=', 'employee_identity_doc.employee_id')
-                        ->groupBy('employee.date_of_birth', 'employee.id', 'employee.first_name', 'employee.last_name', 'title.label' );
 
-        /* We get the ids for each of the criterias */
-        foreach($searchCriterias as $searchCriteria => $searchValues){
+        /* Get usual employee list details */
+        $EmployeesList = $Employees->listWithDetails($listFilterParams);
 
-            /* if the searchValues is a list of ref ids to filter */
-            if(is_array($searchValues)){
-                $Employees->whereIn($searchCriteria.'_id', $searchValues);
-            } /* identity_doc */
-            elseif($searchCriteria == 'identity_doc_number' && !empty($searchValues) && is_string($searchValues)){
-                $Employees->whereRaw('exists (select 1 from employee_identity_doc where employee_identity_doc.employee_id = employee.id and employee_identity_doc.identity_doc_number like ?)', array('%'.$searchValues.'%'));
-            } /* age_min */
-            elseif($searchCriteria == 'age_min' && is_integer($searchValues)){
-                $Employees->whereRaw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) > ?', array($searchValues));
-            } /* age_max */
-            elseif($searchCriteria == 'age_max' && is_integer($searchValues)){
-                $Employees->whereRaw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) < ?', array($searchValues));
-            } /* if the values is not an integer, then it is a text comparison */
-            elseif(is_string($searchValues) && !is_integer($searchValues)){
-                $Employees->whereRaw($searchCriteria.' like ?', array('%'.strtolower($searchValues).'%'));
+        /* In case we want more details on the assignments for a specific event */
+        if (isset($listFilterParams['globalevent_id'])) {
+            /* get information on the specific assignment we are working on */
+            $conflictSelect = Globalevent::find($listFilterParams['globalevent_id'])->employeeConflictQueryBuilder();
+            foreach( $conflictSelect['select'] as $conflictEventPeriod){
+                 $EmployeesList->addSelect(DB::raw($conflictEventPeriod));
             }
+            $EmployeesList->leftjoin('globalevent_period_employee AS gpe ', 'employee.id', '=', 'gpe.employee_id')
+                            ->leftjoin('globalevent_period AS gp', function($join){
+                                                                        $join->on('gpe.globalevent_period_id', '=', 'gp.id')
+                                                                                ->on('gp.start_datetime', '>=', DB::Raw('now()'));
+                                                                                //->on('gp.start_datetime', '>=', $conflictSelect['mindatetime'])
+                                                                                //->on('gp.end_datetime', '<=', $conflictSelect['maxdatetime']);
+                                                                    }
+                            );
         }
 
-        //echo $Employees->toSql();die();
+        //echo $EmployeesList->toSql();die();
 
-        $Employees = $Employees
-                        ->paginate(10)
-                        ->toArray();
-
-       if (isset($globalevent_id)) {
-            for ($i = 0; $i < count($Employees['data']); $i++) {
-                $Employees['data'][$i]['possible_globalevent_periods'] = $this->get_possible_globalevent_period($Employees['data'][$i]['id'], $globalevent_id);
-            }
-        }
+        $EmployeesList = $EmployeesList->limit(500)->paginate(10)
+                                        ->toArray();
 
         return Response::json(
             array(
                 'error' => false,
-                'employees' => $Employees['data'],
-                'current_page' => $Employees['current_page'],
-                'total' => $Employees['total'],
-                'last_page' => $Employees['last_page'],
+                'employees' => $EmployeesList['data'],
+                'current_page' => $EmployeesList['current_page'],
+                'total' => $EmployeesList['total'],
+                'last_page' => $EmployeesList['last_page'],
             ),
             200
         );
-    }
-
-    /**
-     * Filters the list of search criterias
-     *
-     * @param  search criterias
-     * @return search criterias
-     */
-    protected function filterAllowedSearchCriterias($searchCriterias){
-        /* if parameter not an array */
-        if(!is_array($searchCriterias)){
-            return false;
-        }
-
-        /* List of searchable criterias */
-        $allowedCriterias = array(
-              'work_pass_type'=>null
-            , 'race'=>null
-            , 'sex'=>null
-            , 'age_min'=>null
-            , 'age_max'=>null
-            , 'identity_doc_number'=>null
-            , 'last_name'=>null
-        );
-
-        $newSearchCriteria = array();
-        /* First step, make sure the params are an associative array like that:
-         * array('sex'=>array(0, 1)), 'age_min' => 12);
-         */
-        foreach($searchCriterias as $key=>$value){
-            /* If it is an array and it contains the id we wanna search for, we need to push it inside a new array */
-            if(is_array($value)){
-                /* then we are in the case of a list of tuple returned by angular */
-                foreach($value as $tuple){
-                    if(array_key_exists('id', $tuple)){
-                        $newSearchCriterias[$key][] = $tuple['id'];
-                    }
-                }
-            } else {
-                $newSearchCriterias[$key] = $value;
-            }
-        }
-
-        return array_intersect_key($newSearchCriterias, $allowedCriterias);
     }
 
 }
