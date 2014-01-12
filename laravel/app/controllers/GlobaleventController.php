@@ -10,12 +10,12 @@ class GlobaleventController extends \BaseController {
     public function index(){
 
         try {
-            $Globalevents = Globalevent::orderBy('date', 'desc')
+            $Globalevents = Globalevent::orderBy('id', 'desc')
                                         ->paginate(20);
 
             foreach ($Globalevents as $Globalevent)
-                $this->set_labels($Globalevent);    
-            
+                $this->set_labels($Globalevent);
+
             $Globalevents = $Globalevents->toArray();
 
             return Response::json(
@@ -36,7 +36,7 @@ class GlobaleventController extends \BaseController {
                 ),
                 500
             );
-        }    
+        }
     }
 
     private function set_labels ($Globalevent) {
@@ -76,7 +76,7 @@ class GlobaleventController extends \BaseController {
                 ),
                 500
             );
-        }    
+        }
     }
 
     /**
@@ -106,7 +106,7 @@ class GlobaleventController extends \BaseController {
                 ),
                 200
             );
-        } catch (Exception $e) { 
+        } catch (Exception $e) {
             return Response::json(
                 array(
                     'error' => true,
@@ -176,7 +176,7 @@ class GlobaleventController extends \BaseController {
      * @return Response
      */
     public function destroy($id){
-        
+
         try {
             $Globalevent = Globalevent::find($id);
             $GlobaleventPeriod = GlobaleventPeriod::where('globalevent_id', $id);
