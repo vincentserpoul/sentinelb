@@ -10,16 +10,13 @@ class EmployerController extends \BaseController {
     public function index(){
         
         try { 
-            $Employers = Employer::paginate(20)->toArray();
+            $Employers = Employer::get()->toArray();
 
             return Response::json(
                 array(
                     'error' => false,
                     'message' => "Employers returned",
-                    'employers' => $Employers['data'],
-                    'current_page' => $Employers['current_page'],
-                    'last_page' => $Employers['last_page'],
-                    'total' => $Employers['total']
+                    'employers' => $Employers
                 ),
                 200
             );

@@ -13,15 +13,12 @@ class EmployerDepartmentController extends \BaseController {
             $employer_id = Request::input('employer_id');        
 
             if($employer_id) $EmployerDepartments = $this->getDepartments($employer_id);
-            else $EmployerDepartments = EmployerDepartment::paginate(20)->toArray();   
+            else $EmployerDepartments = EmployerDepartment::get()->toArray();   
 
             return Response::json(
                 array(
                     'error' => false,
-                    'EmployerDepartments' => $EmployerDepartments['data'],
-                    'current_page' => $EmployerDepartments['current_page'],
-                    'last_page' => $EmployerDepartments['last_page'],
-                    'total' => $EmployerDepartments['total']
+                    'EmployerDepartments' => $EmployerDepartments
                 ),
                 200
             );
@@ -190,11 +187,11 @@ class EmployerDepartmentController extends \BaseController {
     private function getDepartments($employer_id){
         $rootDepartments = EmployerDepartment::where('employer_id', $employer_id)
                                             ->where('parent_id', null)
-                                            ->paginate(20)
+                                            ->get()
                                             ->toArray(); 
         // set pagination info for departments                   
         for ($i = 0; $i < count($rootDepartments['data']); $i++){            
-            $rootDepartments['data'][$i]['children'] = $this->getDepartmentChildren($rootDepartments['data'][$i]['id'], $employer_id);
+            $rootDepartments[$i]['children'] = $this->getDepartmentChildren($rootDepartments['data'][$i]['id'], $employer_id);
         } 
 
         return $rootDepartments;
