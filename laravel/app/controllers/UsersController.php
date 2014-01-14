@@ -39,7 +39,7 @@ class UsersController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => "Employers cannot be returned"
+                    'message' => "Users cannot be returned"
                 ),
                 500
             );
@@ -57,28 +57,29 @@ class UsersController extends \BaseController {
         try{
             $user = Sentry::findUserById($id);
 
-            $groups = $user->getGroups();
+            if (!is_null(Request::json('groups'))) {
 
-            if(!is_null(Request::json('group'))){
-                $assignedGroupId = Request::json('group')['id'];
+                $groups = $user->getGroups();
 
-                $user->addGroup(Sentry::findGroupById($assignedGroupId));
+                foreach ($groups as $group) {
+                    $user->removeGroup(Sentry::findGroupById($group->id));
+                }
 
-                foreach($groups as $group){
-                    if($assignedGroupId !== $group->id){
-                        $user->removeGroup(Sentry::findGroupById($group->id));
-                    }
+                foreach (Request::json('groups') as $assigned_group_id) {
+                    $user->addGroup(Sentry::findGroupById($assigned_group_id));
                 }
             }
-            
-            $user['group_id'] = UsersGroups::where('user_id', $user->id)->pluck('group_id');
+
+            function getId ($a) {
+                return $a['id'];
+            }
          
             return Response::json(
                 array(
                     'error' => false,
                     'message' => 'User updated',
                     'action' => 'update',
-                    'users' => $this->getAllUsers()
+                    'user' => $this->getUser($id)
                 ),
                 200
             );
@@ -129,34 +130,32 @@ class UsersController extends \BaseController {
     /**
     *   @return all users
     */    
-    private function getAllUsers(){
-        try{
-            $Users = Sentry::findAllUsers();
+    private function getAllUsers() {
+        $Users = Sentry::findAllUsers();
 
-            $returnedUsers = array();
+        $returnedUsers = array();
 
-            function getId ($a) {
-                return $a['id'];
-            }
-
-            foreach ($Users as $user) {
-                $returnedUsers[] = array(
-                    'id' => $user->id,
-                    'email' => $user->email,
-                    'activated' => $user->activated,
-                    'groups' => array_map('getId', $user->getGroups()->toArray())
-                );
-            }
-
-            return $returnedUsers;
-        } catch (Exception $e){
-            return Response::json(
-                array(
-                    'error' => true,
-                    'message' => "User cannot be returned. " . $e->getMessage()
-                ),
-                500
-            );
+        function getId ($a) {
+            return $a['id'];
         }
+
+        foreach ($Users as $user) {
+            $returnedUsers[] = $this->getUser($user->id);
+        }
+
+        return $returnedUsers;
+    }
+
+    private function getUser($id) {
+        $user = Sentry::findUserById($id);
+
+        $returnedUser = array(
+            'id' => $user->id,
+            'email' => $user->email,
+            'activated' => $user->activated,
+            'groups' => array_map('getId', $user->getGroups()->toArray())
+        );
+
+        return $returnedUser;
     }
 }
