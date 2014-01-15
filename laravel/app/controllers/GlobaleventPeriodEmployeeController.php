@@ -239,27 +239,30 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
     public function destroy($id){
 
         try {
-            $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::find($id);
+            if (Input::has('employee_id') && Input::has('event_period_id')) { 
 
-            $now = new Datetime();
+                $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::where('employee_id', '=', Input::get('employee_id'))
+                                                                        ->where('globalevent_period_id', '=', Input::get('event_period_id'))
+                                                                        ->get();
 
-            $GlobaleventPeriod = GlobaleventPeriod::find($GlobaleventPeriodEmployee['globalevent_period_id']);
+                $now = new Datetime();
 
-            if ($now > new Datetime($GlobaleventPeriod->end_datetime))
-                throw new Exception('Cannot delete assignments from past event periods');
+                $GlobaleventPeriod = GlobaleventPeriod::find(Input::get('event_period_id'));
 
-            $employee_id = $GlobaleventPeriodEmployee['employee_id'];
+                if ($now > new Datetime($GlobaleventPeriod->end_datetime))
+                    throw new Exception('Cannot delete assignments from past event periods');
 
-            $GlobaleventPeriodEmployee->delete();
+                $GlobaleventPeriodEmployee->delete();
 
-            return Response::json(
-                array(
-                    'error' => false,
-                    'message' => 'Globalevent period employee deleted',
-                    'globalevent_period_employee' => $GlobaleventPeriodEmployee->toArray()
-                    ),
-                200
-            );
+                return Response::json(
+                    array(
+                        'error' => false,
+                        'message' => 'Globalevent period employee deleted',
+                        'globalevent_period_employee' => $GlobaleventPeriodEmployee->toArray()
+                        ),
+                    200
+                );
+            } else throw new Exception ('Missing arguments');
         } catch (Exception $e) {
             return Response::json(
                 array(
