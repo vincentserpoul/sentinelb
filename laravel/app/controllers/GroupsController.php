@@ -48,25 +48,27 @@ class GroupsController extends \BaseController {
      */
     public function store(){
         try{
-            if(!is_null(Request::json('name')) && !is_null(Request::json('permissions'))){
+            if(!is_null(Request::json('name')) && !is_null(Request::json('group_permissions'))){
                 $groupPermissions = array();
-                $permissions = Request::json('permissions');
+                $permissions = Request::json('group_permissions');
                 
                 foreach($permissions as $permission){
                     $groupPermissions[$permission['name']] = ($permission['isPermitted']) ? 1 : 0;
                 }                
 
-                Sentry::createGroup(array(
+                $group = Sentry::createGroup(array(
                     'name' => Request::json('name'), 
                     'permissions' => $groupPermissions
                 ));
+
+                $this->setGroupPermissions($group, null);
 
                 return Response::json(
                     array(
                         'error' => false,
                         'message' => 'Group created',
                         'action' => 'insert',               
-                        'groups' => $this->getAllGroups()
+                        'group' => $group->toArray()
                     ),
                     200
                 );
@@ -95,9 +97,9 @@ class GroupsController extends \BaseController {
             //find the group using group id
             $group = Sentry::findGroupById($id);
 
-            if(!is_null(Request::json('permissions')) && !is_null(Request::json('name'))){
+            if(!is_null(Request::json('group_permissions')) && !is_null(Request::json('name'))){
                 $groupPermissions = array();
-                $permissions = Request::json('permissions');
+                $permissions = Request::json('group_permissions');
                 
                 foreach($permissions as $permission){
                     $groupPermissions[$permission['name']] = ($permission['isPermitted']) ? 1 : 0;
@@ -106,14 +108,16 @@ class GroupsController extends \BaseController {
                 $group->name = Request::json('name');
                 $group->permissions = $groupPermissions;
                 $group->save();
+
+                $this->setGroupPermissions($group, null);
             }
 
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Group created',
+                    'message' => 'Group updated',
                     'action' => 'insert',               
-                    'groups' => $this->getAllGroups()
+                    'group' => $group->toArray()
                 ),
                 200
             );
@@ -122,7 +126,7 @@ class GroupsController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => 'Group cannot be updated' . $e,
+                    'message' => 'Group cannot be updated. ' . $e->getMessage(),
                     'action' => 'update'
                 ),
                 500
@@ -169,41 +173,42 @@ class GroupsController extends \BaseController {
     /**
     *  @return all groups
     */
-
-    private function getAllGroups(){
-        try{
-            $Groups = Groups::get();
-
-            $permissions = array();
-
-            foreach($Groups as $group){
-                $groupPermissions = Sentry::findGroupById($group->id)->getPermissions();
-                $group['permissions'] = $groupPermissions;
-                $permissions = array_merge($permissions, Sentry::findGroupById($group->id)->getPermissions());
-            }
-
-            foreach($Groups as $group){
-                $groupPermissions = $group['permissions'];
-                foreach(array_keys($permissions) as $permission){
-                    if(isset($groupPermissions[$permission]) && $groupPermissions[$permission]){ 
-                        $groupPermissions[$permission] = array(
-                            'name' => $permission, 
-                            'isPermitted' => true
-                        );
-                    } else {
-                        $groupPermissions[$permission] = array(
-                            'name' => $permission, 
-                            'isPermitted' => false
-                        );
-                    }
-                }
-                $group['permissions'] = $groupPermissions;
-            }
-
-            return $Groups->toArray();
-        } catch (Exception $e){
-
+    private function getAllGroups() {
+        $groups = Groups::get();
+        $permissions = array();
+        foreach ($groups as $group) {
+            $permissions = array_merge($permissions, (array)json_decode($group->permissions));
         }
+        for ($i = 0; $i < count($groups); $i++)
+            $this->setGroupPermissions($groups[$i], $permissions);  
+        return $groups->toArray();
     }
 
+    private function setGroupPermissions($Group, $permissions) {
+        if (is_null($permissions)) {
+            $groups = Groups::get();
+            $permissions = array();
+            foreach ($groups as $group) {
+                $permissions = array_merge($permissions, (array)json_decode($group->permissions));
+            }
+        }
+        if (gettype($Group->permissions) !== 'array')
+            $groupPermissions = (array)json_decode($Group->permissions);
+        else 
+            $groupPermissions = $Group->permissions;
+        foreach(array_keys($permissions) as $permission){
+            if(isset($groupPermissions[$permission]) && $groupPermissions[$permission]){ 
+                $groupPermissions[$permission] = array(
+                    'name' => $permission, 
+                    'isPermitted' => true
+                );
+            } else {
+                $groupPermissions[$permission] = array(
+                    'name' => $permission, 
+                    'isPermitted' => false
+                );
+            }
+        }
+        $Group['group_permissions'] = $groupPermissions;
+    }
 }
