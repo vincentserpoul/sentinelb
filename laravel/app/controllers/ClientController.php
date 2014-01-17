@@ -122,7 +122,8 @@ class ClientController extends \BaseController {
                 array(
                     'error' => false,
                     'message' => 'Client updated',
-                    'action' => 'update'
+                    'action' => 'update',
+                    'client' => $Client->toArray()
                 ),
                 200
             );

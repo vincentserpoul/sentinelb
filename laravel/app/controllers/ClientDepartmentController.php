@@ -9,7 +9,7 @@ class ClientDepartmentController extends \BaseController {
      */
     public function index(){
 
-        //try {
+        try {
             $client_id = Request::input('client_id');        
 
             if($client_id) $ClientDepartments = $this->getDepartments($client_id);
@@ -22,7 +22,7 @@ class ClientDepartmentController extends \BaseController {
                 ),
                 200
             );
-        /*} catch (Exception $e) {
+        } catch (Exception $e) {
             return Response::json(
                 array(
                     'error' => true,
@@ -30,7 +30,7 @@ class ClientDepartmentController extends \BaseController {
                 ),
                 500
             );
-        }*/
+        }
     }
 
     /**
@@ -190,8 +190,8 @@ class ClientDepartmentController extends \BaseController {
                                             ->get()
                                             ->toArray(); 
         // set pagination info for departments                   
-        for ($i = 0; $i < count($rootDepartments['data']); $i++){            
-            $rootDepartments[$i]['children'] = $this->getDepartmentChildren($rootDepartments['data'][$i]['id'], $client_id);
+        for ($i = 0; $i < count($rootDepartments); $i++){            
+            $rootDepartments[$i]['children'] = $this->getDepartmentChildren($rootDepartments[$i]['id'], $client_id);
         } 
 
         return $rootDepartments;
