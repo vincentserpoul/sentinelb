@@ -40,8 +40,8 @@ class GlobaleventController extends \BaseController {
     }
 
     private function set_labels ($Globalevent) {
-        $Globalevent['employer_name'] = Employer::find($Globalevent['employer_id'])->name;
-        $Globalevent['employer_department_label'] = EmployerDepartment::find($Globalevent['employer_department_id'])->label;
+        $Globalevent['client_name'] = Client::find($Globalevent['client_id'])->name;
+        $Globalevent['client_department_label'] = ClientDepartment::find($Globalevent['client_department_id'])->label;
     }
 
     public function globalevent_periods ($globalevent_id) {
@@ -88,9 +88,9 @@ class GlobaleventController extends \BaseController {
         try {
             $Globalevent = new Globalevent;
 
-            $Globalevent->employer_id = Request::json('employer_id');
+            $Globalevent->client_id = Request::json('client_id');
             $Globalevent->label = Request::json('label');
-            $Globalevent->employer_department_id = Request::json('employer_department_id');
+            $Globalevent->client_department_id = Request::json('client_department_id');
             $Globalevent->date = Request::json('date');
 
             $Globalevent->save();
@@ -132,12 +132,12 @@ class GlobaleventController extends \BaseController {
                 $Globalevent->label = Request::json('label');
             }
 
-            if ( Request::json('employer_department_id') ){
-                $Globalevent->employer_department_id = Request::json('employer_department_id');
+            if ( Request::json('client_department_id') ){
+                $Globalevent->client_department_id = Request::json('client_department_id');
             }
 
-            if ( Request::json('employer_id') ) {
-                $Globalevent->employer_id = Request::json('employer_id');
+            if ( Request::json('client_id') ) {
+                $Globalevent->client_id = Request::json('client_id');
             }
 
             if ( Request::json('date') ) {

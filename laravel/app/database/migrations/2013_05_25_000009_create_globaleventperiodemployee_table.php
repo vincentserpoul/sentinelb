@@ -23,8 +23,8 @@ class CreateGlobaleventperiodemployeeTable extends Migration
             $table->string('clvno', 20)->nullable()->default(null);
             $table->decimal('employee_h_rate', 30, 2)->nullable()->unsigned();
             $table->string('employee_h_rate_currency_code', 3)->nullable();
-            $table->decimal('employer_h_rate', 30, 2)->nullable()->unsigned();
-            $table->string('employer_h_rate_currency_code', 3)->nullable();
+            $table->decimal('client_h_rate', 30, 2)->nullable()->unsigned();
+            $table->string('client_h_rate_currency_code', 3)->nullable();
             $table->integer('user_id')->nullable()->default('1')->unsigned();
             $table->timestamps();
         });

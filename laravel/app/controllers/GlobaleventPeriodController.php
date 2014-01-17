@@ -73,7 +73,7 @@ class GlobaleventPeriodController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Employer cannot be created.' . $e->getMessage(),
+                    'message' => 'Client cannot be created.' . $e->getMessage(),
                     'action' => 'update'
                 ),
                 500

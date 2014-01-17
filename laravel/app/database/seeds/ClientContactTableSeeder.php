@@ -1,14 +1,14 @@
 <?php
 
-class EmployerContactTableSeeder extends Seeder {
+class ClientContactTableSeeder extends Seeder {
 
       public function run(){
 
-            DB::table('employer_contact')->delete();
+            DB::table('client_contact')->delete();
 
-            EmployerContact::create(
+            ClientContact::create(
                   array(
-                        'employer_id' => 1,
+                        'client_id' => 1,
                         'title_id' => 1,
                         'first_name' => 'Jean',
                         'last_name' => 'Michel',
@@ -18,9 +18,9 @@ class EmployerContactTableSeeder extends Seeder {
                   )
             );
 
-            EmployerContact::create(
+            ClientContact::create(
                   array(
-                        'employer_id' => 1,
+                        'client_id' => 1,
                         'title_id' => 2,
                         'first_name' => 'Merlu',
                         'last_name' => 'Lampoin',
@@ -30,9 +30,9 @@ class EmployerContactTableSeeder extends Seeder {
                   )
             );
 
-            EmployerContact::create(
+            ClientContact::create(
                   array(
-                        'employer_id' => 2,
+                        'client_id' => 2,
                         'title_id' => 2,
                         'first_name' => 'Pol',
                         'last_name' => 'Polluxc',

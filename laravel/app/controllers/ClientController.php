@@ -1,6 +1,6 @@
 <?php
 
-class EmployerController extends \BaseController {
+class ClientController extends \BaseController {
     
     /**
      * Display a listing of the resource.
@@ -10,13 +10,13 @@ class EmployerController extends \BaseController {
     public function index(){
         
         try { 
-            $Employers = Employer::get()->toArray();
+            $Clients = Client::get()->toArray();
 
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => "Employers returned",
-                    'employers' => $Employers
+                    'message' => "Clients returned",
+                    'clients' => $Clients
                 ),
                 200
             );
@@ -24,7 +24,7 @@ class EmployerController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => "Employers cannot be returned"
+                    'message' => "Clients cannot be returned"
                 ),
                 500
             );
@@ -38,29 +38,29 @@ class EmployerController extends \BaseController {
      */
     public function store(){
         try {
-            $Employer = new Employer;
+            $Client = new Client;
 
-            $Employer->name = Request::json('name');
-            $Employer->address = Request::json('address');
-            $Employer->city = Request::json('city');
-            $Employer->postcode = Request::json('postcode');
-            $Employer->country_code = Request::json('country_code');
-            $Employer->phone_number = Request::json('phone_number');
-            $Employer->fax_number = Request::json('fax_number');
+            $Client->name = Request::json('name');
+            $Client->address = Request::json('address');
+            $Client->city = Request::json('city');
+            $Client->postcode = Request::json('postcode');
+            $Client->country_code = Request::json('country_code');
+            $Client->phone_number = Request::json('phone_number');
+            $Client->fax_number = Request::json('fax_number');
 
-            //$Employer->user_id = Auth::user()->id;
+            //$Client->user_id = Auth::user()->id;
          
             // Validation and Filtering is sorely needed!!
             // Seriously, I'm a bad person for leaving that out.
          
-            $Employer->save();
+            $Client->save();
 
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Employer created',
+                    'message' => 'Client created',
                     'action' => 'insert',               
-                    'employer' => $Employer->toArray()
+                    'client' => $Client->toArray()
                 ),
                 200
             );
@@ -68,7 +68,7 @@ class EmployerController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Employer cannot be created'
+                    'message' => 'Client cannot be created'
                 ),
                 500
             );
@@ -84,44 +84,44 @@ class EmployerController extends \BaseController {
     public function update($id){
         try {
 
-            $Employer = Employer::find($id);
+            $Client = Client::find($id);
          
             if ( Request::json('name') ){
-                $Employer->name = Request::json('name');
+                $Client->name = Request::json('name');
             }
 
             if ( Request::json('address') ){
-                $Employer->address = Request::json('address');
+                $Client->address = Request::json('address');
             }
 
             if ( Request::json('city') ){
-                $Employer->city = Request::json('city');
+                $Client->city = Request::json('city');
             }
 
             if ( Request::json('postcode') ){
-                $Employer->postcode = Request::json('postcode');
+                $Client->postcode = Request::json('postcode');
             }
 
             if ( Request::json('country_code') ){
-                $Employer->country_code = Request::json('country_code');
+                $Client->country_code = Request::json('country_code');
             }
 
             if ( Request::json('phone_number') ){
-                $Employer->phone_number = Request::json('phone_number');
+                $Client->phone_number = Request::json('phone_number');
             }
 
             if ( Request::json('fax_number') ){
-                $Employer->fax_number = Request::json('fax_number');
+                $Client->fax_number = Request::json('fax_number');
             }
 
-            $Employer->id = $id;
+            $Client->id = $id;
          
-            $Employer->save();
+            $Client->save();
          
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Employer updated',
+                    'message' => 'Client updated',
                     'action' => 'update'
                 ),
                 200
@@ -130,7 +130,7 @@ class EmployerController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Employer cannot be updated',
+                    'message' => 'Client cannot be updated',
                     'action' => 'update'
                 ),
                 500
@@ -147,16 +147,16 @@ class EmployerController extends \BaseController {
     public function destroy($id){
 
         try{
-            $Employer = Employer::find($id);
-            $EmployerContact = EmployerContact::where('employer_id', $id);
+            $Client = Client::find($id);
+            $ClientContact = ClientContact::where('client_id', $id);
             
-            $EmployerContact->delete();
-            $Employer->delete();
+            $ClientContact->delete();
+            $Client->delete();
          
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Employer deleted'
+                    'message' => 'Client deleted'
                     ),
                 200
             );
@@ -164,7 +164,7 @@ class EmployerController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => 'Employer cannot be deleted.' . $e
+                    'message' => 'Client cannot be deleted.' . $e
                     ),
                 500
             );

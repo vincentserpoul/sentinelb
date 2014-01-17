@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmployercontactTable extends Migration
+class CreateClientcontactTable extends Migration
 {
     /**
     * Run the migrations.
@@ -11,11 +11,11 @@ class CreateEmployercontactTable extends Migration
     */
     public function up()
     {
-        Schema::create('employer_contact', function($table)
+        Schema::create('client_contact', function($table)
         {
             $table->engine='InnoDB';
             $table->increments('id')->unsigned();
-            $table->integer('employer_id')->unsigned();
+            $table->integer('client_id')->unsigned();
             $table->integer('title_id')->nullable()->default(NULL)->unsigned();
             $table->string('first_name', 50)->default('');
             $table->string('last_name', 50)->default('');
@@ -34,6 +34,6 @@ class CreateEmployercontactTable extends Migration
     */
     public function down()
     {
-        Schema::drop('employer_contact');
+        Schema::drop('client_contact');
     }
 }

@@ -7,9 +7,9 @@ Class WorkType extends Eloquent
 
     protected $table='work_type';
 
-    public function employerdepartment()
+    public function clientdepartment()
     {
-        return $this->belongsTo('Employerdepartment');
+        return $this->belongsTo('Clientdepartment');
     }
 
 }

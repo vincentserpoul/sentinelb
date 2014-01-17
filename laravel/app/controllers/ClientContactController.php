@@ -1,13 +1,13 @@
 <?php
 
-class EmployerContactController extends \BaseController {
+class ClientContactController extends \BaseController {
 
     /**
     * Filter users with enough authorization
     */
     public function __construct(){
         $this->beforeFilter(function(){
-            if (!Sentry::getUser()->hasAnyAccess(array('add_employer_contact'))) return Response::json(
+            if (!Sentry::getUser()->hasAnyAccess(array('add_client_contact'))) return Response::json(
                             array(
                                 'error' => true,
                                 'message' => 'Please log in to continue.'
@@ -23,18 +23,18 @@ class EmployerContactController extends \BaseController {
      * @return Response
      */
     public function index(){
-        $employer_id = Request::input('employer_id');
+        $client_id = Request::input('client_id');
 
-        if($employer_id) $EmployerContacts = EmployerContact::where('employer_id', $employer_id)->paginate(10)->toArray();
-        else $EmployerContacts = EmployerContact::paginate(10)->toArray();
+        if($client_id) $ClientContacts = ClientContact::where('client_id', $client_id)->paginate(10)->toArray();
+        else $ClientContacts = ClientContact::paginate(10)->toArray();
 
         return Response::json(
             array(
                 'error' => false,
-                'EmployerContacts' => $EmployerContacts['data'],
-                'current_page' => $EmployerContacts['current_page'],
-                'last_page' => $EmployerContacts['last_page'],
-                'total' => $EmployerContacts['total']
+                'ClientContacts' => $ClientContacts['data'],
+                'current_page' => $ClientContacts['current_page'],
+                'last_page' => $ClientContacts['last_page'],
+                'total' => $ClientContacts['total']
             ),
             200
         );
@@ -56,29 +56,29 @@ class EmployerContactController extends \BaseController {
      * @return Response
      */
     public function store(){
-        $EmployerContact = new EmployerContact;
+        $ClientContact = new ClientContact;
 
-        $EmployerContact->employer_id = Request::json('employer_id');
-        $EmployerContact->title_id = Request::json('title_id');
-        $EmployerContact->first_name = Request::json('first_name');
-        $EmployerContact->last_name = Request::json('last_name');
-        $EmployerContact->sex_id = Request::json('sex_id');
-        $EmployerContact->mobile_phone_number = Request::json('mobile_phone_number');
-        $EmployerContact->primary_contact = Request::json('primary_contact');
+        $ClientContact->client_id = Request::json('client_id');
+        $ClientContact->title_id = Request::json('title_id');
+        $ClientContact->first_name = Request::json('first_name');
+        $ClientContact->last_name = Request::json('last_name');
+        $ClientContact->sex_id = Request::json('sex_id');
+        $ClientContact->mobile_phone_number = Request::json('mobile_phone_number');
+        $ClientContact->primary_contact = Request::json('primary_contact');
 
-        //$EmployerContact->user_id = Auth::user()->id;
+        //$ClientContact->user_id = Auth::user()->id;
 
         // Validation and Filtering is sorely needed!!
         // Seriously, I'm a bad person for leaving that out.
 
-        $EmployerContact->save();
+        $ClientContact->save();
 
         return Response::json(
             array(
                 'error' => false,
                 'message' => 'Contact created',
                 'action' => 'insert',
-                'EmployerContact' => $EmployerContact->toArray()
+                'ClientContact' => $ClientContact->toArray()
             ),
             200
         );
@@ -92,14 +92,14 @@ class EmployerContactController extends \BaseController {
      */
     public function show($id){
         // Make sure current user owns the requested resource
-        $EmployerContact = EmployerContact::where('id', $id)
+        $ClientContact = ClientContact::where('id', $id)
                 ->take(1)
                 ->get();
 
         return Response::json(
             array(
                 'error' => false,
-                'EmployerContacts' => $EmployerContact->toArray()
+                'ClientContacts' => $ClientContact->toArray()
             ),
             200
         );
@@ -124,50 +124,50 @@ class EmployerContactController extends \BaseController {
      */
     public function update($id){
 
-        $EmployerContact = EmployerContact::find($id);
+        $ClientContact = ClientContact::find($id);
 
-        if (!is_null(Request::json('employer_id'))){
-            $EmployerContact->employer_id = Request::json('employer_id');
+        if (!is_null(Request::json('client_id'))){
+            $ClientContact->client_id = Request::json('client_id');
         }
 
-        if (!is_null(Request::json('employer_id'))){
-            $EmployerContact->employer_id = Request::json('employer_id');
+        if (!is_null(Request::json('client_id'))){
+            $ClientContact->client_id = Request::json('client_id');
         }
 
         if (!is_null(Request::json('title_id'))){
-            $EmployerContact->title_id = Request::json('title_id');
+            $ClientContact->title_id = Request::json('title_id');
         }
 
         if (!is_null(Request::json('first_name'))){
-            $EmployerContact->first_name = Request::json('first_name');
+            $ClientContact->first_name = Request::json('first_name');
         }
 
         if (!is_null(Request::json('last_name'))){
-            $EmployerContact->last_name = Request::json('last_name');
+            $ClientContact->last_name = Request::json('last_name');
         }
 
         if (!is_null(Request::json('sex_id'))){
-            $EmployerContact->sex_id = Request::json('sex_id');
+            $ClientContact->sex_id = Request::json('sex_id');
         }
 
         if (!is_null(Request::json('mobile_phone_number'))){
-            $EmployerContact->mobile_phone_number = Request::json('mobile_phone_number');
+            $ClientContact->mobile_phone_number = Request::json('mobile_phone_number');
         }
 
         if (!is_null(Request::json('primary_contact'))){
-            $EmployerContact->primary_contact = Request::json('primary_contact');
+            $ClientContact->primary_contact = Request::json('primary_contact');
         }
 
-        $EmployerContact->id = $id;
+        $ClientContact->id = $id;
 
-        $EmployerContact->save();
+        $ClientContact->save();
 
         return Response::json(
             array(
                 'error' => false,
-                'message' => 'Employer contact updated',
+                'message' => 'Client contact updated',
                 'action' => 'update',
-                'EmployerContact' => $EmployerContact->toArray()
+                'ClientContact' => $ClientContact->toArray()
             ),
             200
         );
@@ -181,14 +181,14 @@ class EmployerContactController extends \BaseController {
      */
     public function destroy($id){
 
-        $EmployerContact = EmployerContact::find($id);
+        $ClientContact = ClientContact::find($id);
 
-        $EmployerContact->delete();
+        $ClientContact->delete();
 
         return Response::json(
             array(
                 'error' => false,
-                'message' => 'Employer department deleted'
+                'message' => 'Client department deleted'
                 ),
             200
         );

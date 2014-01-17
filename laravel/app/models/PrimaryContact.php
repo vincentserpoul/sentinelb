@@ -1,6 +1,6 @@
 <?php
 
-// Model:'Primary Contact' - Database Table: 'employer_contact'
+// Model:'Primary Contact' - Database Table: 'client_contact'
 
 Class Sex extends Eloquent
 {

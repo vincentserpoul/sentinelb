@@ -47,32 +47,32 @@ class CenturyevergreenForeignKeys
             $table->foreign('user_id')->references('id')->on('users');
         });
 
-        Schema::table('employer', function($table)
+        Schema::table('client', function($table)
         {
-            // Foreign Keys for table 'employer_contact'
+            // Foreign Keys for table 'client_contact'
             $table->foreign('country_code')->references('code')->on('country');
             $table->foreign('user_id')->references('id')->on('users');
         });
 
-        Schema::table('employer_contact', function($table)
+        Schema::table('client_contact', function($table)
         {
-            // Foreign Keys for table 'employer_contact'
+            // Foreign Keys for table 'client_contact'
 
-            $table->foreign('employer_id')->references('id')->on('employer');
+            $table->foreign('client_id')->references('id')->on('client');
             $table->foreign('title_id')->references('id')->on('title');
             $table->foreign('sex_id')->references('id')->on('sex');
             $table->foreign('user_id')->references('id')->on('users');
         });
 
-        Schema::table('employer_department', function($table)
+        Schema::table('client_department', function($table)
         {
-            // Foreign Keys for table 'employer_department'
+            // Foreign Keys for table 'client_department'
 
-            $table->foreign('employer_id')->references('id')->on('employer');
+            $table->foreign('client_id')->references('id')->on('client');
             $table->foreign('work_type_id')->references('id')->on('work_type');
-            $table->foreign('parent_id')->references('id')->on('employer_department');
+            $table->foreign('parent_id')->references('id')->on('client_department');
             $table->foreign('employee_h_rate_currency_code')->references('code')->on('currency');
-            $table->foreign('employer_h_rate_currency_code')->references('code')->on('currency');
+            $table->foreign('client_h_rate_currency_code')->references('code')->on('currency');
             $table->foreign('user_id')->references('id')->on('users');
         });
 
@@ -80,7 +80,7 @@ class CenturyevergreenForeignKeys
         {
             // Foreign Keys for table 'event'
 
-            $table->foreign('employer_department_id')->references('id')->on('employer_department');
+            $table->foreign('client_department_id')->references('id')->on('client_department');
             $table->foreign('user_id')->references('id')->on('users');
         });
 
@@ -99,7 +99,7 @@ class CenturyevergreenForeignKeys
             $table->foreign('globalevent_period_id')->references('id')->on('globalevent_period');
             $table->foreign('employee_id')->references('id')->on('employee');
             $table->foreign('employee_h_rate_currency_code', 'gpe_employee_h_rate_currency_code_foreign')->references('code')->on('currency');
-            $table->foreign('employer_h_rate_currency_code', 'gpe_employer_h_rate_currency_code_foreign')->references('code')->on('currency');
+            $table->foreign('client_h_rate_currency_code', 'gpe_client_h_rate_currency_code_foreign')->references('code')->on('currency');
             $table->unique('clvno');
             $table->foreign('user_id')->references('id')->on('users');
         });
@@ -165,34 +165,34 @@ class CenturyevergreenForeignKeys
 
         });
 
-        Schema::table('employer', function($table)
+        Schema::table('client', function($table)
         {
-            // Drop Foreign Keys for table 'employer_contact'
-            $table->dropForeign('employer_country_code');
+            // Drop Foreign Keys for table 'client_contact'
+            $table->dropForeign('client_country_code');
             $table->dropForeign('user_id_foreign');
 
         });
 
-        Schema::table('employer_contact', function($table)
+        Schema::table('client_contact', function($table)
         {
-            // Drop Foreign Keys for table 'employer_contact'
-            $table->dropForeign('employer_contact_title_id');
-            $table->dropForeign('employer_contact_sex_id');
-            $table->dropForeign('employer_contact_employer_id_foreign');
-            $table->dropForeign('employer_contact_user_id_foreign');
+            // Drop Foreign Keys for table 'client_contact'
+            $table->dropForeign('client_contact_title_id');
+            $table->dropForeign('client_contact_sex_id');
+            $table->dropForeign('client_contact_client_id_foreign');
+            $table->dropForeign('client_contact_user_id_foreign');
 
         });
 
-        Schema::table('employer_department', function($table)
+        Schema::table('client_department', function($table)
         {
-            // Drop Foreign Keys for table 'employer_department'
+            // Drop Foreign Keys for table 'client_department'
 
-            $table->dropForeign('employer_department_employer_id_foreign');
-            $table->dropForeign('employer_department_work_type_id_foreign');
-            $table->dropForeign('employer_department_parent_id_foreign');
-            $table->dropForeign('employer_department_employee_h_rate_currency_code_foreign');
-            $table->dropForeign('employer_department_employer_h_rate_currency_code_foreign');
-            $table->dropForeign('employer_department_user_id_foreign');
+            $table->dropForeign('client_department_client_id_foreign');
+            $table->dropForeign('client_department_work_type_id_foreign');
+            $table->dropForeign('client_department_parent_id_foreign');
+            $table->dropForeign('client_department_employee_h_rate_currency_code_foreign');
+            $table->dropForeign('client_department_client_h_rate_currency_code_foreign');
+            $table->dropForeign('client_department_user_id_foreign');
 
         });
 
@@ -200,8 +200,8 @@ class CenturyevergreenForeignKeys
         {
             // Drop Foreign Keys for table 'event'
 
-            $table->dropForeign('globalevent_employer_department_id_foreign');
-            $table->dropForeign('globalevent_employer_department_user_id_foreign');
+            $table->dropForeign('globalevent_client_department_id_foreign');
+            $table->dropForeign('globalevent_client_department_user_id_foreign');
 
         });
 
@@ -222,7 +222,7 @@ class CenturyevergreenForeignKeys
             $table->dropForeign('globalevent_period_employee_employee_id_foreign');
             $table->dropForeign('globalevent_period_employee_user_id_foreign');
             $table->dropForeign('gpe_employee_h_rate_currency_code_foreign');
-            $table->dropForeign('gpe_employer_h_rate_currency_code_foreign');
+            $table->dropForeign('gpe_client_h_rate_currency_code_foreign');
             $table->dropForeign('globalevent_period_employee_user_id_foreign');
             $table->dropUnique('clvno_unique');
         });

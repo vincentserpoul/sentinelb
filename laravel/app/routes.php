@@ -55,15 +55,15 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::options('employee/{employee_id}', function(){return null;});
         Route::resource('employee', 'EmployeeController');
 
-        // Employer
-        Route::options('employer', function(){return null;});
-        Route::options('employer/{id}', function(){return null;});
-        Route::resource('employer', 'EmployerController');
+        // Client
+        Route::options('client', function(){return null;});
+        Route::options('client/{id}', function(){return null;});
+        Route::resource('client', 'ClientController');
 
-        // EmployerContact
-        Route::options('employer_contact', function(){return null;});
-        Route::options('employer_contact/{id}', function(){return null;});
-        Route::resource('employer_contact', 'EmployerContactController');
+        // ClientContact
+        Route::options('client_contact', function(){return null;});
+        Route::options('client_contact/{id}', function(){return null;});
+        Route::resource('client_contact', 'ClientContactController');
 
         // Payment
         Route::options('payment', function(){return null;});
@@ -71,10 +71,10 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::resource('payment', 'PaymentController');
 
 
-        // EmployerDepartment
-        Route::options('employer_department', function(){return null;});
-        Route::options('employer_department/{id}', function(){return null;});
-        Route::resource('employer_department', 'EmployerDepartmentController');
+        // ClientDepartment
+        Route::options('client_department', function(){return null;});
+        Route::options('client_department/{id}', function(){return null;});
+        Route::resource('client_department', 'ClientDepartmentController');
 
         // Event
         Route::options('globalevent', function(){return null;});

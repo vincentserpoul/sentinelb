@@ -1,20 +1,20 @@
 <?php
 
-// Model:'EmployerDepartment' - Database Table: 'employer_department'
+// Model:'ClientDepartment' - Database Table: 'client_department'
 
-Class EmployerDepartment extends Eloquent
+Class ClientDepartment extends Eloquent
 {
 
-    protected $table='employer_department';
+    protected $table='client_department';
 
     public function event()
     {
         return $this->hasOne('Event');
     }
 
-    public function employer()
+    public function client()
     {
-        return $this->hasOne('Employer');
+        return $this->hasOne('Client');
     }
 
     public function worktype()
