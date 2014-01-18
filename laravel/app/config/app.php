@@ -26,7 +26,7 @@ return array(
         |
         */
 
-        'url' => 'http://qa.sentinelb.com',
+        'url' => 'https://qa.sentinelb.com',
 
         /*
         |--------------------------------------------------------------------------
