@@ -42,3 +42,31 @@ You should see
         {"error":true,"message":"Please log in to continue."}
 
 It's working!
+
+# On QA
+
+ssh to your vagrant machine.
+
+    ssh root@95.85.63.20
+
+and type the following command in your terminal
+
+    cd /var/www/qa.sentinelb.com/laravel
+    sudo composer install
+    sudo composer update
+    mysql -uroot -pdev -e "DROP DATABASE centuryevergreen;"
+    mysql -uroot -pdev -e "CREATE DATABASE centuryevergreen;"
+    php artisan cache:clear
+    php artisan migrate --env=qa  --package=cartalyst/sentry
+    php artisan migrate --env=qa
+    php artisan db:seed --env=qa
+
+Now open your browser and go to
+
+        https://qa.sentinelb.com/api/v1/employee
+
+You should see
+
+        {"error":true,"message":"Please log in to continue."}
+
+It's working!
