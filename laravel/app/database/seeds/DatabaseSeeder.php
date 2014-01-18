@@ -30,9 +30,9 @@ class DatabaseSeeder extends Seeder {
 		$this->call('EmployeeIdentityDocTableSeeder');
 		$this->call('EmployeeDocTableSeeder');
 
-		$this->call('EmployerTableSeeder');
-		$this->call('EmployerContactTableSeeder');
-		$this->call('EmployerDepartmentTableSeeder');
+		$this->call('ClientTableSeeder');
+		$this->call('ClientContactTableSeeder');
+		$this->call('ClientDepartmentTableSeeder');
 
 
 		$this->call('PaymentTableSeeder');	

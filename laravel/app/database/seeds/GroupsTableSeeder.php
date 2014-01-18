@@ -15,7 +15,7 @@ class GroupsTableSeeder extends Seeder {
 	        'name'        => 'developers',
 	        'permissions' => array(
 	        	'user' => 1, 
-	        	'add_employer_contact' => 1, 
+	        	'add_client_contact' => 1, 
 	        	'admin' => 1
 	        )));
 
@@ -23,7 +23,7 @@ class GroupsTableSeeder extends Seeder {
 	        'name'        => 'users',
 	        'permissions' => array(
 	            'user' => 1, 
-	        	'add_employer_contact' => 0,
+	        	'add_client_contact' => 0,
 	        	'admin' => 0
 	        )));
 
@@ -31,7 +31,7 @@ class GroupsTableSeeder extends Seeder {
 	        'name'        => 'admins',
 	        'permissions' => array(
 	            'user' => 1, 
-	        	'add_employer_contact' => 1, 
+	        	'add_client_contact' => 1, 
 	        	'admin' => 1
 	        )));
 
@@ -39,7 +39,7 @@ class GroupsTableSeeder extends Seeder {
 	        'name'        => 'managers',
 	        'permissions' => array(
 	            'user' => 1, 
-	        	'add_employer_contact' => 1,
+	        	'add_client_contact' => 1,
 	        	'admin' => 1
 	        )));
 	}

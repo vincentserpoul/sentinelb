@@ -1,12 +1,12 @@
 <?php
 
-class EmployerTableSeeder extends Seeder {
+class ClientTableSeeder extends Seeder {
 
       public function run(){
 
-            DB::table('employer')->delete();
+            DB::table('client')->delete();
 
-            Employer::create(
+            Client::create(
                   array(
                         'name' => 'MBS', 
                         'address' => '1 marina parade',
@@ -18,7 +18,7 @@ class EmployerTableSeeder extends Seeder {
                   )
             );
 
-            Employer::create(
+            Client::create(
                   array(
                         'name' => 'Mandarin Oriental', 
                         'address' => '1 mandarine parade',
@@ -30,7 +30,7 @@ class EmployerTableSeeder extends Seeder {
                   )
             );
 
-            Employer::create(
+            Client::create(
                   array(
                         'name' => 'Hilton', 
                         'address' => '1 orchard road',

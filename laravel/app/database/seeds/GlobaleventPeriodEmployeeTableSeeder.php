@@ -16,8 +16,8 @@ class GlobaleventPeriodEmployeeTableSeeder extends Seeder {
                         'clvno' => 'HYRFDEYTH',
                         'employee_h_rate' => '10.6',
                         'employee_h_rate_currency_code' => 'SGD',
-                        'employer_h_rate' => '11.6',
-                        'employer_h_rate_currency_code' => 'SGD',
+                        'client_h_rate' => '11.6',
+                        'client_h_rate_currency_code' => 'SGD',
                   )
             );
 
