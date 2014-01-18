@@ -26,7 +26,7 @@ return array(
         |
         */
 
-        'url' => 'http://localhost',
+        'url' => 'http://qa.sentinelb.com',
 
         /*
         |--------------------------------------------------------------------------
@@ -106,7 +106,7 @@ return array(
                 'Illuminate\Validation\ValidationServiceProvider',
                 'Illuminate\View\ViewServiceProvider',
                 'Illuminate\Workbench\WorkbenchServiceProvider',
-        		'Cartalyst\Sentry\SentryServiceProvider',
+                'Cartalyst\Sentry\SentryServiceProvider',
 
         ),
 
@@ -173,18 +173,18 @@ return array(
                 'URL'             => 'Illuminate\Support\Facades\URL',
                 'Validator'       => 'Illuminate\Support\Facades\Validator',
                 'View'            => 'Illuminate\Support\Facades\View',
-				'Sentry' 		  => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
+                'Sentry'          => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
         ),
 
-	/*
-	|--------------------------------------------------------------------------
-	| Allowed origin for request
-	|--------------------------------------------------------------------------
-	|
-	| This is used to allow CORS on certain domains only
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed origin for request
+    |--------------------------------------------------------------------------
+    |
+    | This is used to allow CORS on certain domains only
+    |
+    */
 
-	'allowedorigin' => 'http://dev.sentinelf.com:9000',
+    'allowedorigin' => 'http://qa.sentinelf.com',
 
 );
