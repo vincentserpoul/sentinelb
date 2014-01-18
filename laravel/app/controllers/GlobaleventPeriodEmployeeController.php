@@ -241,10 +241,6 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
         try {
             if (Input::has('employee_id') && Input::has('event_period_id')) { 
 
-                $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::where('employee_id', '=', Input::get('employee_id'))
-                                                                        ->where('globalevent_period_id', '=', Input::get('event_period_id'))
-                                                                        ->get();
-
                 $now = new Datetime();
 
                 $GlobaleventPeriod = GlobaleventPeriod::find(Input::get('event_period_id'));
@@ -252,7 +248,9 @@ class GlobaleventPeriodEmployeeController extends \BaseController {
                 if ($now > new Datetime($GlobaleventPeriod->end_datetime))
                     throw new Exception('Cannot delete assignments from past event periods');
 
-                $GlobaleventPeriodEmployee->delete();
+                $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::where('employee_id', '=', Input::get('employee_id'))
+                                        ->where('globalevent_period_id', '=', Input::get('event_period_id'))
+                                        ->delete();
 
                 return Response::json(
                     array(
