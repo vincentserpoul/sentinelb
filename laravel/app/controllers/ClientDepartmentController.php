@@ -62,7 +62,7 @@ class ClientDepartmentController extends \BaseController {
                     'error' => false,
                     'message' => 'Department created',
                     'action' => 'insert',
-                    'ClientDepartments' => $ClientDepartments['data']
+                    'ClientDepartments' => $ClientDepartments
                 ),
                 200
             );
@@ -136,7 +136,7 @@ class ClientDepartmentController extends \BaseController {
                     'error' => false,
                     'message' => 'ClientDepartment updated', 
                     'action' => 'update', 
-                    'ClientDepartments' => $ClientDepartments['data']
+                    'ClientDepartments' => $ClientDepartments
                 ),
                 200
             );
@@ -144,7 +144,7 @@ class ClientDepartmentController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => "Clients cannot be updated",
+                    'message' => "Clients cannot be updated. " . $e->getMessage(),
                     'action' => "update"
                 ),
                 500
