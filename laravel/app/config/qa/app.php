@@ -185,6 +185,6 @@ return array(
     |
     */
 
-    'allowedorigin' => 'http://qa.sentinelf.com',
+    'allowedorigin' => 'https://qa.sentinelf.com',
 
 );
