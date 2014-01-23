@@ -33,7 +33,7 @@ class GlobaleventPeriodController extends \BaseController {
                 ),
                 500
             );
-        }   
+        }
     }
 
     /**
@@ -54,9 +54,9 @@ class GlobaleventPeriodController extends \BaseController {
             // validate info
             if (strtotime($GlobaleventPeriod->end_datetime) <= strtotime($GlobaleventPeriod->start_datetime))
                 throw new Exception('End datetime must be after start datetime', 1);
-            if ($GlobaleventPeriod->number_of_employee_needed < 1) 
+            if ($GlobaleventPeriod->number_of_employee_needed < 1)
                 throw new Exception("Number of employees needed must be greater than 0", 1);
-                
+
             $GlobaleventPeriod->save();
 
             $GlobaleventPeriod['number_of_employees_assigned'] = 0;
@@ -88,7 +88,7 @@ class GlobaleventPeriodController extends \BaseController {
      * @return Response
      */
     public function update($id){
-        
+
         try {
             $GlobaleventPeriod = GlobaleventPeriod::find($id);
 
@@ -111,7 +111,7 @@ class GlobaleventPeriodController extends \BaseController {
             // validate info
             if ($GlobaleventPeriod->end_datetime <= $GlobaleventPeriod->start_datetime)
                 throw new Exception('End datetime must be after start datetime', 1);
-            if ($GlobaleventPeriod->number_of_employee_needed < 1) 
+            if ($GlobaleventPeriod->number_of_employee_needed < 1)
                 throw new Exception("Number of employees needed must be greater than 0", 1);
 
             $GlobaleventPeriod->id = $id;

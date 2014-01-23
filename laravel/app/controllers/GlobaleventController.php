@@ -39,6 +39,31 @@ class GlobaleventController extends \BaseController {
         }
     }
 
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id){
+
+        // Make sure current user owns the requested resource
+        $Globalevent = Globalevent::with(array('globalevent_period'))
+                ->where('id', $id)
+                ->take(1)
+                ->get();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'globalevents' => $Globalevent->toArray()
+            ),
+            200
+        );
+    }
+
+
     private function set_labels ($Globalevent) {
         $Globalevent['client_name'] = Client::find($Globalevent['client_id'])->name;
         $Globalevent['client_department_label'] = ClientDepartment::find($Globalevent['client_department_id'])->label;

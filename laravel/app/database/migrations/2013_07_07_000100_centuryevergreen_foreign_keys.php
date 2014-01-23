@@ -101,6 +101,7 @@ class CenturyevergreenForeignKeys
             $table->foreign('employee_h_rate_currency_code', 'gpe_employee_h_rate_currency_code_foreign')->references('code')->on('currency');
             $table->foreign('client_h_rate_currency_code', 'gpe_client_h_rate_currency_code_foreign')->references('code')->on('currency');
             $table->unique('clvno');
+            $table->unique(array('employee_id', 'globalevent_period_id'), 'unik_employee_per_geventperiod');
             $table->foreign('user_id')->references('id')->on('users');
         });
 

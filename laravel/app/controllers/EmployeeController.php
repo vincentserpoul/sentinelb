@@ -495,12 +495,12 @@ var_dump($globaleventPeriods);
             foreach( $conflictSelect['select'] as $conflictEventPeriod){
                  $EmployeesList->addSelect(DB::raw($conflictEventPeriod));
             }
+
             $EmployeesList->leftjoin('globalevent_period_employee AS gpe ', 'employee.id', '=', 'gpe.employee_id')
-                            ->leftjoin('globalevent_period AS gp', function($join){
+                            ->leftjoin('globalevent_period AS gp', function($join) use($conflictSelect){
                                                                         $join->on('gpe.globalevent_period_id', '=', 'gp.id')
-                                                                                ->on('gp.start_datetime', '>=', DB::Raw('now()'));
-                                                                                //->on('gp.start_datetime', '>=', $conflictSelect['mindatetime'])
-                                                                                //->on('gp.end_datetime', '<=', $conflictSelect['maxdatetime']);
+                                                                                ->on('gp.start_datetime', '>=', DB::raw("'".$conflictSelect['mindatetime']."'"))
+                                                                                ->on('gp.end_datetime', '<=', DB::raw("'".$conflictSelect['maxdatetime']."'"));
                                                                     }
                             );
         }

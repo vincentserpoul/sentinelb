@@ -31,12 +31,12 @@ Class Globalevent extends Eloquent
         $minDatetime = null;
         $maxDatetime = null;
 
-        /* foreach globaleventperiod, check create the select that will show if there is any conflicting event_period for the employee */
+        /* foreach globaleventperiod, create the select that will check if there is any conflicting event_period for the employee */
         foreach($globaleventPeriods as $key => $globaleventPeriod){
             /* find the min date */
-            $minDatetime > $globaleventPeriod['start_datetime'] ? $minDatetime = $globaleventPeriod['start_datetime']:true;
+            ($minDatetime > $globaleventPeriod['start_datetime'] || is_null($minDatetime) )? $minDatetime = $globaleventPeriod['start_datetime']:true;
             /* find the max date */
-            $maxDatetime < $globaleventPeriod['end_datetime'] ? $maxDatetime = $globaleventPeriod['end_datetime']:true;
+            ($maxDatetime < $globaleventPeriod['end_datetime'] || is_null($maxDatetime) ) ? $maxDatetime = $globaleventPeriod['end_datetime']:true;
             /* addselects to be added to the employee select to show if there is at least one conflict */
             $select[] = "MAX(IF('".$globaleventPeriod['start_datetime']."' between gp.start_datetime and gp.end_datetime OR '".$globaleventPeriod['end_datetime']."' between gp.start_datetime and gp.end_datetime, gp.id, '')) AS '".$globaleventPeriod['id']."'";
         }
@@ -44,7 +44,8 @@ Class Globalevent extends Eloquent
         return array(
                     'select' => $select,
                     'mindatetime' => $minDatetime,
-                    'maxdatetime' => $maxDatetime);
+                    'maxdatetime' => $maxDatetime
+                );
 
     }
 
