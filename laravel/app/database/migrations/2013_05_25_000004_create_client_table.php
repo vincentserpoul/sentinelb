@@ -21,7 +21,6 @@ class CreateClientTable extends Migration
             $table->string('postcode', 20)->default('');
             $table->string('country_code', 3);
             $table->string('phone_number', 20)->default('');
-            $table->string('fax_number', 20)->default('');
             $table->timestamps();
             $table->integer('user_id')->nullable()->default('1')->unsigned();
         });

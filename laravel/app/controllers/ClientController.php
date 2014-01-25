@@ -46,7 +46,6 @@ class ClientController extends \BaseController {
             $Client->postcode = Request::json('postcode');
             $Client->country_code = Request::json('country_code');
             $Client->phone_number = Request::json('phone_number');
-            $Client->fax_number = Request::json('fax_number');
 
             //$Client->user_id = Auth::user()->id;
          
@@ -108,10 +107,6 @@ class ClientController extends \BaseController {
 
             if ( Request::json('phone_number') ){
                 $Client->phone_number = Request::json('phone_number');
-            }
-
-            if ( Request::json('fax_number') ){
-                $Client->fax_number = Request::json('fax_number');
             }
 
             $Client->id = $id;

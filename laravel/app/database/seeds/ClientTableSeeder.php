@@ -14,7 +14,6 @@ class ClientTableSeeder extends Seeder {
                         'postcode' => '159960',
                         'country_code' => 'SGP',
                         'phone_number' => '+6593412294',
-                        'fax_number' => '+6534192294',
                   )
             );
 
@@ -26,7 +25,6 @@ class ClientTableSeeder extends Seeder {
                         'postcode' => '154789',
                         'country_code' => 'SGP',
                         'phone_number' => '+6593415568',
-                        'fax_number' => '+6534199965',
                   )
             );
 
@@ -38,7 +36,6 @@ class ClientTableSeeder extends Seeder {
                         'postcode' => '458963',
                         'country_code' => 'SGP',
                         'phone_number' => '+6565449875',
-                        'fax_number' => '+6565449873',
                   )
             );
 
