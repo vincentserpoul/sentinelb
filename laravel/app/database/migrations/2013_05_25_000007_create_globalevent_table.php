@@ -20,6 +20,7 @@ class CreateGlobaleventTable extends Migration
             $table->integer('client_department_id')->unsigned();
             $table->date('date')->default('0000-00-00');
             $table->timestamps();
+            $table->string('remark', 250);
             $table->integer('user_id')->nullable()->default('1')->unsigned();
         });
     }

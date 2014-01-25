@@ -11,7 +11,8 @@ class GlobaleventTableSeeder extends Seeder {
                         'label' => 'Test kitchen',
                         'client_department_id' => 2,
                         'client_id' => 2,
-                        'date' => '2013-09-14'
+                        'date' => '2013-09-14',
+                        'remark' => 'Kitchen Remark'
                   )
             );
 
@@ -20,7 +21,8 @@ class GlobaleventTableSeeder extends Seeder {
                         'label' => 'Test Grrom',
                         'client_department_id' => 1,
                         'client_id' => 1,
-                        'date' => '2013-09-20'
+                        'date' => '2013-09-20',
+                        'remark' => 'Groom Remark'
                   )
             );
 
@@ -29,7 +31,8 @@ class GlobaleventTableSeeder extends Seeder {
                         'label' => 'Test home grooming',
                         'client_department_id' => 3,
                         'client_id' => 3,
-                        'date' => '2013-10-23'
+                        'date' => '2013-10-23',
+                        'remark' => 'Home Grooming Remark'
                   )
             );
 
