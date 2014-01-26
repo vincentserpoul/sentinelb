@@ -80,13 +80,15 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::options('globalevent', function(){return null;});
         Route::options('globalevent/{id}', function(){return null;});
         Route::resource('globalevent', 'GlobaleventController');
-        Route::options('globalevent/globalevent_periods/{globalevent_id}', function(){return null;});
-        Route::get('globalevent/globalevent_periods/{globalevent_id}', 'GlobaleventController@globalevent_periods');
+        Route::options('globalevent/{globalevent_id}/globalevent_periods', function(){return null;});
+        Route::get('globalevent/{globalevent_id}/globalevent_periods', 'GlobaleventController@globalevent_periods');
 
         // EventPeriod
         Route::options('globalevent_period', function(){return null;});
         Route::options('globalevent_period/{id}', function(){return null;});
         Route::resource('globalevent_period', 'GlobaleventPeriodController');
+        Route::options('globalevent_period/{globalevent_id}/assigned_employees', function(){return null;});
+        Route::get('globalevent_period/{id}/assigned_employees', 'GlobaleventPeriodController@assigned_employees');
 
         // EventPeriodEmployee
         Route::options('globalevent_period_employee', function(){return null;});

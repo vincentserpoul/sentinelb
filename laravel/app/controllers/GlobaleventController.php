@@ -178,39 +178,34 @@ class GlobaleventController extends \BaseController {
     }
 
 
-    public function globalevent_periods ($globalevent_id) {
+    /**
+     * Get the list of globalevent periods for a defined globalevent
+     *
+     * @param  int  $globalevent_id
+     * @return Response
+     */
+    public function globalevent_periods($globalevent_id) {
 
-        try {
-            $GlobaleventPeriods = GlobaleventPeriod::where('globalevent_id', '=', $globalevent_id)
-                                                    ->paginate(10);
+        $GlobaleventPeriods = GlobaleventPeriod::where('globalevent_id', '=', $globalevent_id)
+                                ->leftJoin('globalevent_period_employee', 'globalevent_period_employee.globalevent_period_id', '=', 'globalevent_period.id')
+                                ->select('globalevent_period.id', 'globalevent_period.globalevent_id', 'globalevent_period.start_datetime', 'globalevent_period.end_datetime', 'globalevent_period.number_of_employee_needed', DB::raw('SUM(globalevent_period_employee.employee_id IS NOT NULL) as number_of_employee_assigned'))
+                                ->groupBy('globalevent_period.id', 'globalevent_period.globalevent_id', 'globalevent_period.start_datetime', 'globalevent_period.end_datetime', 'globalevent_period.number_of_employee_needed');
 
-            foreach ($GlobaleventPeriods as $GlobaleventPeriod) {
-                $GlobaleventPeriod['number_of_employees_assigned'] = GlobaleventPeriodEmployee::where('globalevent_period_id', '=', $GlobaleventPeriod->id)
-                                                                                               ->count();
-            }
 
-            $GlobaleventPeriods = $GlobaleventPeriods->toArray();
+        //echo $GlobaleventPeriods->toSql();die();
 
-            return Response::json(
-                array(
-                    'error' => false,
-                    'GlobaleventPeriods' => $GlobaleventPeriods['data'],
-                    'current_page' => $GlobaleventPeriods['current_page'],
-                    'last_page' => $GlobaleventPeriods['last_page'],
-                    'total' => $GlobaleventPeriods['total']
-                ),
-                200
-            );
-        } catch (Exception $e) {
-            return Response::json(
-                array(
-                    'error' => false,
-                    'message' => 'Event period cannot be returned. ' . $e->getMessage(),
-                    'action' => 'get'
-                ),
-                500
-            );
-        }
+        $GlobaleventPeriods = $GlobaleventPeriods->paginate(10)->toArray();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'globalevent_periods' => $GlobaleventPeriods['data'],
+                'current_page' => $GlobaleventPeriods['current_page'],
+                'last_page' => $GlobaleventPeriods['last_page'],
+                'total' => $GlobaleventPeriods['total']
+            ),
+            200
+        );
     }
 
 }
