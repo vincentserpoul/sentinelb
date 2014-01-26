@@ -10,8 +10,6 @@ class GlobaleventTableSeeder extends Seeder {
                   array(
                         'label' => 'Test kitchen',
                         'client_department_id' => 2,
-                        'client_id' => 2,
-                        'date' => '2013-09-14'
                   )
             );
 
@@ -19,8 +17,6 @@ class GlobaleventTableSeeder extends Seeder {
                   array(
                         'label' => 'Test Grrom',
                         'client_department_id' => 1,
-                        'client_id' => 1,
-                        'date' => '2013-09-20'
                   )
             );
 
@@ -28,8 +24,6 @@ class GlobaleventTableSeeder extends Seeder {
                   array(
                         'label' => 'Test home grooming',
                         'client_department_id' => 3,
-                        'client_id' => 3,
-                        'date' => '2013-10-23'
                   )
             );
 
