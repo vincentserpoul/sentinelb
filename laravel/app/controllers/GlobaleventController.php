@@ -113,48 +113,33 @@ class GlobaleventController extends \BaseController {
      */
     public function update($id){
 
-        try {
-            $Globalevent = Globalevent::find($id);
+        $Globalevent = Globalevent::find($id);
 
-            if ( Request::json('label') ){
-                $Globalevent->label = Request::json('label');
-            }
-
-            if ( Request::json('client_department_id') ){
-                $Globalevent->client_department_id = Request::json('client_department_id');
-            }
-
-            if ( Request::json('client_id') ) {
-                $Globalevent->client_id = Request::json('client_id');
-            }
-
-            if ( Request::json('date') ) {
-                $Globalevent->date = Request::json('date');
-            }
-
-            $Globalevent->id = $id;
-
-            $Globalevent->save();
-
-            $this->set_labels($Globalevent);
-
-            return Response::json(
-                array(
-                    'error' => false,
-                    'message' => 'Event updated',
-                    'globalevents' => $Globalevent->toArray()
-                ),
-                200
-            );
-        } catch (Exception $e) {
-            return Response::json(
-                array(
-                    'error' => true,
-                    'message' => "Event cannot be updated. " . $e->getMessage()
-                ),
-                500
-            );
+        if ( Request::json('label') ){
+            $Globalevent->label = Request::json('label');
         }
+
+        if ( Request::json('client_department_id') ){
+            $Globalevent->client_department_id = Request::json('client_department_id');
+        }
+
+        $Globalevent->save();
+
+        // We get the newly created item
+        $Globalevent = new Globalevent;
+
+        $Globalevent = $Globalevent->listWithDetails(array('id'=>$id))
+            ->take(1)
+            ->get();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'message' => 'Event successfully created',
+                'globalevents' => $Globalevent->toArray()
+            ),
+            200
+        );
     }
 
     /**

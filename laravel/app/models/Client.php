@@ -12,9 +12,9 @@ Class Client extends Eloquent
         return $this->hasMany('Clientcontact');
     }
 
-    public function clientdepartment()
+    public function client_department()
     {
-        return $this->hasMany('Clientdepartment');
+        return $this->hasMany('ClientDepartment');
     }
 
 }

@@ -105,7 +105,8 @@ Class Globalevent extends Eloquent
                         ->join('client_department', 'client_department.id', '=', 'globalevent.client_department_id')
                         ->join('client', 'client.id', '=', 'client_department.client_id')
                         ->leftJoin('globalevent_period', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
-                        ->groupBy('client.name', 'client_department.label', 'globalevent.id', 'globalevent.label');
+                        ->groupBy('client.name', 'client_department.label', 'globalevent.id', 'globalevent.label')
+                        ->orderBy('id', 'desc');
 
         if(!is_null($listFilterParams)){
             $GlobaleventsList = $this->filterList($GlobaleventsList, $listFilterParams);

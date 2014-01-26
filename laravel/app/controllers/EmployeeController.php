@@ -17,7 +17,7 @@ class EmployeeController extends \BaseController {
                         ->toArray();
 
 $globaleventPeriods = Globalevent::find(1)->employeeConflictBuilder();
-var_dump($globaleventPeriods);
+
         return Response::json(
             array(
                 'error' => false,
