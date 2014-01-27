@@ -124,7 +124,7 @@ Class Employee extends Eloquent
     public function listWithDetails($listFilterParams = null)
     {
 
-        $EmployeeList = $this->select(DB::raw('title.label as title_label')
+        $EmployeesList = $this->select(DB::raw('title.label as title_label')
                                 , 'employee.id'
                                 , 'employee.first_name'
                                 , 'employee.last_name'
@@ -136,11 +136,11 @@ Class Employee extends Eloquent
                         ->groupBy('employee.date_of_birth', 'employee.id', 'employee.first_name', 'employee.last_name', 'title.label' );
 
         if(!is_null($listFilterParams)){
-            $EmployeeList = $this->filterList($EmployeeList, $listFilterParams);
+            $EmployeesList = $this->filterList($EmployeesList, $listFilterParams);
         }
 
 
-        return $EmployeeList;
+        return $EmployeesList;
 
     }
 

@@ -186,11 +186,9 @@ class GlobaleventController extends \BaseController {
      */
     public function globalevent_periods($globalevent_id) {
 
-        $GlobaleventPeriods = GlobaleventPeriod::where('globalevent_id', '=', $globalevent_id)
-                                ->leftJoin('globalevent_period_employee', 'globalevent_period_employee.globalevent_period_id', '=', 'globalevent_period.id')
-                                ->select('globalevent_period.id', 'globalevent_period.globalevent_id', 'globalevent_period.start_datetime', 'globalevent_period.end_datetime', 'globalevent_period.number_of_employee_needed', DB::raw('SUM(globalevent_period_employee.employee_id IS NOT NULL) as number_of_employee_assigned'))
-                                ->groupBy('globalevent_period.id', 'globalevent_period.globalevent_id', 'globalevent_period.start_datetime', 'globalevent_period.end_datetime', 'globalevent_period.number_of_employee_needed');
+        $GlobaleventPeriods = new GlobaleventPeriod;
 
+        $GlobaleventPeriods = $GlobaleventPeriods->listWithDetails(array('globalevent_id'=>$globalevent_id));
 
         //echo $GlobaleventPeriods->toSql();die();
 
