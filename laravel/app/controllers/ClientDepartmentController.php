@@ -10,23 +10,27 @@ class ClientDepartmentController extends \BaseController {
     public function index(){
 
         /* default HTTP status cached */
-        $httpCode = 200;
+        //$httpCode = 200;
 
         /* trying to get it from the cache first */
-        $ClientDepartments = Cache::get('client_departments');
+        //$ClientDepartments = Cache::get('client_departments');
 
+        /*
         if(empty($ClientDepartments)){
-            $ClientDepartments = Client::with('client_department')
-                                    ->get();
+            $ClientDepartments = ClientDepartment::get();
             /* Caching the result and change the httpCode */
+        /*
             $httpCode = 200;
             Cache::forever('client_departments', $ClientDepartments);
         }
+        */
+
+        $ClientDepartments = ClientDepartment::get();
 
         return Response::json(
             array(
                 'error' => false,
-                'client_departments' => $ClientDepartments->toArray()
+                'ClientDepartments' => $ClientDepartments->toArray()
             ),
             200
         );

@@ -76,7 +76,7 @@ class ClientContactController extends \BaseController {
                     'error' => false,
                     'message' => 'Contact created',
                     'action' => 'insert',
-                    'contact' => $ClientContact->toArray()
+                    'clientContact' => $ClientContact->toArray()
                 ),
                 200
             );
@@ -177,7 +177,7 @@ class ClientContactController extends \BaseController {
                     'error' => false,
                     'message' => 'Client contact updated',
                     'action' => 'update',
-                    'contact' => $ClientContact->toArray()
+                    'clientContact' => $ClientContact->toArray()
                 ),
                 200
             );
