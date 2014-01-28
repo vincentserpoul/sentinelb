@@ -60,7 +60,7 @@ class GlobaleventPeriodController extends \BaseController {
 
         $GlobaleventPeriod = new GlobaleventPeriod;
 
-        $GlobaleventPeriod->globalevent_id = Request::json('event_id');
+        $GlobaleventPeriod->globalevent_id = Request::json('globalevent_id');
         $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
         $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
         $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
@@ -73,7 +73,13 @@ class GlobaleventPeriodController extends \BaseController {
 
         $GlobaleventPeriod->save();
 
-        $GlobaleventPeriod['number_of_employees_assigned'] = 0;
+        $id = $GlobaleventPeriod->id;
+
+        /* Get the data back */
+        $GlobaleventPeriod = new GlobaleventPeriod;
+        $GlobaleventPeriod = $GlobaleventPeriod->listWithDetails(array('id'=>$id))
+                                                ->take(1)
+                                                ->get();
 
         return Response::json(
             array(
@@ -122,11 +128,19 @@ class GlobaleventPeriodController extends \BaseController {
 
             $GlobaleventPeriod->save();
 
+            $id = $GlobaleventPeriod->id;
+
+            /* Get the data back */
+            $GlobaleventPeriod = new GlobaleventPeriod;
+            $GlobaleventPeriod = $GlobaleventPeriod->listWithDetails(array('id'=>$id))
+                                                    ->take(1)
+                                                    ->get();
+
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Global event period updated',
-                    'eventPeriod' => $GlobaleventPeriod->toArray()
+                    'message' => 'Event Period successfully created',
+                    'globalevent_periods' => $GlobaleventPeriod->toArray()
                 ),
                 200
             );
@@ -154,6 +168,9 @@ class GlobaleventPeriodController extends \BaseController {
             $GlobaleventPeriod = GlobaleventPeriod::find($id);
             $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::where('globalevent_period_id', $id);
 
+            if($GlobaleventPeriodEmployee->count() > 1){
+                throw new Exception('Some employees are still associated to it', 1);
+            }
 
             $GlobaleventPeriodEmployee->delete();
             $GlobaleventPeriod->delete();
@@ -169,7 +186,7 @@ class GlobaleventPeriodController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Event period cannot be deleted.' . $e,
+                    'message' => 'Event period cannot be deleted: ' . $e->getMessage(),
                     'action' => 'delete'
                 ),
                 500
