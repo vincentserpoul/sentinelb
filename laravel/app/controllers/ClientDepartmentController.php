@@ -9,28 +9,27 @@ class ClientDepartmentController extends \BaseController {
      */
     public function index(){
 
-        try {
-            $client_id = Request::input('client_id');        
+        /* default HTTP status cached */
+        $httpCode = 200;
 
-            if($client_id) $ClientDepartments = $this->getDepartments($client_id);
-            else $ClientDepartments = ClientDepartment::get()->toArray();   
+        /* trying to get it from the cache first */
+        $ClientDepartments = Cache::get('client_departments');
 
-            return Response::json(
-                array(
-                    'error' => false,
-                    'ClientDepartments' => $ClientDepartments
-                ),
-                200
-            );
-        } catch (Exception $e) {
-            return Response::json(
-                array(
-                    'error' => true,
-                    'message' => "departments cannot be returned. " . $e->getMessage()
-                ),
-                500
-            );
+        if(empty($ClientDepartments)){
+            $ClientDepartments = Client::with('client_department')
+                                    ->get();
+            /* Caching the result and change the httpCode */
+            $httpCode = 200;
+            Cache::forever('client_departments', $ClientDepartments);
         }
+
+        return Response::json(
+            array(
+                'error' => false,
+                'client_departments' => $ClientDepartments->toArray()
+            ),
+            200
+        );
     }
 
     /**
@@ -52,7 +51,7 @@ class ClientDepartmentController extends \BaseController {
             $ClientDepartment->client_h_rate = Request::json('client_h_rate');
             $ClientDepartment->client_h_rate_currency_code = Request::json('client_h_rate_currency_code');
             $ClientDepartment->parent_id = Request::json('parent_id');
-         
+
             $ClientDepartment->save();
 
             $ClientDepartments = $this->getDepartments($ClientDepartment->client_id);
@@ -88,7 +87,7 @@ class ClientDepartmentController extends \BaseController {
 
         try {
             $ClientDepartment = ClientDepartment::find($id);
-         
+
             if ( Request::json('client_id') ){
                 $ClientDepartment->client_id = Request::json('client_id');
             }
@@ -126,16 +125,16 @@ class ClientDepartmentController extends \BaseController {
             }
 
             $ClientDepartment->id = $id;
-         
+
             $ClientDepartment->save();
 
             $ClientDepartments = $this->getDepartments($ClientDepartment->client_id);
-         
+
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'ClientDepartment updated', 
-                    'action' => 'update', 
+                    'message' => 'ClientDepartment updated',
+                    'action' => 'update',
                     'ClientDepartments' => $ClientDepartments
                 ),
                 200
@@ -164,7 +163,7 @@ class ClientDepartmentController extends \BaseController {
             $ClientDepartment = ClientDepartment::find($id);
 
             $ClientDepartment->delete();
-         
+
             return Response::json(
                 array(
                     'error' => false,
@@ -188,11 +187,11 @@ class ClientDepartmentController extends \BaseController {
         $rootDepartments = ClientDepartment::where('client_id', $client_id)
                                             ->where('parent_id', null)
                                             ->get()
-                                            ->toArray(); 
-        // set pagination info for departments                   
-        for ($i = 0; $i < count($rootDepartments); $i++){            
+                                            ->toArray();
+        // set pagination info for departments
+        for ($i = 0; $i < count($rootDepartments); $i++){
             $rootDepartments[$i]['children'] = $this->getDepartmentChildren($rootDepartments[$i]['id'], $client_id);
-        } 
+        }
 
         return $rootDepartments;
     }
@@ -201,14 +200,14 @@ class ClientDepartmentController extends \BaseController {
         $departments = ClientDepartment::where('client_id', $client_id)
                                          ->where('parent_id', $parent_id)
                                          ->get()
-                                         ->toArray();     
+                                         ->toArray();
 
-        if(!count($departments)) 
+        if(!count($departments))
             return null;
-        
+
         for ($i = 0; $i < count($departments); $i++){
             $departments[$i]['children'] = $this->getDepartmentChildren($departments[$i]['id'], $client_id);
-        }      
+        }
         return $departments;
     }
 }

@@ -9,31 +9,46 @@ class GlobaleventPeriodController extends \BaseController {
      */
     public function index(){
 
-        try {
-            $GlobaleventPeriods = GlobaleventPeriod::with(array('globalevent', 'eventperiodemployee'))
-                                                    ->paginate(10)
-                                                    ->toArray();
+        $GlobaleventPeriods = GlobaleventPeriod::with(array('globalevent', 'eventperiodemployee'))
+                                                ->paginate(10)
+                                                ->toArray();
 
-            return Response::json(
-                array(
-                    'error' => false,
-                    'GlobaleventPeriods' => $GlobaleventPeriods['data'],
-                    'current_page' => $GlobaleventPeriods['current_page'],
-                    'last_page' => $GlobaleventPeriods['last_page'],
-                    'total' => $GlobaleventPeriods['total']
-                ),
-                200
-            );
-        } catch (Exception $e) {
-            return Response::json(
-                array(
-                    'error' => false,
-                    'message' => 'Event period cannot be returned',
-                    'action' => 'get'
-                ),
-                500
-            );
-        }
+        return Response::json(
+            array(
+                'error' => false,
+                'globalevent_periods' => $GlobaleventPeriods['data'],
+                'current_page' => $GlobaleventPeriods['current_page'],
+                'last_page' => $GlobaleventPeriods['last_page'],
+                'total' => $GlobaleventPeriods['total']
+            ),
+            200
+        );
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id){
+
+        $GlobaleventPeriods = new GlobaleventPeriod;
+
+        // Make sure current user owns the requested resource
+        $GlobaleventPeriods = $GlobaleventPeriods
+                ->where('id', $id)
+                ->take(1)
+                ->get();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'globalevent_periods' => $GlobaleventPeriods->toArray()
+            ),
+            200
+        );
     }
 
     /**
@@ -43,42 +58,31 @@ class GlobaleventPeriodController extends \BaseController {
      */
     public function store(){
 
-        try {
-            $GlobaleventPeriod = new GlobaleventPeriod;
+        $GlobaleventPeriod = new GlobaleventPeriod;
 
-            $GlobaleventPeriod->globalevent_id = Request::json('event_id');
-            $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
-            $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
-            $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
+        $GlobaleventPeriod->globalevent_id = Request::json('event_id');
+        $GlobaleventPeriod->start_datetime = Request::json('start_datetime');
+        $GlobaleventPeriod->end_datetime = Request::json('end_datetime');
+        $GlobaleventPeriod->number_of_employee_needed = Request::json('number_of_employee_needed');
 
-            // validate info
-            if (strtotime($GlobaleventPeriod->end_datetime) <= strtotime($GlobaleventPeriod->start_datetime))
-                throw new Exception('End datetime must be after start datetime', 1);
-            if ($GlobaleventPeriod->number_of_employee_needed < 1)
-                throw new Exception("Number of employees needed must be greater than 0", 1);
+        // validate info
+        if (strtotime($GlobaleventPeriod->end_datetime) <= strtotime($GlobaleventPeriod->start_datetime))
+            throw new Exception('End datetime must be after start datetime', 1);
+        if ($GlobaleventPeriod->number_of_employee_needed < 1)
+            throw new Exception("Number of employees needed must be greater than 0", 1);
 
-            $GlobaleventPeriod->save();
+        $GlobaleventPeriod->save();
 
-            $GlobaleventPeriod['number_of_employees_assigned'] = 0;
+        $GlobaleventPeriod['number_of_employees_assigned'] = 0;
 
-            return Response::json(
-                array(
-                    'error' => false,
-                    'message' => 'Event Period successfully created',
-                    'eventPeriod' => $GlobaleventPeriod->toArray()
-                ),
-                200
-            );
-        } catch (Exception $e) {
-            return Response::json(
-                array(
-                    'error' => false,
-                    'message' => 'Client cannot be created.' . $e->getMessage(),
-                    'action' => 'update'
-                ),
-                500
-            );
-        }
+        return Response::json(
+            array(
+                'error' => false,
+                'message' => 'Event Period successfully created',
+                'globalevent_periods' => $GlobaleventPeriod->toArray()
+            ),
+            200
+        );
     }
 
     /**
@@ -172,5 +176,36 @@ class GlobaleventPeriodController extends \BaseController {
             );
         }
     }
+
+    /**
+     * Get the the list of employees already assigned to the globalevent period
+     *
+     * @return Response
+     */
+    public function assigned_employees($id){
+
+        $Employees = new Employee;
+
+        $EmployeesList = $Employees
+                        ->listWithDetails()
+                        ->join('globalevent_period_employee', 'globalevent_period_employee.employee_id', '=', 'employee.id')
+                        ->where('globalevent_period_employee.globalevent_period_id', '=', $id)
+                        ->limit(100)
+                        ->paginate(10)
+                        ->toArray();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'employees' => $EmployeesList['data'],
+                'current_page' => $EmployeesList['current_page'],
+                'total' => $EmployeesList['total'],
+                'last_page' => $EmployeesList['last_page'],
+            ),
+            200
+        );
+
+    }
+
 
 }
