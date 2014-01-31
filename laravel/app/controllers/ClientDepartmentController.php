@@ -214,4 +214,38 @@ class ClientDepartmentController extends \BaseController {
         }
         return $departments;
     }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function getAllClientDepartments(){
+
+        /* default HTTP status cached */
+        $httpCode = 200;
+
+        /* trying to get it from the cache first */
+        $ClientDepartments = Cache::get('client_departments');
+
+
+        if(empty($ClientDepartments)){
+            $ClientDepartments = Client::with('client_department')->get();
+            /* Caching the result and change the httpCode */
+
+            $httpCode = 200;
+            Cache::forever('client_departments', $ClientDepartments);
+        }
+
+
+        return Response::json(
+            array(
+                'error' => false,
+                'client_departments' => $ClientDepartments->toArray()
+            ),
+            $httpCode
+        );
+
+    }
+
 }

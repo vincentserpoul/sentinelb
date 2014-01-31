@@ -74,7 +74,10 @@ Route::group(array('prefix' => 'api/v1'), function()
         // ClientDepartment
         Route::options('client_department', function(){return null;});
         Route::options('client_department/{id}', function(){return null;});
+        Route::options('client_department/clients_departments', function(){return null;});
+        Route::get('client_department/clients_departments', 'ClientDepartmentController@getAllClientDepartments');
         Route::resource('client_department', 'ClientDepartmentController');
+
 
         // Event
         Route::options('globalevent', function(){return null;});

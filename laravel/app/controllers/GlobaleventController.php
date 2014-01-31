@@ -74,8 +74,6 @@ class GlobaleventController extends \BaseController {
 
             $Globalevent->label = Request::json('label');
             $Globalevent->client_department_id = Request::json('client_department_id');
-            $Globalevent->date = Request::json('date');
-            $Globalevent->remark = Request::json('remark');
 
             $Globalevent->save();
 
@@ -130,7 +128,7 @@ class GlobaleventController extends \BaseController {
         }
 
         $Globalevent->id = $id;
-        
+
         $Globalevent->save();
 
         // We get the newly created item
