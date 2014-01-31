@@ -9,7 +9,7 @@ class GlobaleventPeriodController extends \BaseController {
      */
     public function index(){
 
-        $GlobaleventPeriods = GlobaleventPeriod::with(array('globalevent', 'eventperiodemployee'))
+        $GlobaleventPeriods = GlobaleventPeriod::with(array('globalevent', 'globaleventperiodemployee'))
                                                 ->paginate(10)
                                                 ->toArray();
 
@@ -207,6 +207,7 @@ class GlobaleventPeriodController extends \BaseController {
                         ->listWithDetails()
                         ->join('globalevent_period_employee', 'globalevent_period_employee.employee_id', '=', 'employee.id')
                         ->where('globalevent_period_employee.globalevent_period_id', '=', $id)
+                        ->addSelect(DB::raw('globalevent_period_employee.id AS globalevent_period_employee_id'))
                         ->limit(100)
                         ->paginate(10)
                         ->toArray();

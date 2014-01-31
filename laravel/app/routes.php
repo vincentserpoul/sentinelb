@@ -94,8 +94,6 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::options('globalevent_period_employee', function(){return null;});
         Route::options('globalevent_period_employee/{id}', function(){return null;});
         Route::resource('globalevent_period_employee', 'GlobaleventPeriodEmployeeController');
-        Route::options('globalevent_period_employee/assign_whole_event', function(){return null;});
-        Route::post('globalevent_period_employee/assign_whole_event', 'GlobaleventPeriodEmployeeController@assign_whole_event');
 
         // Model static labels
         Route::options('modelstaticlabels', function(){return null;});
