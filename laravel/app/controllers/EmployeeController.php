@@ -45,94 +45,111 @@ class EmployeeController extends \BaseController {
      * @return Response
      */
     public function store(){
-        $Employee = new Employee;
 
-        $Employee->title_id = Request::json('title_id');
-        $Employee->first_name = Request::json('first_name');
-        $Employee->last_name = Request::json('last_name');
-        $Employee->sex_id = Request::json('sex_id');
-        $Employee->country_code = Request::json('country_code');
-        $Employee->date_of_birth = Request::json('date_of_birth');
-        $Employee->mobile_phone_number = Request::json('mobile_phone_number');
-        $Employee->school = Request::json('school');
-        $Employee->join_date = Request::json('join_date');
-        $Employee->race_id = Request::json('race_id');
-        $Employee->status_id = Request::json('status_id');
-        $Employee->work_pass_type_id = Request::json('work_pass_type_id');
+        try {
 
-        $Employee->save();
+            if(empty(Request::json('employee_identity_doc'))){
+                throw new Exception('You need at least one identity document');
+            }
 
-        $id = $Employee->id;
+            $Employee = new Employee;
 
-        /*****************/
-        /* Employee docs */
-        /*****************/
-        $newEmployeeDocs = Request::json('employee_doc');
+            $Employee->title_id = Request::json('title_id');
+            $Employee->first_name = Request::json('first_name');
+            $Employee->last_name = Request::json('last_name');
+            $Employee->sex_id = Request::json('sex_id');
+            $Employee->country_code = Request::json('country_code');
+            $Employee->date_of_birth = Request::json('date_of_birth');
+            $Employee->mobile_phone_number = Request::json('mobile_phone_number');
+            $Employee->school = Request::json('school');
+            $Employee->join_date = Request::json('join_date');
+            $Employee->race_id = Request::json('race_id');
+            $Employee->status_id = Request::json('status_id');
+            $Employee->work_pass_type_id = Request::json('work_pass_type_id');
 
-        if(!is_null($newEmployeeDocs)){
+            $Employee->save();
 
-            /* Create the new Docs */
-            foreach($newEmployeeDocs as $index=>$newEmployeeDoc){
-            /* if there is no ID, it means it is a new Doc */
-                $employeeDoc = new EmployeeDoc;
-                $employeeDoc->employee_id = $id;
-                $employeeDoc->doc_type_id = $newEmployeeDoc['doc_type_id'];
-                $employeeDoc->save();
-                $newEmployeeDocs[$index]['id'] = $employeeDoc->id;
+            $id = $Employee->id;
 
-                /* if there is an uploaded image */
-                if(array_key_exists('doc_image', $newEmployeeDoc)){
-                    $employeeDoc->saveImage($newEmployeeDoc['doc_image']);
-                    /* replace the url data so that the response is not long */
-                    unset($newEmployeeDocs[$index]['doc_image']);
+            /*****************/
+            /* Employee docs */
+            /*****************/
+            $newEmployeeDocs = Request::json('employee_doc');
+
+            if(!is_null($newEmployeeDocs)){
+
+                /* Create the new Docs */
+                foreach($newEmployeeDocs as $index=>$newEmployeeDoc){
+                /* if there is no ID, it means it is a new Doc */
+                    $employeeDoc = new EmployeeDoc;
+                    $employeeDoc->employee_id = $id;
+                    $employeeDoc->doc_type_id = $newEmployeeDoc['doc_type_id'];
+                    $employeeDoc->save();
+                    $newEmployeeDocs[$index]['id'] = $employeeDoc->id;
+
+                    /* if there is an uploaded image */
+                    if(array_key_exists('doc_image', $newEmployeeDoc)){
+                        $employeeDoc->saveImage($newEmployeeDoc['doc_image']);
+                        /* replace the url data so that the response is not long */
+                        unset($newEmployeeDocs[$index]['doc_image']);
+                    }
                 }
             }
-        }
 
-        /**************************/
-        /* Employee Identity docs */
-        /**************************/
-        $newEmployeeIdentityDocs = Request::json('employee_identity_doc');
+            /**************************/
+            /* Employee Identity docs */
+            /**************************/
+            $newEmployeeIdentityDocs = Request::json('employee_identity_doc');
 
-        if(!is_null($newEmployeeIdentityDocs)){
+            if(!empty($newEmployeeIdentityDocs)){
 
-            /* Create the new Docs */
-            foreach($newEmployeeIdentityDocs as $index=>$newEmployeeIdentityDoc){
-            /* if there is no ID, it means it is a new Doc */
-                $employeeIdentityDoc = new EmployeeIdentityDoc;
-                $employeeIdentityDoc->employee_id = $id;
-                $employeeIdentityDoc->identity_doc_type_id = $newEmployeeIdentityDoc['identity_doc_type_id'];
-                $employeeIdentityDoc->identity_doc_number = $newEmployeeIdentityDoc['identity_doc_number'];
-                $employeeIdentityDoc->identity_doc_validity_start = $newEmployeeIdentityDoc['identity_doc_validity_start'];
-                $employeeIdentityDoc->identity_doc_validity_end = $newEmployeeIdentityDoc['identity_doc_validity_end'];
-                $employeeIdentityDoc->save();
-                $newEmployeeIdentityDocs[$index]['id'] = $employeeIdentityDoc->id;
+                /* Create the new Docs */
+                foreach($newEmployeeIdentityDocs as $index=>$newEmployeeIdentityDoc){
+                /* if there is no ID, it means it is a new Doc */
+                    $employeeIdentityDoc = new EmployeeIdentityDoc;
+                    $employeeIdentityDoc->employee_id = $id;
+                    $employeeIdentityDoc->identity_doc_type_id = $newEmployeeIdentityDoc['identity_doc_type_id'];
+                    $employeeIdentityDoc->identity_doc_number = $newEmployeeIdentityDoc['identity_doc_number'];
+                    $employeeIdentityDoc->identity_doc_validity_start = $newEmployeeIdentityDoc['identity_doc_validity_start'];
+                    $employeeIdentityDoc->identity_doc_validity_end = $newEmployeeIdentityDoc['identity_doc_validity_end'];
+                    $employeeIdentityDoc->save();
+                    $newEmployeeIdentityDocs[$index]['id'] = $employeeIdentityDoc->id;
 
-                /* if there is an uploaded image */
-                if(array_key_exists('doc_image', $newEmployeeIdentityDoc)){
-                    $employeeIdentityDoc->saveImage($newEmployeeIdentityDoc['doc_image']);
-                    /* replace the url data so that the response is not long */
-                    $newEmployeeIdentityDoc[$index]['image_name'] = $employeeIdentityDoc->image_name;
-                    unset($newEmployeeIdentityDoc[$index]['doc_image']);
+                    /* if there is an uploaded image */
+                    if(array_key_exists('doc_image', $newEmployeeIdentityDoc)){
+                        $employeeIdentityDoc->saveImage($newEmployeeIdentityDoc['doc_image']);
+                        /* replace the url data so that the response is not long */
+                        $newEmployeeIdentityDoc[$index]['image_name'] = $employeeIdentityDoc->image_name;
+                        unset($newEmployeeIdentityDoc[$index]['doc_image']);
+                    }
                 }
             }
+
+            /* updates employee with the new data for identity docs */
+            $Employee['employee_identity_doc'] = $newEmployeeIdentityDocs;
+
+            /* updates employee with the new data */
+            $Employee['employee_doc'] = $newEmployeeDocs;
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Employee created',
+                    'action' => 'insert',
+                    'employee' => $Employee->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Employee cannot be created. " . $e->getMessage(),
+                    'action' => "create"
+                ),
+                422
+            );
         }
-
-        /* updates employee with the new data for identity docs */
-        $Employee['employee_identity_doc'] = $newEmployeeIdentityDocs;
-
-        /* updates employee with the new data */
-        $Employee['employee_doc'] = $newEmployeeDocs;
-
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Employee created',
-                'action' => 'insert',
-                'employee' => $Employee->toArray()
-            ),
-            200
-        );
     }
 
     /**
