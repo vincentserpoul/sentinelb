@@ -48,8 +48,41 @@ class EmployeeController extends \BaseController {
 
         try {
 
-            if(empty(Request::json('employee_identity_doc'))){
-                throw new Exception('You need at least one identity document');
+            /* Validation of the data */
+            $valid = Validator::make(
+                Request::json()->all(),
+                array(
+                    'title_id' => 'required',
+                    'first_name' => 'required',
+                    'last_name' => 'required',
+                    'sex_id' => 'required',
+                    'country_code' => 'required',
+                    'date_of_birth' => 'required|date',
+                    'mobile_phone_number' => 'required',
+                    'school' => 'required',
+                    'race_id' => 'required',
+                    'work_pass_type_id' => 'required',
+                    'race_id' => 'required'
+                )
+            );
+
+            if ($valid->fails())
+            {
+                throw new Exception($valid->messages(), 1);
+            }
+
+            /* Check if there is at least one identity doc */
+            /* Validation of the data */
+            $valid = Validator::make(
+                Request::json('employee_identity_doc'),
+                array(
+
+                )
+            );
+
+            if ($valid->fails())
+            {
+                throw new Exception($valid->messages(), 1);
             }
 
             $Employee = new Employee;
@@ -62,9 +95,9 @@ class EmployeeController extends \BaseController {
             $Employee->date_of_birth = Request::json('date_of_birth');
             $Employee->mobile_phone_number = Request::json('mobile_phone_number');
             $Employee->school = Request::json('school');
-            $Employee->join_date = Request::json('join_date');
+            $Employee->join_date = date('Y-m-d');
             $Employee->race_id = Request::json('race_id');
-            $Employee->status_id = Request::json('status_id');
+            $Employee->status_id = 1;
             $Employee->work_pass_type_id = Request::json('work_pass_type_id');
 
             $Employee->save();
