@@ -62,27 +62,14 @@ class EmployeeController extends \BaseController {
                     'school' => 'required',
                     'race_id' => 'required',
                     'work_pass_type_id' => 'required',
-                    'race_id' => 'required'
+                    'race_id' => 'required',
+                    'employee_identity_doc' => 'min:1'
                 )
             );
 
             if ($valid->fails())
             {
-                throw new Exception($valid->messages(), 1);
-            }
-
-            /* Check if there is at least one identity doc */
-            /* Validation of the data */
-            $valid = Validator::make(
-                Request::json('employee_identity_doc'),
-                array(
-
-                )
-            );
-
-            if ($valid->fails())
-            {
-                throw new Exception($valid->messages(), 1);
+                throw new Exception(implode($valid->messages()->all(':message'), ' - '), 1);
             }
 
             $Employee = new Employee;
@@ -229,53 +216,77 @@ class EmployeeController extends \BaseController {
 
         try {
 
+            /* Validation of the data */
+            $valid = Validator::make(
+                Request::json()->all(),
+                array(
+                    'title_id' => 'required',
+                    'first_name' => 'required',
+                    'last_name' => 'required',
+                    'sex_id' => 'required',
+                    'country_code' => 'required',
+                    'date_of_birth' => 'required|date',
+                    'mobile_phone_number' => 'required',
+                    'school' => 'required',
+                    'race_id' => 'required',
+                    'work_pass_type_id' => 'required',
+                    'race_id' => 'required',
+                    'employee_identity_doc' => 'min:1'
+                )
+            );
+
+            if ($valid->fails())
+            {
+                throw new Exception(implode($valid->messages()->all(':message'), ' - '), 1);
+            }
+
             $Employee = Employee::find($id);
 
-            if ( Request::json('title_id') ){
+            if ( !is_null(Request::json('title_id')) ){
                 $Employee->title_id = Request::json('title_id');
             }
 
-            if ( Request::json('first_name') ){
+            if ( !is_null(Request::json('first_name')) ){
                 $Employee->first_name = Request::json('first_name');
             }
 
-            if ( Request::json('last_name') ){
+            if ( !is_null(Request::json('last_name'))){
                 $Employee->last_name = Request::json('last_name');
             }
 
-            if ( Request::json('sex_id') ){
+            if ( !is_null(Request::json('sex_id')) ){
                 $Employee->sex_id = Request::json('sex_id');
             }
 
-            if ( Request::json('country_code') ){
+            if ( !is_null(Request::json('country_code')) ){
                 $Employee->country_code = Request::json('country_code');
             }
 
-            if ( Request::json('date_of_birth') ){
+            if ( !is_null(Request::json('date_of_birth')) ){
                 $Employee->date_of_birth = Request::json('date_of_birth');
             }
 
-            if ( Request::json('mobile_phone_number') ){
+            if ( !is_null(Request::json('mobile_phone_number')) ){
                 $Employee->mobile_phone_number = Request::json('mobile_phone_number');
             }
 
-            if ( Request::json('school') ){
+            if ( !is_null(Request::json('school')) ){
                 $Employee->school = Request::json('school');
             }
 
-            if ( Request::json('join_date') ){
+            if ( !is_null(Request::json('join_date')) ){
                 $Employee->join_date = Request::json('join_date');
             }
 
-            if ( Request::json('race_id') ){
+            if ( !is_null(Request::json('race_id')) ){
                 $Employee->race_id = Request::json('race_id');
             }
 
-            if ( Request::json('status_id') ){
+            if ( !is_null(Request::json('status_id')) ){
                 $Employee->status_id = Request::json('status_id');
             }
 
-            if ( Request::json('work_pass_type_id') ){
+            if ( !is_null(Request::json('work_pass_type_id')) ){
                 $Employee->work_pass_type_id = Request::json('work_pass_type_id');
             }
 
@@ -396,9 +407,10 @@ class EmployeeController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => 'Employee cannot be updated. ' . $e->getMessage()
+                    'message' => "Employee cannot be updated. " . $e->getMessage(),
+                    'action' => "create"
                 ),
-                500
+                422
             );
         }
     }
