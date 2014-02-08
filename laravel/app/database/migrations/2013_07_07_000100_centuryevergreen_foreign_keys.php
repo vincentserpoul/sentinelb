@@ -36,6 +36,7 @@ class CenturyevergreenForeignKeys
             $table->foreign('employee_id')->references('id')->on('employee');
             $table->foreign('identity_doc_type_id')->references('id')->on('identity_doc_type');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->unique(array('identity_doc_type_id', 'identity_doc_number'), 'unik_id');
         });
 
         Schema::table('employee_remarks', function($table)

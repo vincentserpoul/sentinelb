@@ -52,10 +52,10 @@ class EmployeeController extends \BaseController {
             $valid = Validator::make(
                 Request::json()->all(),
                 array(
-                    'title_id' => 'required',
+                    'title_id' => 'required|integer',
                     'first_name' => 'required',
                     'last_name' => 'required',
-                    'sex_id' => 'required',
+                    'sex_id' => 'required|integer',
                     'country_code' => 'required',
                     'date_of_birth' => 'required|date',
                     'mobile_phone_number' => 'required',
@@ -75,13 +75,13 @@ class EmployeeController extends \BaseController {
             $Employee = new Employee;
 
             $Employee->title_id = Request::json('title_id');
-            $Employee->first_name = Request::json('first_name');
-            $Employee->last_name = Request::json('last_name');
+            $Employee->first_name = strip_tags(trim(ucfirst(strtolower(Request::json('first_name')))));
+            $Employee->last_name = strip_tags(trim(ucfirst(strtolower(Request::json('last_name')))));
             $Employee->sex_id = Request::json('sex_id');
             $Employee->country_code = Request::json('country_code');
             $Employee->date_of_birth = Request::json('date_of_birth');
-            $Employee->mobile_phone_number = Request::json('mobile_phone_number');
-            $Employee->school = Request::json('school');
+            $Employee->mobile_phone_number = strip_tags(trim(Request::json('mobile_phone_number')));
+            $Employee->school = strip_tags(trim(ucfirst(strtolower(Request::json('school')))));
             $Employee->join_date = date('Y-m-d');
             $Employee->race_id = Request::json('race_id');
             $Employee->status_id = 1;
@@ -129,7 +129,7 @@ class EmployeeController extends \BaseController {
                     $employeeIdentityDoc = new EmployeeIdentityDoc;
                     $employeeIdentityDoc->employee_id = $id;
                     $employeeIdentityDoc->identity_doc_type_id = $newEmployeeIdentityDoc['identity_doc_type_id'];
-                    $employeeIdentityDoc->identity_doc_number = $newEmployeeIdentityDoc['identity_doc_number'];
+                    $employeeIdentityDoc->identity_doc_number = strip_tags(trim(strtoupper($newEmployeeIdentityDoc['identity_doc_number'])));
                     $employeeIdentityDoc->identity_doc_validity_start = $newEmployeeIdentityDoc['identity_doc_validity_start'];
                     $employeeIdentityDoc->identity_doc_validity_end = $newEmployeeIdentityDoc['identity_doc_validity_end'];
                     $employeeIdentityDoc->save();
@@ -220,10 +220,10 @@ class EmployeeController extends \BaseController {
             $valid = Validator::make(
                 Request::json()->all(),
                 array(
-                    'title_id' => 'required',
+                    'title_id' => 'required|integer',
                     'first_name' => 'required',
                     'last_name' => 'required',
-                    'sex_id' => 'required',
+                    'sex_id' => 'required|integer',
                     'country_code' => 'required',
                     'date_of_birth' => 'required|date',
                     'mobile_phone_number' => 'required',
@@ -247,11 +247,11 @@ class EmployeeController extends \BaseController {
             }
 
             if ( !is_null(Request::json('first_name')) ){
-                $Employee->first_name = Request::json('first_name');
+                $Employee->first_name = strip_tags(trim(ucfirst(strtolower(Request::json('first_name')))));
             }
 
             if ( !is_null(Request::json('last_name'))){
-                $Employee->last_name = Request::json('last_name');
+                $Employee->last_name = strip_tags(trim(ucfirst(strtolower(Request::json('last_name')))));
             }
 
             if ( !is_null(Request::json('sex_id')) ){
@@ -267,11 +267,11 @@ class EmployeeController extends \BaseController {
             }
 
             if ( !is_null(Request::json('mobile_phone_number')) ){
-                $Employee->mobile_phone_number = Request::json('mobile_phone_number');
+                $Employee->mobile_phone_number = strip_tags(trim(Request::json('mobile_phone_number')));
             }
 
             if ( !is_null(Request::json('school')) ){
-                $Employee->school = Request::json('school');
+                $Employee->school = strip_tags(trim(ucfirst(strtolower(Request::json('school')))));
             }
 
             if ( !is_null(Request::json('join_date')) ){
@@ -367,7 +367,7 @@ class EmployeeController extends \BaseController {
                         $employeeIdentityDoc = new EmployeeIdentityDoc;
                         $employeeIdentityDoc->employee_id = $id;
                         $employeeIdentityDoc->identity_doc_type_id = $newEmployeeIdentityDoc['identity_doc_type_id'];
-                        $employeeIdentityDoc->identity_doc_number = $newEmployeeIdentityDoc['identity_doc_number'];
+                        $employeeIdentityDoc->identity_doc_number = strip_tags(trim(strtoupper($newEmployeeIdentityDoc['identity_doc_number'])));
                         $employeeIdentityDoc->identity_doc_validity_start = $newEmployeeIdentityDoc['identity_doc_validity_start'];
                         $employeeIdentityDoc->identity_doc_validity_end = $newEmployeeIdentityDoc['identity_doc_validity_end'];
                         $employeeIdentityDoc->save();
