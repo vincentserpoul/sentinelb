@@ -13,7 +13,7 @@ class EmployeeController extends \BaseController {
 
         $EmployeesList = $Employees->listWithDetails()
                         ->limit(100)
-                        ->paginate(10)
+                        ->paginate(50)
                         ->toArray();
 
         return Response::json(
@@ -506,7 +506,7 @@ class EmployeeController extends \BaseController {
         $EmployeesList->join('globalevent_period_employee AS gpe', 'gpe.employee_id', '=', 'employee.id')
                         ->where('gpe.globalevent_period_id', '=', $globalevent_period_id);
 
-        $EmployeesList = $EmployeesList->limit(500)->paginate(10)
+        $EmployeesList = $EmployeesList->limit(500)->paginate(50)
                                         ->toArray();
 
         return Response::json(
@@ -567,7 +567,7 @@ class EmployeeController extends \BaseController {
 
         //echo $EmployeesList->toSql();die();
 
-        $EmployeesList = $EmployeesList->limit(500)->paginate(10)
+        $EmployeesList = $EmployeesList->limit(500)->paginate(50)
                                         ->toArray();
 
         return Response::json(
