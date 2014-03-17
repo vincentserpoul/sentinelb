@@ -57,7 +57,7 @@ return array(
             'host'      => 'localhost',
             'database'  => 'centuryevergreen',
             'username'  => 'root',
-            'password'  => 'dev',
+            'password'  => 'Kiwi1769',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
