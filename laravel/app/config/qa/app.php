@@ -26,7 +26,7 @@ return array(
         |
         */
 
-        'url' => 'http://qa.sentinelb.com',
+        'url' => 'https://sentinelb.kwiwango.com',
 
         /*
         |--------------------------------------------------------------------------
@@ -65,7 +65,7 @@ return array(
         |
         */
 
-        'key' => 'YourSecretKey!!!',
+        'key' => 'IwaEVrere4%gghfhkdsdduu^u&8j',
 
         /*
         |--------------------------------------------------------------------------
@@ -185,6 +185,6 @@ return array(
     |
     */
 
-    'allowedorigin' => 'https://qa.sentinelf.com',
+    'allowedorigin' => 'https://sentinelf.kwiwango.com',
 
 );
