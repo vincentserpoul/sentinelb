@@ -52,7 +52,7 @@ class EmployeeController extends \BaseController {
             $valid = Validator::make(
                 Request::json()->all(),
                 array(
-                    'title_id' => 'required|integer',
+                    'title_id' => 'integer',
                     'first_name' => 'required',
                     'last_name' => 'required',
                     'sex_id' => 'required|integer',
@@ -74,7 +74,12 @@ class EmployeeController extends \BaseController {
 
             $Employee = new Employee;
 
-            $Employee->title_id = Request::json('title_id');
+            /* if title_id is undefined, make it 4 */
+            $title_id = Request::json('title_id');
+            if(empty($title_id)){
+                $title_id = 4;
+            }
+            $Employee->title_id = $title_id;
             $Employee->first_name = strip_tags(trim(ucfirst(strtolower(Request::json('first_name')))));
             $Employee->last_name = strip_tags(trim(ucfirst(strtolower(Request::json('last_name')))));
             $Employee->sex_id = Request::json('sex_id');
@@ -220,7 +225,7 @@ class EmployeeController extends \BaseController {
             $valid = Validator::make(
                 Request::json()->all(),
                 array(
-                    'title_id' => 'required|integer',
+                    'title_id' => 'integer',
                     'first_name' => 'required',
                     'last_name' => 'required',
                     'sex_id' => 'required|integer',

@@ -24,7 +24,14 @@ class TitleTableSeeder extends Seeder {
                         'label' => 'Miss'
                   )
             );
-           
+
+            Title::create(
+                  array(
+                        'label' => 'None'
+                  )
+            );
+
+
 
     }
 }
