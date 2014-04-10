@@ -92,6 +92,7 @@ Class Employee extends Eloquent
             , 'age_max'=>null
             , 'identity_doc_number'=>null
             , 'last_name'=>null
+            , 'mobile_phone_number' => null
         );
 
         $newSearchCriteria = array();
