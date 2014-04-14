@@ -12,7 +12,6 @@
 */
 App::before(function($request)
 {
-    if($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         $statusCode = 204;
 
         $headers = [
@@ -23,7 +22,6 @@ App::before(function($request)
         ];
 
         return Response::make(null, $statusCode, $headers);
-    }
 });
 
 
