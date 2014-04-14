@@ -107,6 +107,7 @@ return array(
                 'Illuminate\View\ViewServiceProvider',
                 'Illuminate\Workbench\WorkbenchServiceProvider',
                 'Cartalyst\Sentry\SentryServiceProvider',
+                'Barryvdh\Cors\CorsServiceProvider',
 
         ),
 
@@ -175,16 +176,5 @@ return array(
                 'View'            => 'Illuminate\Support\Facades\View',
                 'Sentry'          => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
         ),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Allowed origin for request
-    |--------------------------------------------------------------------------
-    |
-    | This is used to allow CORS on certain domains only
-    |
-    */
-
-    'allowedorigin' => 'https://sentinelf.kwiwango.com',
 
 );

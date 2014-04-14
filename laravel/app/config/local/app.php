@@ -106,7 +106,8 @@ return array(
                 'Illuminate\Validation\ValidationServiceProvider',
                 'Illuminate\View\ViewServiceProvider',
                 'Illuminate\Workbench\WorkbenchServiceProvider',
-        		'Cartalyst\Sentry\SentryServiceProvider',
+        	'Cartalyst\Sentry\SentryServiceProvider',
+                'Barryvdh\Cors\CorsServiceProvider',
 
         ),
 
@@ -176,15 +177,5 @@ return array(
 				'Sentry' 		  => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
         ),
 
-	/*
-	|--------------------------------------------------------------------------
-	| Allowed origin for request
-	|--------------------------------------------------------------------------
-	|
-	| This is used to allow CORS on certain domains only
-	|
-	*/
-
-	'allowedorigin' => 'http://dev.sentinelf.com:9000',
 
 );
