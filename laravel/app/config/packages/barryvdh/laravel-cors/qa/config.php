@@ -1,5 +1,5 @@
 <?php
-die('po');
+
 return array(
 
     /*
