@@ -23,6 +23,10 @@ Class Employee extends Eloquent
         return $this->hasMany('EmployeeDoc');
     }
 
+    public function employee_contact()
+    {
+        return $this->hasMany('EmployeeContact');
+    }
 
     public function employee_remarks()
     {

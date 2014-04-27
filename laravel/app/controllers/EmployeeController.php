@@ -96,6 +96,32 @@ class EmployeeController extends \BaseController {
 
             $id = $Employee->id;
 
+            /*********************/
+            /* Employee contacts */
+            /*********************/
+            $newEmployeeContacts = Request::json('employee_contact');
+
+            if(!is_null($newEmployeeContacts)){
+
+                /* Create the new Docs */
+                foreach($newEmployeeContacts as $index=>$newEmployeeContact){
+                /* if there is no ID, it means it is a new Doc */
+                    $employeeContact = new EmployeeContact;
+                    $employeeContact->employee_id = $id;
+
+                    /* if title_id is undefined, make it 4 */
+                    if(!array_key_exists('title_id', $newEmployeeContact)){
+                        $contact_title_id = 4;
+                    }
+                    $employeeContact->title_id = $contact_title_id;
+                    $employeeContact->first_name = $newEmployeeContact['first_name'];
+                    $employeeContact->last_name = $newEmployeeContact['last_name'];
+                    $employeeContact->mobile_phone_number = $newEmployeeContact['mobile_phone_number'];
+                    $employeeContact->save();
+                    $newEmployeeContact[$index]['id'] = $employeeContact->id;
+                }
+            }
+
             /*****************/
             /* Employee docs */
             /*****************/
@@ -156,6 +182,9 @@ class EmployeeController extends \BaseController {
             /* updates employee with the new data */
             $Employee['employee_doc'] = $newEmployeeDocs;
 
+            /* updates employee with the new data */
+            $Employee['employee_contact'] = $newEmployeeContacts;
+
             return Response::json(
                 array(
                     'error' => false,
@@ -186,7 +215,7 @@ class EmployeeController extends \BaseController {
     public function show($id){
 
         // Make sure current user owns the requested resource
-        $Employee = Employee::with(array('employee_identity_doc', 'employee_doc'))
+        $Employee = Employee::with(array('employee_identity_doc', 'employee_doc', 'employee_contact'))
                 ->where('id', $id)
                 ->take(1)
                 ->get();
@@ -296,6 +325,54 @@ class EmployeeController extends \BaseController {
             }
 
             $Employee->id = $id;
+
+
+            /*********************/
+            /* Employee contacts */
+            /*********************/
+            $newEmployeeContacts = Request::json('employee_contact');
+
+            if(!is_null($newEmployeeContacts)){
+
+                /* List of ids that we will keep in the docs */
+                $employeeContactIdTokeep = array_column($newEmployeeContacts, 'id');
+
+                /*
+                 * Delete all contacts that are not given in the employee json
+                 * We could do a simple delete in Db, but in order to trigger the event 'deleted'
+                 * We need to loop through the objects
+                 */
+                $employeeContactToDelete = EmployeeContact::where('employee_contact.employee_id', '=', $id);
+                if(!empty($employeeContactIdTokeep)){
+                    $employeeContactToDelete->whereNotIn('id', $employeeContactIdTokeep);
+                }
+                $employeeContactDeleteList = $employeeContactToDelete->get();
+
+                foreach($employeeContactDeleteList as $employeeContact){
+                    $employeeContact->delete();
+                }
+
+                /* Create the new Docs */
+                foreach($newEmployeeContacts as $index=>$newEmployeeContact){
+                    /* if there is no ID, it means it is a new Contact */
+                    if(!array_key_exists('id', $newEmployeeContact)){
+                        $employeeContact = new EmployeeContact;
+                        $employeeContact->employee_id = $id;
+
+                        /* if title_id is undefined, make it 4 */
+                        if(!array_key_exists('title_id', $newEmployeeContact)){
+                            $contact_title_id = 4;
+                        }
+                        $employeeContact->title_id = $contact_title_id;
+                        $employeeContact->first_name = $newEmployeeContact['first_name'];
+                        $employeeContact->last_name = $newEmployeeContact['last_name'];
+                        $employeeContact->mobile_phone_number = $newEmployeeContact['mobile_phone_number'];
+                        $employeeContact->save();
+                        $newEmployeeContact[$index]['id'] = $employeeContact->id;
+                    }
+                }
+            }
+
 
             /*****************/
             /* Employee docs */

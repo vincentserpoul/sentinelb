@@ -16,7 +16,7 @@ return array(
      |
      */
     'defaults' => array(
-        'allow_credentials' => true,
+        'allow_credentials' => false,
         'allow_origin' => array(),
         'allow_headers' => array(),
         'allow_methods' => array(),
@@ -26,7 +26,7 @@ return array(
 
     'paths' => array(
         '^/api/' => array(
-            'allow_origin' => array('*'),
+            'allow_origin' => array('https://sentinelf.kwiwango.com'),
             'allow_headers' => array('Content-Type'),
             'allow_methods' => array('POST', 'PUT', 'GET', 'DELETE'),
             'max_age' => 3600,

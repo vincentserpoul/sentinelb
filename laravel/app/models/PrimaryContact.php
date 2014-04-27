@@ -2,10 +2,10 @@
 
 // Model:'Primary Contact' - Database Table: 'client_contact'
 
-Class Sex extends Eloquent
+Class PrimaryContact extends Eloquent
 {
     protected $visible = array('id', 'label');
-    protected $table='sex';
+    protected $table='client_contact';
 
     public function employee()
     {

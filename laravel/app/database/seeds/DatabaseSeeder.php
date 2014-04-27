@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder {
 	public function run()
 	{
 		Eloquent::unguard();
-		
+
 		$this->call('GroupsTableSeeder');
 		$this->call('UsersTableSeeder');
 		$this->call('UsersGroupsTableSeeder');
@@ -20,11 +20,11 @@ class DatabaseSeeder extends Seeder {
 		$this->call('CurrencyTableSeeder');
 		$this->call('CountryTableSeeder');
 		$this->call('SexTableSeeder');
-		$this->call('TitleTableSeeder');	
+		$this->call('TitleTableSeeder');
 		$this->call('WorkPassTypeTableSeeder');
 		$this->call('WorkTypeTableSeeder');
 		$this->call('IdentityDocTypeTableSeeder');
-		$this->call('DocTypeTableSeeder');			
+		$this->call('DocTypeTableSeeder');
 
 		$this->call('EmployeeTableSeeder');
 		$this->call('EmployeeIdentityDocTableSeeder');
@@ -35,11 +35,12 @@ class DatabaseSeeder extends Seeder {
 		$this->call('ClientDepartmentTableSeeder');
 
 
-		$this->call('PaymentTableSeeder');	
+		$this->call('PaymentTableSeeder');
 		$this->call('GlobaleventTableSeeder');
 		$this->call('GlobaleventPeriodTableSeeder');
 		$this->call('GlobaleventPeriodEmployeeTableSeeder');
 		$this->call('PeriodEmployeePaymentTableSeeder');
+		$this->call('EmployeeContactTableSeeder');
 
 	}
 
