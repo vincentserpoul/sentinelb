@@ -506,10 +506,16 @@ class EmployeeController extends \BaseController {
     public function destroy($id){
 
         $Employee = Employee::find($id);
+
+        /* We don't want a full delete, just inactive status
         $EmployeeIdentityDoc = EmployeeIdentityDoc::where('employee_id', $id);
 
         $EmployeeIdentityDoc->delete();
         $Employee->delete();
+        */
+        /* Hardcoded delete status */
+        $Employee->status = 1;
+        $Employee->save();
 
         return Response::json(
             array(

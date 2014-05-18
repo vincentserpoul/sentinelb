@@ -43,11 +43,11 @@ class AuthController extends BaseController {
 			    	//Assemble an array of each user's status
 			    	$data['userStatus'] = array();
 			    	foreach ($data['allUsers'] as $user) {
-			    		if ($user->isActivated()) 
+			    		if ($user->isActivated())
 			    		{
 			    			$data['userStatus'][$user->id] = "Active";
-			    		} 
-			    		else 
+			    		}
+			    		else
 			    		{
 			    			$data['userStatus'][$user->id] = "Not Active";
 			    		}
@@ -70,7 +70,7 @@ class AuthController extends BaseController {
 					    }
 
 			    	}
-			    } 
+			    }
 
 			    return View::make('users.index')->with($data);
 			} else {
@@ -88,7 +88,7 @@ class AuthController extends BaseController {
 	/**
 	 *  Display this user's details.
 	 */
-	
+
 	public function getShow($id)
 	{
 		try
@@ -120,13 +120,13 @@ class AuthController extends BaseController {
 
 
 	/**
-	 * Register a new user. 
+	 * Register a new user.
 	 *
 	 * @return Response
 	 */
-	public function postRegister() 
+	public function postRegister()
 	{
-	
+
 		// Gather Sanitized Input
 		$input = array(
 			'email' => Binput::get('email'),
@@ -148,24 +148,24 @@ class AuthController extends BaseController {
 		{
 			// Validation has failed
 			// Get error message
-			$message = ''; 
+			$message = '';
 			if ($v->messages()->has('email')) $message = $v->messages()->get('email');
 			else if ($v->messages()->has('password')) $message = $v->messages()->get('password');
 			else if ($v->messages()->has('password_confirmation')) $message = $v->messages->get('password_confirmation');
 			// Return Reponse with error message
 			return Response::json(
 							array(
-								'error' => true, 
+								'error' => true,
 								'message' => $message
 							),
 							403
 						);
 		}
-		else 
+		else
 		{
 
 			try {
-				//Attempt to register the user. 
+				//Attempt to register the user.
 				$user = Sentry::register(array('email' => $input['email'], 'password' => $input['password']));
 
 				//Get the activation code & prep data for email
@@ -183,7 +183,7 @@ class AuthController extends BaseController {
 		    	// Return Reponse with success message
 				return Response::json(
 								array(
-									'error' => false, 
+									'error' => false,
 									'message' => 'Your account has been created. Check your email for the confirmation link.'
 								),
 								200
@@ -195,7 +195,7 @@ class AuthController extends BaseController {
 			    // Return Reponse with error message
 				return Response::json(
 								array(
-									'error' => true, 
+									'error' => true,
 									'message' => 'Login field required.'
 								),
 								403
@@ -206,7 +206,7 @@ class AuthController extends BaseController {
 			    // Return Reponse with error message
 				return Response::json(
 								array(
-									'error' => true, 
+									'error' => true,
 									'message' => 'User already exists.'
 								),
 								403
@@ -220,7 +220,7 @@ class AuthController extends BaseController {
 	 * Activate a new User
 	 */
 	public function getActivate($userId = null, $activationCode = null) {
-		try 
+		try
 		{
 		    // Find the user
 		    $user = Sentry::getUserProvider()->findById($userId);
@@ -229,8 +229,8 @@ class AuthController extends BaseController {
 		    if ($user->attemptActivation($activationCode))
 		    {
 		        // User activation passed
-		        
-		    	//Add this person to the user group. 
+
+		    	//Add this person to the user group.
 		    	$userGroup = Sentry::getGroupProvider()->findById(1);
 		    	$user->addGroup($userGroup);
 
@@ -264,7 +264,7 @@ class AuthController extends BaseController {
 	 * @return Response
 	 */
 
-	public function postLogin() 
+	public function postLogin()
 	{
 		// Gather Sanitized Input
 		$input = array(
@@ -286,19 +286,19 @@ class AuthController extends BaseController {
 		{
 			// Validation has failed
 			// Get the error message
-			$message = ''; 
-			if ($v->messages()->has('email')) $message = $v->messages()->get('email'); 
+			$message = '';
+			if ($v->messages()->has('email')) $message = $v->messages()->get('email');
 			else if ($v->messages()->has('password')) $message = $v->messages()->get('password');
 			// Return reponse with error message
 			return Response::json(
 							array(
-								'error' => true, 
+								'error' => true,
 								'message' => $message
 							),
 							403
 						);
 		}
-		else 
+		else
 		{
 			try
 			{
@@ -322,11 +322,11 @@ class AuthController extends BaseController {
 			    // Sometimes a user is found, however hashed credentials do
 			    // not match. Therefore a user technically doesn't exist
 			    // by those credentials. Check the error message returned
-			    // for more information.			    
+			    // for more information.
 				// Return reponse with error message
 				return Response::json(
 								array(
-									'error' => true, 
+									'error' => true,
 									'message' => 'Invalid username or password.'
 								),
 								403
@@ -338,29 +338,29 @@ class AuthController extends BaseController {
 				// Return reponse with error message
 				return Response::json(
 								array(
-									'error' => true, 
+									'error' => true,
 									'message' => 'You have not yet activated this account.'
 								),
 								403
 							);
 			}
 
-			//Login was succesful.  
+			//Login was succesful.
 			$userGroups = $user->getGroups();
 			$userPermissions = array_keys($user->getMergedPermissions());
 			return Response::json(
 								array(
-									'error' => false, 
-									'message' => 'You are logged in.', 
+									'error' => false,
+									'message' => 'You are logged in.',
 									'user' => array(
-										'email' => $user->email, 
+										'email' => $user->email,
 										'userRole' => array(
-											'title' => $userGroups[0]->name, 
+											'title' => $userGroups[0]->name,
 											'permissions' => $userPermissions
 										)
 									)
 								),
-								200	
+								200
 							);
 		}
 	}
@@ -368,39 +368,39 @@ class AuthController extends BaseController {
 	/**
 	 * Logout
 	 */
-	
-	public function getLogout() 
+
+	public function getLogout()
 	{
 		try {
 			Sentry::logout();
-			//Login was succesful.  
+			//Login was succesful.
 			return Response::json(
 						array(
-							'error' => false, 
-							'message' => 'You are logged out.', 
+							'error' => false,
+							'message' => 'You are logged out.',
 							'user' => array(
-								'email' => '', 
+								'email' => '',
 								'userRole' => array(
-									'title' => 'public', 
+									'title' => 'public',
 									'permissions' => array('public')
 								)
 							)
 						),
-						200	
+						200
 					);
 		} catch(Exception $e) {
 			return Response::json(
 					array(
-						'error' => true, 
-						'message' => 'Loggout has error.'		
-					), 
+						'error' => true,
+						'message' => 'Loggout has error.'
+					),
 					401
 				);
 		}
 	}
 
 
-	
+
 
 	/**
 	 * Forgot Password / Reset
@@ -429,7 +429,7 @@ class AuthController extends BaseController {
 			// Validation has failed
 			return Redirect::to('users/resetpassword')->withErrors($v)->withInput();
 		}
-		else 
+		else
 		{
 			try
 			{
@@ -471,7 +471,7 @@ class AuthController extends BaseController {
 		    if ($user->attemptResetPassword($resetCode, $newPassword))
 		    {
 		        // Password reset passed
-		        // 
+		        //
 		        // Email the reset code to the user
 
 			    //Prepare New Password body
@@ -485,7 +485,7 @@ class AuthController extends BaseController {
 
 				Session::flash('success', 'Your password has been changed. Check your email for the new password.');
 			    return Redirect::to('/');
-		        
+
 		    }
 		    else
 		    {
@@ -522,8 +522,8 @@ class AuthController extends BaseController {
 	/**
 	 *  Edit / Update User Profile
 	 */
-	
-	public function getEdit($id) 
+
+	public function getEdit($id)
 	{
 		try
 		{
@@ -538,7 +538,7 @@ class AuthController extends BaseController {
 				$data['userGroups'] = $data['user']->getGroups();
 				$data['allGroups'] = Sentry::getGroupProvider()->findAll();
 				return View::make('users.edit')->with($data);
-			} 
+			}
 			elseif ($currentUser->getId() == $id)
 			{
 				//They are not an admin, but they are viewing their own profile.
@@ -580,7 +580,7 @@ class AuthController extends BaseController {
 			// Validation has failed
 			return Redirect::to('users/edit/' . $id)->withErrors($v)->withInput();
 		}
-		else 
+		else
 		{
 			try
 			{
@@ -591,10 +591,10 @@ class AuthController extends BaseController {
 			   	//Do they have admin access?
 				if ( $currentUser->hasAccess('admin')  || $currentUser->getId() == $id)
 				{
-					// Either they are an admin, or they are changing their own password. 
+					// Either they are an admin, or they are changing their own password.
 					// Find the user using the user id
-					$user = Sentry::getUserProvider()->findById($id);	
-					
+					$user = Sentry::getUserProvider()->findById($id);
+
 				    // Update the user details
 				    $user->first_name = $input['firstName'];
 				    $user->last_name = $input['lastName'];
@@ -616,7 +616,7 @@ class AuthController extends BaseController {
 				} else {
 					Session::flash('error', 'You don\'t have access to that user.');
 					return Redirect::to('/');
-				}			   			    
+				}
 			}
 			catch (Cartalyst\Sentry\Users\UserExistsException $e)
 			{
@@ -632,11 +632,11 @@ class AuthController extends BaseController {
 	}
 
 	/**
-	 * Process changepassword form. 
+	 * Process changepassword form.
 	 * @param  [type] $id [description]
 	 * @return [type]     [description]
 	 */
-	public function postChangepassword($id) 
+	public function postChangepassword($id)
 	{
 		// Gather Sanitized Input
 		$input = array(
@@ -660,11 +660,11 @@ class AuthController extends BaseController {
 			// Validation has failed
 			return Redirect::to('users/edit/' . $id)->withErrors($v)->withInput();
 		}
-		else 
+		else
 		{
 			try
 			{
-			    
+
 				//Get the current user's id.
 				Sentry::check();
 				$currentUser = Sentry::getUser();
@@ -672,9 +672,9 @@ class AuthController extends BaseController {
 			   	//Do they have admin access?
 				if ( $currentUser->hasAccess('admin')  || $currentUser->getId() == $id)
 				{
-					// Either they are an admin, or they are changing their own password. 
-					$user = Sentry::getUserProvider()->findById($id);	
-					if ($user->checkHash($input['oldPassword'], $user->getPassword())) 
+					// Either they are an admin, or they are changing their own password.
+					$user = Sentry::getUserProvider()->findById($id);
+					if ($user->checkHash($input['oldPassword'], $user->getPassword()))
 			    	{
 				    	//The oldPassword matches the current password in the DB. Proceed.
 				    	$user->password = $input['newPassword'];
@@ -692,14 +692,14 @@ class AuthController extends BaseController {
 							return Redirect::to('users/edit/' . $id);
 					    }
 					} else {
-						// The oldPassword did not match the password in the database. Abort. 
+						// The oldPassword did not match the password in the database. Abort.
 						Session::flash('error', 'You did not provide the correct password.');
 						return Redirect::to('users/edit/' . $id);
 					}
 				} else {
 					Session::flash('error', 'You don\'t have access to that user.');
 					return Redirect::to('/');
-				}			   			    
+				}
 			}
 			catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
 			{
@@ -726,7 +726,7 @@ class AuthController extends BaseController {
 	 */
 	public function postUpdatememberships($id)
 	{
-		try 
+		try
 		{
 			//Get the current user's id.
 			Sentry::check();
@@ -738,11 +738,11 @@ class AuthController extends BaseController {
 				$user = Sentry::getUserProvider()->findById($id);
 				$allGroups = Sentry::getGroupProvider()->findAll();
 				$permissions = Input::get('permissions');
-				
+
 				$statusMessage = '';
 				foreach ($allGroups as $group) {
-					
-					if (isset($permissions[$group->id])) 
+
+					if (isset($permissions[$group->id]))
 					{
 						//The user should be added to this group
 						if ($user->addGroup($group))
@@ -768,13 +768,13 @@ class AuthController extends BaseController {
 				}
 				Session::flash('info', $statusMessage);
 				return Redirect::to('users/show/'. $id);
-			} 
-			else 
+			}
+			else
 			{
 				Session::flash('error', 'You don\'t have access to that user.');
 				return Redirect::to('/');
 			}
-	
+
 		}
 		catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
 		{
@@ -840,7 +840,7 @@ class AuthController extends BaseController {
 			// Validation has failed
 			return Redirect::to('users/suspend/' . $id)->withErrors($v)->withInput();
 		}
-		else 
+		else
 		{
 			try
 			{
@@ -898,9 +898,9 @@ class AuthController extends BaseController {
 	/**
 	 * Generate password - helper function
 	 * From http://www.phpscribble.com/i4xzZu/Generate-random-passwords-of-given-length-and-strength
-	 * 
+	 *
 	 */
-	
+
 	private function _generatePassword($length=9, $strength=4) {
 		$vowels = 'aeiouy';
 		$consonants = 'bcdfghjklmnpqrstvwxz';
@@ -916,7 +916,7 @@ class AuthController extends BaseController {
 		if ($strength & 8) {
 			$consonants .= '@#$%';
 		}
-	 
+
 		$password = '';
 		$alt = time() % 2;
 		for ($i = 0; $i < $length; $i++) {
@@ -937,45 +937,45 @@ class AuthController extends BaseController {
 	public function getState() {
 		try {
 			if ( Sentry::check()) { //user is logged in
-				$user = Sentry::getUser();  
+				$user = Sentry::getUser();
 				$userGroups = $user->getGroups();
 				$userPermissions = array_keys($user->getMergedPermissions());
 				return Response::json(
 							array(
-								'error' => false, 
-								'message' => 'You are logged in.', 
+								'error' => false,
+								'message' => 'You are logged in.',
 								'user' => array(
-									'email' => $user->email, 
+									'email' => $user->email,
 									'userRole' => array(
-										'title' => $userGroups[0]->name, 
+										'title' => $userGroups[0]->name,
 										'permissions' => $userPermissions
 									)
 								)
 							),
-							200	
+							200
 						);
 			} else {
 				return Response::json(
 							array(
-								'error' => false, 
-								'message' => 'You are not logged in.', 
+								'error' => false,
+								'message' => 'You are not logged in.',
 								'user' => array(
-									'email' => '', 
+									'email' => '',
 									'userRole' => array(
-										'title' => 'public', 
+										'title' => 'public',
 										'permissions' => array('public')
 									)
 								)
 							),
-							200	
+							200
 						);
 			}
 		} catch (Exception $e) {
 			return Response::json(
 						array(
-							'error' => true, 
-							'message' => 'User\'s state is undefined' 
-						), 
+							'error' => true,
+							'message' => 'User\'s state is undefined'
+						),
 						403
 			);
 		}

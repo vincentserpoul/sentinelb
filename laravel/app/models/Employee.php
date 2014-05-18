@@ -92,6 +92,7 @@ Class Employee extends Eloquent
               'work_pass_type'=>null
             , 'race'=>null
             , 'sex'=>null
+            , 'status'=>null
             , 'age_min'=>null
             , 'age_max'=>null
             , 'identity_doc_number'=>null
@@ -184,7 +185,7 @@ Class Employee extends Eloquent
                 $EmployeesList->whereRaw('TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE()) < ?', array($searchValues));
             } /* if the values is not an integer, then it is a text comparison */
             elseif(is_string($searchValues) && !is_integer($searchValues)){
-                $EmployeesList->whereRaw($searchCriteria.' like ?', array('%'.strtolower($searchValues).'%'));
+                $EmployeesList->whereRaw($searchCriteria.' like ?', array(strtolower($searchValues).'%'));
             }
         }
 

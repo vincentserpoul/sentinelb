@@ -26,7 +26,7 @@ return array(
 
     'paths' => array(
         '^/api/' => array(
-            'allow_origin' => array('http://dev.sentinelf.com:9000'),
+            'allow_origin' => array('http://dev.sentinelf.com:9000', '*'),
             'allow_headers' => array('Content-Type'),
             'allow_methods' => array('POST', 'PUT', 'GET', 'DELETE'),
             'max_age' => 3600,

@@ -34,12 +34,12 @@ App::after(function($request, $response)
 Route::filter('auth', function()
 {
 	if ((Request::getMethod() !== 'OPTIONS') && !Sentry::check()) return Response::json(
-							array(
-								'error' => true,
-								'message' => 'Please log in to continue.'
-							),
-							401
-						);
+		array(
+			'error' => true,
+			'message' => 'Please log in to continue.'
+		),
+		401
+	);
 });
 
 

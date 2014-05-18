@@ -18,5 +18,12 @@ class StatusTableSeeder extends Seeder {
                   )
             );
 
+            Status::create(
+                  array(
+                        'label' => 'Banned'
+                  )
+            );
+
+
     }
 }

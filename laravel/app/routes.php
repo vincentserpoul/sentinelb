@@ -50,6 +50,9 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::options('employee/assigned_employees/{globalevent_period_id}', function(){return null;});
         Route::get('employee/assigned_employees/{globalevent_period_id}', 'EmployeeController@assigned_employees');
 
+        Route::options('employee/{employee_id}/remark', function(){return null;});
+        Route::resource('employee/{employee_id}/remark', 'EmployeeRemarkController');
+
         /* Base url for employees */
         Route::options('employee', function(){return null;});
         Route::options('employee/{employee_id}', function(){return null;});
