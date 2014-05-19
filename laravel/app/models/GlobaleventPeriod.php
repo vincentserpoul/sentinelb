@@ -7,7 +7,7 @@ Class GlobaleventPeriod extends Eloquent
 
     protected $table='globalevent_period';
 
-    public function employeeremarks()
+    public function employeeremark()
     {
         return $this->hasMany('Employeeremark');
     }

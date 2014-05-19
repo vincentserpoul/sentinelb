@@ -1,11 +1,11 @@
 <?php
 
-// Model:'EmployeeRemark' - Database Table: 'employee_remarks'
+// Model:'EmployeeRemark' - Database Table: 'employee_remark'
 
 Class EmployeeRemark extends Eloquent
 {
 
-    protected $table='employee_remarks';
+    protected $table='employee_remark';
 
     public function employee()
     {

@@ -7,7 +7,7 @@ Class Globalevent extends Eloquent
 
     protected $table='globalevent';
 
-    public function employeeremarks()
+    public function employeeremark()
     {
         return $this->hasMany('Employeeremark');
     }

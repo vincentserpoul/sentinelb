@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmployeeremarksTable extends Migration
+class CreateEmployeeremarkTable extends Migration
 {
     /**
     * Run the migrations.
@@ -11,7 +11,7 @@ class CreateEmployeeremarksTable extends Migration
     */
     public function up()
     {
-        Schema::create('employee_remarks', function($table)
+        Schema::create('employee_remark', function($table)
         {
             $table->engine='InnoDB';
             $table->increments('id')->unsigned();
@@ -30,6 +30,6 @@ class CreateEmployeeremarksTable extends Migration
     */
     public function down()
     {
-        Schema::drop('employee_remarks');
+        Schema::drop('employee_remark');
     }
 }

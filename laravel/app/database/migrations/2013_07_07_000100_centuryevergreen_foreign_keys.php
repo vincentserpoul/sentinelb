@@ -39,9 +39,9 @@ class CenturyevergreenForeignKeys
             $table->unique(array('identity_doc_type_id', 'identity_doc_number'), 'unik_id');
         });
 
-        Schema::table('employee_remarks', function($table)
+        Schema::table('employee_remark', function($table)
         {
-            // Foreign Keys for table 'employee_remarks'
+            // Foreign Keys for table 'employee_remark'
 
             $table->foreign('employee_id')->references('id')->on('employee');
             $table->foreign('globalevent_period_id')->references('id')->on('globalevent_period');
@@ -156,14 +156,14 @@ class CenturyevergreenForeignKeys
 
         });
 
-        Schema::table('employee_remarks', function($table)
+        Schema::table('employee_remark', function($table)
         {
-            // Drop Foreign Keys for table 'employee_remarks'
+            // Drop Foreign Keys for table 'employee_remark'
 
-            $table->dropForeign('employee_remarks_employee_id_foreign');
-            $table->dropForeign('employee_remarks_globalevent_id_foreign');
-            $table->dropForeign('employee_remarks_event_period_id_foreign');
-            $table->dropForeign('employee_remarks_user_id_foreign');
+            $table->dropForeign('employee_remark_employee_id_foreign');
+            $table->dropForeign('employee_remark_globalevent_id_foreign');
+            $table->dropForeign('employee_remark_event_period_id_foreign');
+            $table->dropForeign('employee_remark_user_id_foreign');
 
         });
 

@@ -45,38 +45,56 @@ class EmployeeRemarkController extends \BaseController {
      *
      * @return Response
      */
-    public function store(){
+    public function store($employee_id){
+
         try {
-            $Client = new Client;
 
-            $Client->name = Request::json('name');
-            $Client->address = Request::json('address');
-            $Client->city = Request::json('city');
-            $Client->postcode = Request::json('postcode');
-            $Client->country_code = Request::json('country_code');
-            $Client->phone_number = Request::json('phone_number');
+            if (empty($employee_id))
+            {
+                throw new Exception('Please specify an employee', 1);
+            }
 
-            //$Client->user_id = Auth::user()->id;
+            /* Validation of the data */
+            $valid = Validator::make(
+                Request::json()->all(),
+                array(
+                    'remark' => 'required|min:5|max:5000',
+                )
+            );
+
+            if ($valid->fails())
+            {
+                throw new Exception(implode($valid->messages()->all(':message'), ' - '), 1);
+            }
+
+            $EmployeeRemark = new EmployeeRemark;
+
+            $EmployeeRemark->employee_id = $employee_id;
+            if( !empty(Request::json('globalevent_period_id'))){
+                $EmployeeRemark->globalevent_period_id = Request::json('globalevent_period_id');
+            }
+            $EmployeeRemark->remark = Request::json('remark');
 
             // Validation and Filtering is sorely needed!!
             // Seriously, I'm a bad person for leaving that out.
 
-            $Client->save();
+            $EmployeeRemark->save();
 
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Client created',
-                    'action' => 'insert',
-                    'client' => $Client->toArray()
+                    'message' => 'Remark saved',
+                    'action' => 'create',
+                    'employee_remark' => $EmployeeRemark->toArray()
                 ),
                 200
             );
+
         } catch (Exception $e) {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Client cannot be created'
+                    'message' => 'Remark cannot be created: '.$e->getMessage()
                 ),
                 500
             );

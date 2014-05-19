@@ -28,9 +28,9 @@ Class Employee extends Eloquent
         return $this->hasMany('EmployeeContact');
     }
 
-    public function employee_remarks()
+    public function employee_remark()
     {
-        return $this->hasMany('Employeeremark');
+        return $this->hasMany('EmployeeRemark');
     }
 
     public function globalevent_period_employee()
