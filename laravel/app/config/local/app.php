@@ -177,5 +177,5 @@ return array(
 				'Sentry' 		  => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
         ),
 
-
+        'cipher' => MCRYPT_RIJNDAEL_256,
 );

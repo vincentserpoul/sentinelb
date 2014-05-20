@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('WorkTypeTableSeeder');
 		$this->call('IdentityDocTypeTableSeeder');
 		$this->call('DocTypeTableSeeder');
+		$this->call('PaymentTypeTableSeeder');
 
 		$this->call('EmployeeTableSeeder');
 		$this->call('EmployeeIdentityDocTableSeeder');

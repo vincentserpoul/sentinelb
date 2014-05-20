@@ -111,11 +111,24 @@ class CenturyevergreenForeignKeys
             // Foreign Keys for table 'event_period_employee'
 
             $table->foreign('globalevent_period_employee_id')->references('id')->on('globalevent_period_employee');
-            $table->unique('globalevent_period_employee_id');
             $table->foreign('payment_id')->references('id')->on('payment');
             $table->foreign('user_id')->references('id')->on('users');
         });
 
+        Schema::table('payment', function($table)
+        {
+            // Foreign Keys for table 'event_period_employee'
+
+            $table->foreign('payment_type_id')->references('id')->on('payment_type');
+            $table->foreign('currency_code')->references('code')->on('currency');
+            $table->foreign('user_id')->references('id')->on('users');
+        });
+
+        Schema::table('payment_type', function($table)
+        {
+            // Foreign Keys for table 'event_period_employee'
+            $table->foreign('user_id')->references('id')->on('users');
+        });
     }
 
     /**
@@ -237,6 +250,21 @@ class CenturyevergreenForeignKeys
             $table->dropUnique('period_employee_payment_globalevent_period_employee_id_unique');
             $table->dropForeign('period_employee_payment_payment_id_foreign')->references('id')->on('payment');
             $table->dropForeign('user_id');
+        });
+
+        Schema::table('payment', function($table)
+        {
+            // Foreign Keys for table 'event_period_employee'
+
+            $table->dropForeign('payment_payment_type_id_foreign');
+            $table->dropForeign('payment_currency_code_foreign');
+            $table->dropForeign('user_id');
+        });
+
+        Schema::table('payment_type', function($table)
+        {
+            // Foreign Keys for table 'event_period_employee'
+            $table->dropForeign('user_id')->references('id')->on('users');
         });
 
     }

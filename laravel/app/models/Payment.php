@@ -9,7 +9,12 @@ Class Payment extends Eloquent
 
     public function globalevent_period_employee()
     {
-        return $this->belongsToMany('GlobaleventPeriodEmployee', 'period_employee_payment');
+        return $this->belongsToMany('GlobaleventPeriodEmployee', 'period_employee_payment')->withTimestamps();
+    }
+
+    public function payment_type()
+    {
+        return $this->belongsTo('PaymentType');
     }
 
 }

@@ -16,7 +16,7 @@ class CreateEmployeedocTable extends Migration
             $table->engine='InnoDB';
             $table->increments('id')->unsigned();
             $table->integer('employee_id')->unsigned();
-            $table->integer('doc_type_id')->nullable()->default(NULL)->unsigned();
+            $table->integer('doc_type_id')->unsigned();
             $table->string('image_name', 100)->nullable()->default(NULL);
             $table->timestamps();
             $table->integer('user_id')->nullable()->default('1')->unsigned();

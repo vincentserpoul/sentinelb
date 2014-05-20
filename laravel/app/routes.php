@@ -50,8 +50,20 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::options('employee/assigned_employees/{globalevent_period_id}', function(){return null;});
         Route::get('employee/assigned_employees/{globalevent_period_id}', 'EmployeeController@assigned_employees');
 
+        /* Remarks for employees */
         Route::options('employee/{employee_id}/remark', function(){return null;});
-        Route::resource('employee/{employee_id}/remark', 'EmployeeRemarkController');
+        Route::get('employee/{employee_id}/remark/{remark_id}', 'EmployeeRemarkController@show');
+        Route::get('employee/{employee_id}/remark', 'EmployeeRemarkController@index');
+        Route::delete('employee/{employee_id}/remark/{remark_id}', 'EmployeeRemarkController@destroy');
+        Route::post('employee/{employee_id}/remark', 'EmployeeRemarkController@create');
+        Route::put('employee/{employee_id}/remark/{remark_id}', 'EmployeeRemarkController@update');
+
+
+        /* Payments */
+        Route::options('payment', function(){return null;});
+        Route::options('payment/{id}', function(){return null;});
+        Route::resource('payment', 'PaymentController');
+
 
         /* Base url for employees */
         Route::options('employee', function(){return null;});

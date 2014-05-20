@@ -41,6 +41,40 @@ class EmployeeRemarkController extends \BaseController {
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($remark_id){
+
+        try{
+
+            $EmployeeRemark = EmployeeRemark::findOrFail($remark_id);
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'EmployeeRemarks' => $EmployeeRemark->toArray()
+                ),
+                200
+            );
+        }
+        catch{
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Remark cannot be found: '.$e->getMessage()
+                ),
+                500
+            );
+        }
+
+
+    }
+
+
+    /**
      * Store a newly created resource in storage.
      *
      * @return Response
@@ -104,48 +138,22 @@ class EmployeeRemarkController extends \BaseController {
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
+     * @param  int  $remark_id
      * @return Response
      */
-    public function update($id){
-        try {
+    public function update($remark_id){
+        try{
+            $EmployeeRemark = EmployeeRemark::findOrFail($remark_id);
 
-            $Client = Client::find($id);
-
-            if ( Request::json('name') ){
-                $Client->name = Request::json('name');
-            }
-
-            if ( Request::json('address') ){
-                $Client->address = Request::json('address');
-            }
-
-            if ( Request::json('city') ){
-                $Client->city = Request::json('city');
-            }
-
-            if ( Request::json('postcode') ){
-                $Client->postcode = Request::json('postcode');
-            }
-
-            if ( Request::json('country_code') ){
-                $Client->country_code = Request::json('country_code');
-            }
-
-            if ( Request::json('phone_number') ){
-                $Client->phone_number = Request::json('phone_number');
-            }
-
-            $Client->id = $id;
-
-            $Client->save();
+            $EmployeeRemark->remark = Request::json('remark');
+            $EmployeeRemark->save();
 
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Client updated',
-                    'action' => 'update',
-                    'client' => $Client->toArray()
+                    'message' => 'Remark saved',
+                    'action' => 'create',
+                    'employee_remark' => $EmployeeRemark->toArray()
                 ),
                 200
             );
@@ -153,8 +161,7 @@ class EmployeeRemarkController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Client cannot be updated',
-                    'action' => 'update'
+                    'message' => 'Remark cannot be updated: '.$e->getMessage()
                 ),
                 500
             );
@@ -164,22 +171,21 @@ class EmployeeRemarkController extends \BaseController {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $remark_id
      * @return Response
      */
-    public function destroy($id){
+    public function destroy($remark_id){
 
         try{
-            $Client = Client::find($id);
-            $ClientContact = ClientContact::where('client_id', $id);
 
-            $ClientContact->delete();
-            $Client->delete();
+            $EmployeeRemark = EmployeeRemark::findOrFail($remark_id);
+
+            $EmployeeRemark->delete();
 
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Client deleted'
+                    'message' => 'Remark deleted'
                     ),
                 200
             );
@@ -187,7 +193,7 @@ class EmployeeRemarkController extends \BaseController {
             return Response::json(
                 array(
                     'error' => true,
-                    'message' => 'Client cannot be deleted.' . $e
+                    'message' => 'Remark cannot be deleted: ' . $e->getMessage()
                     ),
                 500
             );

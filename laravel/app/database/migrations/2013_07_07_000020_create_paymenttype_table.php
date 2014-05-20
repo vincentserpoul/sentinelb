@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePaymentTable extends Migration
+class CreatePaymenttypeTable extends Migration
 {
     /**
     * Run the migrations.
@@ -11,13 +11,11 @@ class CreatePaymentTable extends Migration
     */
     public function up()
     {
-        Schema::create('payment', function($table)
+        Schema::create('payment_type', function($table)
         {
             $table->engine='InnoDB';
             $table->increments('id')->unsigned();
-            $table->decimal('amount', 30, 2)->unsigned();
-            $table->string('currency_code', 3);
-            $table->integer('payment_type_id')->nullable()->default(NULL)->unsigned();
+            $table->string('label', 100)->nullable()->default(NULL);
             $table->timestamps();
             $table->integer('user_id')->nullable()->default('1')->unsigned();
         });
@@ -30,6 +28,6 @@ class CreatePaymentTable extends Migration
     */
     public function down()
     {
-        Schema::drop('payment');
+        Schema::drop('payment_type');
     }
 }

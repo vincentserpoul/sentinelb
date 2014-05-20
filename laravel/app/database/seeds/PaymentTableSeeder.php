@@ -8,14 +8,24 @@ class PaymentTableSeeder extends Seeder {
 
             Payment::create(
                   array(
-                        'extra_amount' => 10.5,
+                        'payment_type_id' => 1,
+                        'amount' => 10.5,
                         'currency_code' => 'SGD'
                   )
             );
 
             Payment::create(
                   array(
-                        'extra_amount' => 22.4,
+                        'payment_type_id' => 1,
+                        'amount' => 22.4,
+                        'currency_code' => 'SGD'
+                  )
+            );
+
+            Payment::create(
+                  array(
+                        'payment_type_id' => 2,
+                        'amount' => 22.4,
                         'currency_code' => 'SGD'
                   )
             );

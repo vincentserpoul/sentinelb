@@ -9,8 +9,8 @@ class PaymentController extends \BaseController {
      */
     public function index(){
 
-        
-        $Payments = Payment::get();        
+
+        $Payments = Payment::take(10)->get();
 
         return Response::json(
             array(
@@ -37,24 +37,53 @@ class PaymentController extends \BaseController {
      * @return Response
      */
     public function store(){
-        
-        return true;
-        // Pas de création en direct
-        $Payment = new Payment;
-        $Payment->amount = Request::json('amount');
-        $Payment->currency_code = Request::json('currency_code');
-        //$Payment->user_id = Auth::user()->id;
-        $Payment->save();
 
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Payment created',
-                'action' => 'insert',
-                'Payment' => $Payment->toArray()
-            ),
-            200
-        );
+        try{
+
+            /* Validation of the data */
+            $valid = Validator::make(
+                Request::json()->all(),
+                array(
+                    'amount' => 'required',
+                    'currency_code' => 'required|size:3|alphanum',
+                    'globalevent_period_ids' => 'required|array|min:1',
+                    'payment_type_id' => 'required|integer',
+                )
+            );
+
+            if ($valid->fails())
+            {
+                throw new Exception(implode($valid->messages()->all(':message'), ' - '), 1);
+            }
+
+            // Pas de création en direct
+            $Payment = new Payment;
+            $Payment->amount = Request::json('amount');
+            $Payment->currency_code = Request::json('currency_code');
+            $Payment->payment_type_id = Request::json('payment_type_id');
+            $Payment->save();
+            // Associate the payment with globalevent_period
+            $Payment->globalevent_period_employee()->sync(Request::json('globalevent_period_ids'));
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Payment created',
+                    'action' => 'create',
+                    'Payment' => $Payment->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Payment cannot be created: " . $e->getMessage(),
+                    'action' => "create"
+                ),
+                422
+            );
+        }
 
     }
 
@@ -66,30 +95,27 @@ class PaymentController extends \BaseController {
      */
     public function show($id){
 
-        $Payment = Payment::where('id', $id)
-        ->take(1)
-        ->get();
-     
-        return Response::json(
-            array(
-                'error' => false,
-                'Payments' => $Payment->toArray()
-            ),
-            200
-        );
+        try{
+            $Payment = Payment::findOrFail($id);
 
-  
-    }
+            return Response::json(
+                array(
+                    'error' => false,
+                    'Payments' => $Payment->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Payment cannot be found',
+                    'action' => 'show'
+                ),
+                404
+            );
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -108,7 +134,7 @@ class PaymentController extends \BaseController {
             {
                 $Payment->amount = Request::json('amount');
             }
-            //$Payment->id = $id; 
+            //$Payment->id = $id;
             $Payment->save();
             return Response::json(
                 array(
@@ -139,19 +165,16 @@ class PaymentController extends \BaseController {
      * @return Response
      */
     public function destroy($id){
-       return true;
-       // Pas de suppression en direct
-       try
-        {
-            $Payment = Payment::find($id);
-            $Payment->id = $id; 
+        try{
+            $Payment = Payment::findOrFail($id);
+            $PeriodEmployeePayment = PeriodEmployeePayment::where('payment_id', $id);
+            $PeriodEmployeePayment->delete();
             $Payment->delete();
             return Response::json(
                 array(
                     'error' => false,
                     'message' => 'Payment deleted',
-                    'action' => 'delete',
-                    'payment' => $Payment->toArray()
+                    'action' => 'delete'
                 ),
                 200
             );
@@ -159,15 +182,12 @@ class PaymentController extends \BaseController {
             return Response::json(
                 array(
                     'error' => false,
-                    'message' => 'Payment cannot be deleted',
-                    'action' => 'delete',
-                    'payment' => $id
+                    'message' => 'Payment cannot be deleted: '.$e->getMessage(),
+                    'action' => 'delete'
                 ),
-                500
+                404
             );
         }
-
-
     }
 
 }

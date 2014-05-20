@@ -188,4 +188,6 @@ return array(
 
     'allowedorigin' => 'https://qa.sentinelf.com',
 
+    'cipher' => MCRYPT_RIJNDAEL_256,
+
 );
