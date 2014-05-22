@@ -541,7 +541,11 @@ class EmployeeController extends \BaseController {
                                 ->join('globalevent_period', 'globalevent_period.id', '=', 'globalevent_period_employee.globalevent_period_id')
                                 ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
                                 ->leftjoin('period_employee_payment', 'globalevent_period_employee.id', '=', 'period_employee_payment.globalevent_period_employee_id')
-                                ->leftjoin('payment', 'period_employee_payment.payment_id', '=', 'payment.id')
+                                ->leftjoin('payment', function($join)
+                                    {
+                                        $join->on('period_employee_payment.payment_id', '=', 'payment.id')->where('payment.payment_type_id', '=', '1');
+                                    }
+                                )
                                 ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'payment.id as payment_id')
                                 ->limit(10)
                                 ->orderBy('globalevent_period.end_datetime', 'desc')
@@ -568,7 +572,7 @@ class EmployeeController extends \BaseController {
                                 ->join('globalevent_period_employee', 'employee.id', '=', 'globalevent_period_employee.employee_id')
                                 ->join('globalevent_period', 'globalevent_period.id', '=', 'globalevent_period_employee.globalevent_period_id')
                                 ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
-                                ->whereRaw('not exists (select 1 from period_employee_payment pep, payment pa where pa.payment_id = pep,payment_id and pa.payment_type_id = 1 andpep.globalevent_period_employee_id = globalevent_period_employee.id)')
+                                ->whereRaw('not exists (select 1 from period_employee_payment pep, payment pa where pa.id = pep.payment_id and pa.payment_type_id = 1 and pep.globalevent_period_employee_id = globalevent_period_employee.id)')
                                 ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*')
                                 ->orderBy('globalevent_period.end_datetime', 'desc')
                                 ->get();

@@ -59,8 +59,7 @@ class EmployeeRemarkController extends \BaseController {
                 ),
                 200
             );
-        }
-        catch{
+        } catch (Exception $e) {
             return Response::json(
                 array(
                     'error' => false,
@@ -69,7 +68,6 @@ class EmployeeRemarkController extends \BaseController {
                 500
             );
         }
-
 
     }
 

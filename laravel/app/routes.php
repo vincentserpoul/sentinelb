@@ -52,12 +52,8 @@ Route::group(array('prefix' => 'api/v1'), function()
 
         /* Remarks for employees */
         Route::options('employee/{employee_id}/remark', function(){return null;});
-        Route::get('employee/{employee_id}/remark/{remark_id}', 'EmployeeRemarkController@show');
-        Route::get('employee/{employee_id}/remark', 'EmployeeRemarkController@index');
-        Route::delete('employee/{employee_id}/remark/{remark_id}', 'EmployeeRemarkController@destroy');
-        Route::post('employee/{employee_id}/remark', 'EmployeeRemarkController@create');
-        Route::put('employee/{employee_id}/remark/{remark_id}', 'EmployeeRemarkController@update');
-
+        Route::options('employee/{employee_id}/remark/{remark_id}', function(){return null;});
+        Route::resource('employee/{employee_id}/remark', 'EmployeeRemarkController');
 
         /* Payments */
         Route::options('payment', function(){return null;});
