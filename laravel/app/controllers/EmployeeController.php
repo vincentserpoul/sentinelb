@@ -572,8 +572,9 @@ class EmployeeController extends \BaseController {
                                 ->join('globalevent_period_employee', 'employee.id', '=', 'globalevent_period_employee.employee_id')
                                 ->join('globalevent_period', 'globalevent_period.id', '=', 'globalevent_period_employee.globalevent_period_id')
                                 ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
+                                ->join('client_department', 'client_department.id', '=', 'globalevent.client_department_id')
                                 ->whereRaw('not exists (select 1 from period_employee_payment pep, payment pa where pa.id = pep.payment_id and pa.payment_type_id = 1 and pep.globalevent_period_employee_id = globalevent_period_employee.id)')
-                                ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*')
+                                ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'client_department.*')
                                 ->orderBy('globalevent_period.end_datetime', 'desc')
                                 ->get();
 
@@ -585,6 +586,34 @@ class EmployeeController extends \BaseController {
             200
         );
     }
+
+    /**
+     * Retrieve The list of employee assignments.
+     *
+     * @param  int  $employee_id
+     * @return Response
+     */
+    public function paid_globalevent_period($employee_id){
+        $globaleventPeriods = Employee::where('employee.id', '=', $employee_id)
+                                ->join('globalevent_period_employee', 'employee.id', '=', 'globalevent_period_employee.employee_id')
+                                ->join('globalevent_period', 'globalevent_period.id', '=', 'globalevent_period_employee.globalevent_period_id')
+                                ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
+                                ->join('client_department', 'client_department.id', '=', 'globalevent.client_department_id')
+                                ->join('period_employee_payment', 'period_employee_payment.globalevent_period_employee_id', '=', 'globalevent_period_employee.id')
+                                ->join('payment', 'payment.id', '=', 'period_employee_payment.payment_id')
+                                ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'client_department.*', 'payment.*')
+                                ->orderBy('globalevent_period.end_datetime', 'desc')
+                                ->get();
+
+        return Response::json(
+            array(
+                'error' => false,
+                'globalevent_periods' => $globaleventPeriods->toArray()
+            ),
+            200
+        );
+    }
+
 
     public function assigned_employees($globalevent_period_id) {
 

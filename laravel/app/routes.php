@@ -43,6 +43,7 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::get('employee/{employee_id}/globalevent_period', 'EmployeeController@globalevent_period');
         Route::options('employee/{employee_id}/unpaid_globalevent_period', function(){return null;});
         Route::get('employee/{employee_id}/unpaid_globalevent_period', 'EmployeeController@unpaid_globalevent_period');
+        Route::get('employee/{employee_id}/paid_globalevent_period', 'EmployeeController@paid_globalevent_period');
         Route::options('employee/{employee_id}/possible_globalevent_period/{event_id}', function(){return null;});
         Route::get('employee/{employee_id}/possible_globalevent_period/{event_id}', 'EmployeeController@possible_globalevent_period');
         Route::options('employee/all_possible_globalevent_period/{event_id}', function(){return null;});
@@ -80,6 +81,7 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::options('payment', function(){return null;});
         Route::options('payment/{id}', function(){return null;});
         Route::resource('payment', 'PaymentController');
+        Route::get('payment/payment_details', 'PaymentController@paymentDetails')
 
 
         // ClientDepartment

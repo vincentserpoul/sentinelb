@@ -112,6 +112,7 @@ class CenturyevergreenForeignKeys
 
             $table->foreign('globalevent_period_employee_id')->references('id')->on('globalevent_period_employee');
             $table->foreign('payment_id')->references('id')->on('payment');
+            $table->unique('globalevent_period_employee_id', 'unik_payment_per_geventperiodemployee');
             $table->foreign('user_id')->references('id')->on('users');
         });
 
