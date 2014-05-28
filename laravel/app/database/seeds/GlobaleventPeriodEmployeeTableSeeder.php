@@ -36,6 +36,8 @@ class GlobaleventPeriodEmployeeTableSeeder extends Seeder {
                         'employee_id' => 3,
                         'real_start_datetime' => '2013-02-01 08:03:00',
                         'real_end_datetime' => '2013-02-01 10:30:00',
+                        'real_break_duration_s' => '3500',
+                        'clvno' => 'HYRFDEYWWTH',
                   )
             );
 
@@ -47,6 +49,8 @@ class GlobaleventPeriodEmployeeTableSeeder extends Seeder {
                         'employee_id' => 1,
                         'real_start_datetime' => '2013-03-01 08:00:00',
                         'real_end_datetime' => '2013-03-01 10:00:00',
+                        'real_break_duration_s' => '3600',
+                        'clvno' => 'HYRFDEYTHDD',
                   )
             );
 
@@ -56,6 +60,8 @@ class GlobaleventPeriodEmployeeTableSeeder extends Seeder {
                         'employee_id' => 2,
                         'real_start_datetime' => '2013-03-01 08:00:00',
                         'real_end_datetime' => '2013-03-01 10:00:00',
+                        'real_break_duration_s' => '3200',
+                        'clvno' => 'HYRFDEYTWRH',
                   )
             );
 

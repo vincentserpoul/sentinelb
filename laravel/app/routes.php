@@ -56,12 +56,6 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::options('employee/{employee_id}/remark/{remark_id}', function(){return null;});
         Route::resource('employee/{employee_id}/remark', 'EmployeeRemarkController');
 
-        /* Payments */
-        Route::options('payment', function(){return null;});
-        Route::options('payment/{id}', function(){return null;});
-        Route::resource('payment', 'PaymentController');
-
-
         /* Base url for employees */
         Route::options('employee', function(){return null;});
         Route::options('employee/{employee_id}', function(){return null;});
@@ -81,7 +75,7 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::options('payment', function(){return null;});
         Route::options('payment/{id}', function(){return null;});
         Route::resource('payment', 'PaymentController');
-        Route::get('payment/payment_details', 'PaymentController@paymentDetails')
+        Route::get('payment/payment_details', 'PaymentController@paymentDetails');
 
 
         // ClientDepartment

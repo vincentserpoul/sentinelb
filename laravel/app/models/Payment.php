@@ -17,4 +17,10 @@ Class Payment extends Eloquent
         return $this->belongsTo('PaymentType');
     }
 
+    public function getGlobaleventPeriodPayments($globaleventPeriodEmployeeIds){
+        $payment = new GlobaleventPeriodEmployee;
+        $payment = $payment->getGlobaleventPeriodEmployeePayments($globaleventPeriodEmployeeIds);
+
+        return $payment;
+    }
 }

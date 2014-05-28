@@ -18,6 +18,7 @@ class CreatePaymentTable extends Migration
             $table->decimal('amount', 30, 2)->unsigned();
             $table->string('currency_code', 3);
             $table->integer('payment_type_id')->nullable()->default(NULL)->unsigned();
+            $table->integer('employee_id')->unsigned();;
             $table->timestamps();
             $table->integer('user_id')->nullable()->default('1')->unsigned();
         });

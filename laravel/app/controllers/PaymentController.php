@@ -40,15 +40,36 @@ class PaymentController extends \BaseController {
 
         try{
 
+            $validationForPayment = array(
+                'amount' => 'required',
+                'currency_code' => 'required|size:3|alphanum',
+                'globalevent_period_employee_ids' => 'required|array|min:1',
+                'payment_type_id' => 'required|integer',
+                'employee_id' => 'required|integer',
+            );
+
+            $paymentRequest = Request::json()->all();
+
+            /* If theres no payment type, then we push for the default one */
+            if(empty($paymentRequest['payment_type_id'])){
+                $paymentRequest['payment_type_id'] = 2;
+            }
+
+            /* if there is no globalevent periods then we remove the check and else we need an amount and a currency */
+            if(empty($paymentRequest['globalevent_period_employee_ids'])){
+                unset($validationForPayment['globalevent_period_employee_ids']);
+                // it means it is labor work
+                $paymentRequest['payment_type_id'] = 1;
+            } else {
+                unset($validationForPayment['amount']);
+                unset($validationForPayment['currency_code']);
+                unset($validationForPayment['employee_id']);
+            }
+
             /* Validation of the data */
             $valid = Validator::make(
-                Request::json()->all(),
-                array(
-                    'amount' => 'required',
-                    'currency_code' => 'required|size:3|alphanum',
-                    'globalevent_period_ids' => 'required|array|min:1',
-                    'payment_type_id' => 'required|integer',
-                )
+                $paymentRequest,
+                $validationForPayment
             );
 
             if ($valid->fails())
@@ -56,14 +77,38 @@ class PaymentController extends \BaseController {
                 throw new Exception(implode($valid->messages()->all(':message'), ' - '), 1);
             }
 
-            // Pas de création en direct
+
+            /* Validation of globalevent_periodids and generate amount and currency */
             $Payment = new Payment;
-            $Payment->amount = Request::json('amount');
-            $Payment->currency_code = Request::json('currency_code');
-            $Payment->payment_type_id = Request::json('payment_type_id');
+
+            if(!empty($paymentRequest['globalevent_period_employee_ids'])){
+            $paymentInfos = $Payment->getGlobaleventPeriodPayments($paymentRequest['globalevent_period_employee_ids']);
+
+                $paymentRequest['amount'] = $paymentInfos[0]['amount'];
+                $paymentRequest['currency_code'] = $paymentInfos[0]['currency_code'];
+                $paymentRequest['employee_id'] = $paymentInfos[0]['employee_id'];
+
+                /* If none of the global event periods is processable, throw an error */
+                if(empty($paymentInfos[0]['globalevent_period_employee_ids'])){
+                    throw new Exception('none of your event period is processable', 1);
+                }
+
+                $paymentRequest['globalevent_period_employee_ids'] = explode(', ', $paymentInfos[0]['globalevent_period_employee_ids']);
+            }
+
+            // Pas de création en direct
+            $Payment->amount = $paymentRequest['amount'];
+            $Payment->currency_code = $paymentRequest['currency_code'];
+            $Payment->payment_type_id = $paymentRequest['payment_type_id'];
+            $Payment->employee_id = $paymentRequest['employee_id'];
+
             $Payment->save();
-            // Associate the payment with globalevent_period
-            $Payment->globalevent_period_employee()->sync(Request::json('globalevent_period_ids'));
+
+
+            /* If globalevent_period are specified, Associate the payment with globalevent_period */
+            if(!empty($paymentRequest['globalevent_period_employee_ids'])){
+                $Payment->globalevent_period_employee()->sync($paymentRequest['globalevent_period_employee_ids']);
+            }
 
             return Response::json(
                 array(

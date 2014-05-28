@@ -122,6 +122,7 @@ class CenturyevergreenForeignKeys
 
             $table->foreign('payment_type_id')->references('id')->on('payment_type');
             $table->foreign('currency_code')->references('code')->on('currency');
+            $table->foreign('employee_id')->references('id')->on('employee');
             $table->foreign('user_id')->references('id')->on('users');
         });
 
