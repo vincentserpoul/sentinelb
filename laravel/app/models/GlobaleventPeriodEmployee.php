@@ -19,7 +19,7 @@ Class GlobaleventPeriodEmployee extends Eloquent
 
     public function payment()
     {
-        return $this->belongsToMany('Payment', 'period_employee_payment');
+        return $this->belongsTo('Payment');
     }
 
     public function scopeEmployee($employee_id){

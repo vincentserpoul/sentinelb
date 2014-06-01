@@ -101,18 +101,9 @@ class CenturyevergreenForeignKeys
             $table->foreign('employee_id')->references('id')->on('employee');
             $table->foreign('employee_h_rate_currency_code', 'gpe_employee_h_rate_currency_code_foreign')->references('code')->on('currency');
             $table->foreign('client_h_rate_currency_code', 'gpe_client_h_rate_currency_code_foreign')->references('code')->on('currency');
+            $table->foreign('payment_id')->references('id')->on('payment');
             $table->unique('clvno');
             $table->unique(array('employee_id', 'globalevent_period_id'), 'unik_employee_per_geventperiod');
-            $table->foreign('user_id')->references('id')->on('users');
-        });
-
-        Schema::table('period_employee_payment', function($table)
-        {
-            // Foreign Keys for table 'event_period_employee'
-
-            $table->foreign('globalevent_period_employee_id')->references('id')->on('globalevent_period_employee');
-            $table->foreign('payment_id')->references('id')->on('payment');
-            $table->unique('globalevent_period_employee_id', 'unik_payment_per_geventperiodemployee');
             $table->foreign('user_id')->references('id')->on('users');
         });
 
@@ -241,17 +232,8 @@ class CenturyevergreenForeignKeys
             $table->dropForeign('gpe_employee_h_rate_currency_code_foreign');
             $table->dropForeign('gpe_client_h_rate_currency_code_foreign');
             $table->dropForeign('globalevent_period_employee_user_id_foreign');
+            $table->dropForeign('globalevent_period_employee_payment_id_foreign');
             $table->dropUnique('clvno_unique');
-        });
-
-        Schema::table('period_employee_payment', function($table)
-        {
-            // Foreign Keys for table 'event_period_employee'
-
-            $table->dropForeign('period_employee_payment_globalevent_period_employee_foreign');
-            $table->dropUnique('period_employee_payment_globalevent_period_employee_id_unique');
-            $table->dropForeign('period_employee_payment_payment_id_foreign')->references('id')->on('payment');
-            $table->dropForeign('user_id');
         });
 
         Schema::table('payment', function($table)

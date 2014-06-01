@@ -107,7 +107,11 @@ class PaymentController extends \BaseController {
 
             /* If globalevent_period are specified, Associate the payment with globalevent_period */
             if(!empty($paymentRequest['globalevent_period_employee_ids'])){
-                $Payment->globalevent_period_employee()->sync($paymentRequest['globalevent_period_employee_ids']);
+                foreach($paymentRequest['globalevent_period_employee_ids'] as $globalevent_period_employee_id){
+                    $GlobaleventPeriodEmployee = GlobaleventPeriodEmployee::find($globalevent_period_employee_id);
+                    $GlobaleventPeriodEmployee->payment_id = $Payment->id;
+                    $GlobaleventPeriodEmployee->save();
+                }
             }
 
             return Response::json(

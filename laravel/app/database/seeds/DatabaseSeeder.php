@@ -40,7 +40,6 @@ class DatabaseSeeder extends Seeder {
 		$this->call('GlobaleventTableSeeder');
 		$this->call('GlobaleventPeriodTableSeeder');
 		$this->call('GlobaleventPeriodEmployeeTableSeeder');
-		$this->call('PeriodEmployeePaymentTableSeeder');
 		$this->call('EmployeeContactTableSeeder');
 		$this->call('EmployeeRemarkTableSeeder');
 

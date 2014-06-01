@@ -540,10 +540,9 @@ class EmployeeController extends \BaseController {
                                 ->join('globalevent_period_employee', 'employee.id', '=', 'globalevent_period_employee.employee_id')
                                 ->join('globalevent_period', 'globalevent_period.id', '=', 'globalevent_period_employee.globalevent_period_id')
                                 ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
-                                ->leftjoin('period_employee_payment', 'globalevent_period_employee.id', '=', 'period_employee_payment.globalevent_period_employee_id')
                                 ->leftjoin('payment', function($join)
                                     {
-                                        $join->on('period_employee_payment.payment_id', '=', 'payment.id')->where('payment.payment_type_id', '=', '1');
+                                        $join->on('globalevent_period_employee.payment_id', '=', 'payment.id');
                                     }
                                 )
                                 ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'payment.id as payment_id')
@@ -573,8 +572,10 @@ class EmployeeController extends \BaseController {
                                 ->join('globalevent_period', 'globalevent_period.id', '=', 'globalevent_period_employee.globalevent_period_id')
                                 ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
                                 ->join('client_department', 'client_department.id', '=', 'globalevent.client_department_id')
-                                ->whereRaw('not exists (select 1 from period_employee_payment pep, payment pa where pa.id = pep.payment_id and pa.payment_type_id = 1 and pep.globalevent_period_employee_id = globalevent_period_employee.id)')
-                                ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'client_department.*')
+                                ->whereNotNull('real_start_datetime')
+                                ->whereNotNull('real_end_datetime')
+                                ->whereNull('payment_id')
+                                ->select('globalevent_period_employee.id as globalevent_period_employee_id', 'globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'client_department.*')
                                 ->orderBy('globalevent_period.end_datetime', 'desc')
                                 ->get();
 
@@ -599,8 +600,7 @@ class EmployeeController extends \BaseController {
                                 ->join('globalevent_period', 'globalevent_period.id', '=', 'globalevent_period_employee.globalevent_period_id')
                                 ->join('globalevent', 'globalevent_period.globalevent_id', '=', 'globalevent.id')
                                 ->join('client_department', 'client_department.id', '=', 'globalevent.client_department_id')
-                                ->join('period_employee_payment', 'period_employee_payment.globalevent_period_employee_id', '=', 'globalevent_period_employee.id')
-                                ->join('payment', 'payment.id', '=', 'period_employee_payment.payment_id')
+                                ->join('payment', 'payment.id', '=', 'globalevent_period_employee.payment_id')
                                 ->select('globalevent.*', 'globalevent_period.*', 'globalevent_period_employee.*', 'client_department.*', 'payment.*')
                                 ->orderBy('globalevent_period.end_datetime', 'desc')
                                 ->get();

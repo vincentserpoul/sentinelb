@@ -18,6 +18,7 @@ class GlobaleventPeriodEmployeeTableSeeder extends Seeder {
                         'employee_h_rate_currency_code' => 'SGD',
                         'client_h_rate' => '11.6',
                         'client_h_rate_currency_code' => 'SGD',
+                        'payment_id' => 1,
                   )
             );
 
@@ -37,7 +38,7 @@ class GlobaleventPeriodEmployeeTableSeeder extends Seeder {
                         'real_start_datetime' => '2013-02-01 08:03:00',
                         'real_end_datetime' => '2013-02-01 10:30:00',
                         'real_break_duration_s' => '3500',
-                        'clvno' => 'HYRFDEYWWTH',
+                        'clvno' => 'HYRFDEYWWTH'
                   )
             );
 
@@ -51,6 +52,7 @@ class GlobaleventPeriodEmployeeTableSeeder extends Seeder {
                         'real_end_datetime' => '2013-03-01 10:00:00',
                         'real_break_duration_s' => '3600',
                         'clvno' => 'HYRFDEYTHDD',
+                        'payment_id' => 2
                   )
             );
 
