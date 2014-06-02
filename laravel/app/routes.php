@@ -75,7 +75,7 @@ Route::group(array('prefix' => 'api/v1'), function()
         Route::options('payment', function(){return null;});
         Route::options('payment/{id}', function(){return null;});
         Route::resource('payment', 'PaymentController');
-        Route::get('payment/payment_details', 'PaymentController@paymentDetails');
+        Route::get('employee/{employee_id}/payment', 'PaymentController@employee');
 
 
         // ClientDepartment

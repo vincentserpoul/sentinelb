@@ -18,4 +18,9 @@ Class Payment extends Eloquent
 
         return $payment;
     }
+
+    public function scopeEmployee($query, $employee_id){
+        return $query->where('employee_id', '=', $employee_id);
+    }
+
 }

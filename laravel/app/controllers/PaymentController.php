@@ -10,12 +10,14 @@ class PaymentController extends \BaseController {
     public function index(){
 
 
-        $Payments = Payment::take(10)->get();
+        $Payments = Payment::take(10)
+                        ->orderBy('created_at', 'asc')
+                        ->get();
 
         return Response::json(
             array(
                 'error' => false,
-                'Payments' => $Payments->toArray()
+                'payments' => $Payments->toArray()
             ),
             200
         );
@@ -101,7 +103,9 @@ class PaymentController extends \BaseController {
             $Payment->currency_code = $paymentRequest['currency_code'];
             $Payment->payment_type_id = $paymentRequest['payment_type_id'];
             $Payment->employee_id = $paymentRequest['employee_id'];
-
+            if(!empty($paymentRequest['details'])){
+                $Payment->details = $paymentRequest['details'];
+            }
             $Payment->save();
 
 
@@ -119,7 +123,7 @@ class PaymentController extends \BaseController {
                     'error' => false,
                     'message' => 'Payment created',
                     'action' => 'create',
-                    'Payment' => $Payment->toArray()
+                    'payment' => $Payment->toArray()
                 ),
                 200
             );
@@ -233,6 +237,38 @@ class PaymentController extends \BaseController {
                     'error' => false,
                     'message' => 'Payment cannot be deleted: '.$e->getMessage(),
                     'action' => 'delete'
+                ),
+                404
+            );
+        }
+    }
+
+     /**
+     * Display a listing of the resource for a specific employee
+     *
+     * @return Response
+     */
+    public function employee($employee_id){
+
+        try {
+            $PaymentsList = Payment::employee($employee_id)
+                                ->take(5)
+                                ->orderBy('created_at', 'desc')
+                                ->get();
+
+            return Response::json(
+                array(
+                    'error' => false,
+                    'payments' => $PaymentsList->toArray()
+                ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Payment list for employee '.$employee_id.' can not be retrieved: '.$e->getMessage(),
+                    'action' => 'get'
                 ),
                 404
             );

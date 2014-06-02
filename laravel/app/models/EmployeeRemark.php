@@ -7,7 +7,7 @@ Class EmployeeRemark extends Eloquent
 
     protected $table='employee_remark';
 
-    public function employee()
+    public function employees()
     {
         return $this->BelongsTo('Employee');
     }
@@ -20,6 +20,10 @@ Class EmployeeRemark extends Eloquent
     public function globaleventperiod()
     {
         return $this->belongsTo('Globaleventperiod');
+    }
+
+    public function scopeEmployee($query, $employee_id){
+        return $query->where('employee_id', '=', $employee_id);
     }
 
 }

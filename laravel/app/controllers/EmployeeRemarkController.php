@@ -16,15 +16,13 @@ class EmployeeRemarkController extends \BaseController {
                 throw new Exception('Please specify an employee', 1);
             }
 
-            $EmployeeRemarks = new EmployeeRemark;
-
-            $EmployeeRemarksList = $EmployeeRemarks::where('employee_id', '=', $employee_id)->get()->toArray();
+            $EmployeeRemarksList = EmployeeRemark::employee($employee_id)->get();
 
             return Response::json(
                 array(
                     'error' => false,
                     'message' => 'Remarks for '.$employee_id,
-                    'employee_remarks' => $EmployeeRemarksList,
+                    'employee_remarks' => $EmployeeRemarksList->toArray(),
                 ),
                 200
             );
