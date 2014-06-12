@@ -53,7 +53,6 @@ class EmployeeController extends \BaseController {
                 Request::json()->all(),
                 array(
                     'title_id' => 'integer',
-                    'first_name' => 'required',
                     'last_name' => 'required',
                     'sex_id' => 'required|integer',
                     'country_code' => 'required',
@@ -255,7 +254,6 @@ class EmployeeController extends \BaseController {
                 Request::json()->all(),
                 array(
                     'title_id' => 'integer',
-                    'first_name' => 'required',
                     'last_name' => 'required',
                     'sex_id' => 'required|integer',
                     'country_code' => 'required',
