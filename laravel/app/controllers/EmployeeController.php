@@ -78,8 +78,17 @@ class EmployeeController extends \BaseController {
             if(empty($title_id)){
                 $title_id = 4;
             }
+
+            /* if first name is undefined, make it empty */
+            $first_name = Request::json('first_name');
+            if(empty($first_name)){
+                $first_name = '';
+            } else {
+                $first_name = strip_tags(trim(ucfirst(strtolower(Request::json('first_name')))));
+            }
+
             $Employee->title_id = $title_id;
-            $Employee->first_name = strip_tags(trim(ucfirst(strtolower(Request::json('first_name')))));
+            $Employee->first_name = $first_name;
             $Employee->last_name = strip_tags(trim(ucfirst(strtolower(Request::json('last_name')))));
             $Employee->sex_id = Request::json('sex_id');
             $Employee->country_code = Request::json('country_code');
