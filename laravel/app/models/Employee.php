@@ -92,6 +92,7 @@ Class Employee extends Eloquent
               'work_pass_type'=>null
             , 'race'=>null
             , 'sex'=>null
+            , 'school'=>null
             , 'status'=>null
             , 'age_min'=>null
             , 'age_max'=>null
