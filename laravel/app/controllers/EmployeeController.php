@@ -59,7 +59,7 @@ class EmployeeController extends \BaseController {
                     'country_code' => 'required',
                     'date_of_birth' => 'required|date',
                     'mobile_phone_number' => 'required',
-                    'school' => 'required',
+                    'school_id' => 'required',
                     'race_id' => 'required',
                     'work_pass_type_id' => 'required',
                     'race_id' => 'required',
@@ -86,7 +86,7 @@ class EmployeeController extends \BaseController {
             $Employee->country_code = Request::json('country_code');
             $Employee->date_of_birth = Request::json('date_of_birth');
             $Employee->mobile_phone_number = strip_tags(trim(Request::json('mobile_phone_number')));
-            $Employee->school = strip_tags(trim(ucfirst(strtolower(Request::json('school')))));
+            $Employee->school_id = Request::json('school_id');
             $Employee->join_date = date('Y-m-d');
             $Employee->race_id = Request::json('race_id');
             $Employee->status_id = 1;
@@ -261,7 +261,7 @@ class EmployeeController extends \BaseController {
                     'country_code' => 'required',
                     'date_of_birth' => 'required|date',
                     'mobile_phone_number' => 'required',
-                    'school' => 'required',
+                    'school_id' => 'required',
                     'race_id' => 'required',
                     'work_pass_type_id' => 'required',
                     'race_id' => 'required',
@@ -304,8 +304,8 @@ class EmployeeController extends \BaseController {
                 $Employee->mobile_phone_number = strip_tags(trim(Request::json('mobile_phone_number')));
             }
 
-            if ( !is_null(Request::json('school')) ){
-                $Employee->school = strip_tags(trim(ucfirst(strtolower(Request::json('school')))));
+            if ( !is_null(Request::json('school_id')) ){
+                $Employee->school_id = Request::json('school_id');
             }
 
             if ( !is_null(Request::json('join_date')) ){
@@ -505,27 +505,38 @@ class EmployeeController extends \BaseController {
      */
     public function destroy($id){
 
-        $Employee = Employee::find($id);
+        try{
+            $Employee = Employee::find($id);
 
-        /* We don't want a full delete, just inactive status
-        $EmployeeIdentityDoc = EmployeeIdentityDoc::where('employee_id', $id);
+            /* We don't want a full delete, just inactive status
+            $EmployeeIdentityDoc = EmployeeIdentityDoc::where('employee_id', $id);
 
-        $EmployeeIdentityDoc->delete();
-        $Employee->delete();
-        */
-        /* Hardcoded delete status */
-        $Employee->status = 1;
-        $Employee->save();
+            $EmployeeIdentityDoc->delete();
+            $Employee->delete();
+            */
+            /* Hardcoded delete status */
+            $Employee->status_id = 1;
+            $Employee->save();
 
-        return Response::json(
-            array(
-                'error' => false,
-                'message' => 'Employee deleted',
-                'action' => 'delete',
-                'employee' => $Employee->toArray()
+            return Response::json(
+                array(
+                    'error' => false,
+                    'message' => 'Employee deleted',
+                    'action' => 'delete',
+                    'employee' => $Employee->toArray()
+                    ),
+                200
+            );
+        } catch (Exception $e) {
+            return Response::json(
+                array(
+                    'error' => true,
+                    'message' => "Employee cannot be deleted. " . $e->getMessage(),
+                    'action' => "delete"
                 ),
-            200
-        );
+                422
+            );
+        }
     }
 
     /**

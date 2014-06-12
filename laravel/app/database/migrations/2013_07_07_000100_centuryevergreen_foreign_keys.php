@@ -16,6 +16,7 @@ class CenturyevergreenForeignKeys
             $table->foreign('sex_id')->references('id')->on('sex');
             $table->foreign('country_code')->references('code')->on('country');
             $table->foreign('race_id')->references('id')->on('race');
+            $table->foreign('school_id')->references('id')->on('school');
             $table->foreign('status_id')->references('id')->on('status');
             $table->foreign('work_pass_type_id')->references('id')->on('work_pass_type');
             $table->foreign('user_id')->references('id')->on('users');

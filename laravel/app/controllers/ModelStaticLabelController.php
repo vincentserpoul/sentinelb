@@ -41,6 +41,10 @@ class ModelStaticLabelController extends \BaseController {
                     $neededClass = new WorkPassType;
                     $formattedLabels['work_pass_type'] = $neededClass->get()->toArray();
 
+                    // Work pass types
+                    $neededClass = new School;
+                    $formattedLabels['school'] = $neededClass->get()->toArray();
+
                     break;
                 case 'contact':
                     //Titles

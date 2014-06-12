@@ -22,7 +22,7 @@ class CreateEmployeeTable extends Migration
             $table->string('country_code', 3)->default('');
             $table->date('date_of_birth')->default('0000-00-00');
             $table->string('mobile_phone_number', 40)->default('');
-            $table->string('school', 50)->default('');
+            $table->integer('school_id')->nullable()->default(NULL)->unsigned();
             $table->dateTime('join_date')->nullable()->default(NULL);
             $table->integer('race_id')->nullable()->default(NULL)->unsigned();
             $table->integer('status_id')->default(0)->unsigned();
